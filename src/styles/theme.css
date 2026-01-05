@@ -1,0 +1,30 @@
+:root {
+  --font-title: "Cinzel", "Iowan Old Style", "Palatino", serif;
+  --font-body: "Source Serif 4", "Georgia", serif;
+  --font-ui: "Manrope", "Avenir Next", "Segoe UI", sans-serif;
+
+  --ink: #1e1a16;
+  --ink-soft: #3a332b;
+  --ink-muted: #5b5147;
+  --parchment: #f6eee0;
+  --parchment-2: #efe1c7;
+  --obsidian: #141110;
+  --velvet: #3a1f2b;
+  --velvet-2: #4b2532;
+  --gold: #d8b25c;
+  --gold-2: #f0d493;
+  --emerald: #2f6f5f;
+  --ember: #c36b3f;
+  --shadow: 0 18px 40px rgba(20, 14, 10, 0.25);
+  --border: 1px solid rgba(58, 51, 43, 0.2);
+  --radius: 18px;
+
+  --backdrop:
+    radial-gradient(circle at 20% 20%, rgba(243, 214, 165, 0.5), transparent 50%),
+    radial-gradient(circle at 80% 10%, rgba(198, 144, 86, 0.35), transparent 40%),
+    linear-gradient(130deg, #f6eee0 10%, #e9d3b2 48%, #d4b892 100%);
+}
+
+body {
+  font-family: var(--font-body);
+}
