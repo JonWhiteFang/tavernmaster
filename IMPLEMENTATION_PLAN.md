@@ -16,8 +16,8 @@ A living plan to track progress for the AI Dungeon Master desktop app (Mac, offl
 - [x] Establish directory structure (`src/app`, `src/styles`, `docs/`).
 - [x] Create fantasy‑luxury theme baseline and dashboard shell.
 - [x] Document architecture, data model, LLM runtime, Supabase strategy.
-- [ ] Add formatting/linting (Prettier + ESLint, rustfmt config).
-- [ ] Add CI workflow for build + lint + tests.
+- [x] Add formatting/linting (Prettier + ESLint, rustfmt config).
+- [x] Add CI workflow for build + lint + tests.
 
 ### 2) Data Layer & Persistence (SQLite)
 
