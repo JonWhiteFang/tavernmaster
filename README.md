@@ -29,6 +29,13 @@ npm run tauri:dev
 npm run tauri:build
 ```
 
+## Lint & Test
+
+```bash
+npm run lint
+npm run test
+```
+
 ## Local LLM Setup
 
 - Ollama (default): `http://localhost:11434`
