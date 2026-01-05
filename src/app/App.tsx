@@ -1,6 +1,14 @@
+import { useEffect } from "react";
+import { initDatabase } from "./data/db";
 import Dashboard from "./screens/Dashboard";
 
 export default function App() {
+  useEffect(() => {
+    void initDatabase().catch((error) => {
+      console.error("Failed to initialize database", error);
+    });
+  }, []);
+
   return (
     <div className="app">
       <header className="topbar">

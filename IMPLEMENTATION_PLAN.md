@@ -21,9 +21,10 @@ A living plan to track progress for the AI Dungeon Master desktop app (Mac, offl
 
 ### 2) Data Layer & Persistence (SQLite)
 
-- [ ] Choose SQLite adapter and migration tool (Tauri plugin or Rust side).
-- [ ] Implement schema from `docs/DATA_MODEL.md` with migrations.
-- [ ] Add repositories for Campaign, Characters, Encounters, Journal.
+- [x] Choose SQLite adapter and migration tool (tauri-plugin-sql).
+- [x] Implement schema initialization from `docs/DATA_MODEL.md`.
+- [x] Add baseline repository for Campaigns.
+- [ ] Add repositories for Characters, Encounters, Journal.
 - [ ] Implement SRD import on first launch (from bundled JSON).
 - [ ] Add seed data for demo campaign and sample characters.
 

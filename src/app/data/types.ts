@@ -24,6 +24,7 @@ export interface Character {
 export interface Campaign {
   id: string;
   name: string;
+  summary?: string;
   createdAt: string;
   updatedAt: string;
   activeSceneId?: string;
