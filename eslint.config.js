@@ -10,6 +10,12 @@ export default [
     files: ["**/*.{ts,tsx}"],
     languageOptions: {
       parser: tsParser,
+      globals: {
+        console: "readonly",
+        crypto: "readonly",
+        document: "readonly",
+        window: "readonly"
+      },
       parserOptions: {
         ecmaVersion: "latest",
         sourceType: "module",
