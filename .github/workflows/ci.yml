@@ -21,7 +21,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm run test
+
       - name: Build frontend
         run: npm run build
-
-      # TODO: add lint/test commands once configured.
