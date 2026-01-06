@@ -5,6 +5,7 @@ import AiDirector from "./screens/AiDirector";
 import EncounterFlow from "./screens/EncounterFlow";
 import Journal from "./screens/Journal";
 import MapStudio from "./screens/MapStudio";
+import LogsExports from "./screens/LogsExports";
 import PartySheets from "./screens/PartySheets";
 import Settings from "./screens/Settings";
 
@@ -53,6 +54,8 @@ export default function App() {
         return <Journal />;
       case "map":
         return <MapStudio />;
+      case "logs":
+        return <LogsExports />;
       case "party":
         return <PartySheets />;
       case "dashboard":
