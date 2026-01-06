@@ -34,3 +34,8 @@ The local database is the source of truth. All tables include `id`, `created_at`
 
 - `sync_state`: last_pulled_at, last_pushed_at, conflict_count.
 - `sync_queue`: entity_type, entity_id, op_type, payload_json.
+
+## App Settings & AI Logs
+
+- `app_settings`: key, value_json (stores LLM config and app preferences).
+- `ai_logs`: campaign_id, session_id, kind (dm/party/summary/user), content, payload_json.

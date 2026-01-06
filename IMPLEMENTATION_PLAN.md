@@ -39,11 +39,11 @@ A living plan to track progress for the AI Dungeon Master desktop app (Mac, offl
 
 ### 4) AI Orchestration (Local LLM)
 
-- [ ] LLM client with OpenAI‑compatible settings (Ollama/LM Studio).
-- [ ] Prompt templates for DM + Party, with structured JSON outputs.
-- [ ] Approval workflow: propose → review → approve/reject → resolve.
-- [ ] Context summarization + memory pruning (session summary every N turns).
-- [ ] Rules reference retrieval from SRD index.
+- [x] LLM client with OpenAI‑compatible settings (Ollama/LM Studio).
+- [x] Prompt templates for DM + Party, with structured JSON outputs.
+- [x] Approval workflow: propose → review → approve/reject → resolve.
+- [x] Context summarization + memory pruning (session summary every N turns).
+- [x] Rules reference retrieval from SRD index.
 
 ### 5) UI/UX (Fantasy‑Luxury Desktop)
 
@@ -54,7 +54,7 @@ A living plan to track progress for the AI Dungeon Master desktop app (Mac, offl
 - [ ] Map Studio (image import, tokens, fog, rulers).
 - [ ] Journal + narrative transcript with export.
 - [ ] AI Director panel (approval queue, tone, tactics profiles).
-- [ ] Settings (LLM config, sync, SRD source, theme).
+- [ ] Settings UI (LLM config, sync, SRD source, theme).
 
 ### 6) Supabase Sync (Single User)
 

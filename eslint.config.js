@@ -14,7 +14,10 @@ export default [
         console: "readonly",
         crypto: "readonly",
         document: "readonly",
-        window: "readonly"
+        window: "readonly",
+        fetch: "readonly",
+        TextDecoder: "readonly",
+        ReadableStream: "readonly"
       },
       parserOptions: {
         ecmaVersion: "latest",

@@ -5,6 +5,7 @@ Tavern Master talks to local LLMs via an OpenAI-compatible API (Ollama or LM Stu
 - `base_url` (default `http://localhost:11434` for Ollama)
 - `model` (default `llama3.1:8b` or similar)
 - `temperature`, `max_tokens`, and `top_p`
+- `stream` (enable streaming responses in the UI)
 
 ## Roles
 
@@ -21,3 +22,4 @@ Tavern Master talks to local LLMs via an OpenAI-compatible API (Ollama or LM Stu
 
 - Require JSON output for actions to keep results deterministic.
 - Summarize long conversations into `session_summary` every N turns to keep context tight.
+- Attempt a single JSON repair pass when output is malformed.

@@ -196,6 +196,24 @@ export const schemaStatements: string[] = [
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL
   );`,
+  `CREATE TABLE IF NOT EXISTS app_settings (
+    key TEXT PRIMARY KEY,
+    value_json TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+  );`,
+  `CREATE TABLE IF NOT EXISTS ai_logs (
+    id TEXT PRIMARY KEY,
+    campaign_id TEXT,
+    session_id TEXT,
+    kind TEXT NOT NULL,
+    content TEXT NOT NULL,
+    payload_json TEXT,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    FOREIGN KEY (campaign_id) REFERENCES campaigns(id),
+    FOREIGN KEY (session_id) REFERENCES sessions(id)
+  );`,
   "CREATE INDEX IF NOT EXISTS idx_campaigns_updated_at ON campaigns(updated_at);",
   "CREATE INDEX IF NOT EXISTS idx_characters_updated_at ON characters(updated_at);",
   "CREATE INDEX IF NOT EXISTS idx_encounters_updated_at ON encounters(updated_at);"

@@ -1,0 +1,105 @@
+import { getDatabase } from "./db";
+
+export type AiLogKind = "dm" | "party" | "summary" | "system" | "user";
+
+export type AiLogEntry = {
+  id: string;
+  campaignId?: string;
+  sessionId?: string;
+  kind: AiLogKind;
+  content: string;
+  payload?: Record<string, unknown>;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export async function insertAiLog(entry: {
+  campaignId?: string;
+  sessionId?: string;
+  kind: AiLogKind;
+  content: string;
+  payload?: Record<string, unknown>;
+}): Promise<AiLogEntry> {
+  const db = await getDatabase();
+  const id = crypto.randomUUID();
+  const now = new Date().toISOString();
+
+  await db.execute(
+    `INSERT INTO ai_logs (id, campaign_id, session_id, kind, content, payload_json, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      id,
+      entry.campaignId ?? null,
+      entry.sessionId ?? null,
+      entry.kind,
+      entry.content,
+      entry.payload ? JSON.stringify(entry.payload) : null,
+      now,
+      now
+    ]
+  );
+
+  return {
+    id,
+    campaignId: entry.campaignId,
+    sessionId: entry.sessionId,
+    kind: entry.kind,
+    content: entry.content,
+    payload: entry.payload,
+    createdAt: now,
+    updatedAt: now
+  };
+}
+
+export async function listAiLogs(params: {
+  campaignId?: string;
+  sessionId?: string;
+  limit?: number;
+}): Promise<AiLogEntry[]> {
+  const db = await getDatabase();
+  const clauses: string[] = [];
+  const values: (string | number)[] = [];
+
+  if (params.campaignId) {
+    clauses.push("campaign_id = ?");
+    values.push(params.campaignId);
+  }
+  if (params.sessionId) {
+    clauses.push("session_id = ?");
+    values.push(params.sessionId);
+  }
+
+  const where = clauses.length ? `WHERE ${clauses.join(" AND ")}` : "";
+  const limit = params.limit ?? 50;
+
+  const rows = await db.select<
+    {
+      id: string;
+      campaign_id: string | null;
+      session_id: string | null;
+      kind: AiLogKind;
+      content: string;
+      payload_json: string | null;
+      created_at: string;
+      updated_at: string;
+    }[]
+  >(
+    `SELECT id, campaign_id, session_id, kind, content, payload_json, created_at, updated_at
+     FROM ai_logs
+     ${where}
+     ORDER BY created_at DESC
+     LIMIT ?`,
+    [...values, limit]
+  );
+
+  return rows.map((row) => ({
+    id: row.id,
+    campaignId: row.campaign_id ?? undefined,
+    sessionId: row.session_id ?? undefined,
+    kind: row.kind,
+    content: row.content,
+    payload: row.payload_json ? JSON.parse(row.payload_json) : undefined,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at
+  }));
+}
