@@ -19,7 +19,8 @@ export default [
         TextDecoder: "readonly",
         ReadableStream: "readonly",
         URL: "readonly",
-        File: "readonly"
+        File: "readonly",
+        Blob: "readonly"
       },
       parserOptions: {
         ecmaVersion: "latest",

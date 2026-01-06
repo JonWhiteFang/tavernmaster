@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { JournalEntry } from "../data/types";
 import { listJournalEntries } from "../data/journal";
+import { downloadTextFile, openPrintWindow, toFilename } from "../ui/exports";
 
 export default function Journal() {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
@@ -36,6 +37,27 @@ export default function Journal() {
 
   const activeEntry =
     filteredEntries.find((entry) => entry.id === selectedId) ?? filteredEntries[0];
+
+  const handleExportMarkdown = () => {
+    if (!activeEntry) {
+      return;
+    }
+    const content = `# ${activeEntry.title}\n\nCreated: ${formatDateTime(
+      activeEntry.createdAt
+    )}\n\n${activeEntry.content}\n`;
+    const filename = toFilename(activeEntry.title, "journal-entry", "md");
+    downloadTextFile(filename, content, "text/markdown");
+  };
+
+  const handleExportPdf = () => {
+    if (!activeEntry) {
+      return;
+    }
+    const content = `${activeEntry.title}\n\nCreated: ${formatDateTime(
+      activeEntry.createdAt
+    )}\n\n${activeEntry.content}\n`;
+    openPrintWindow(`Journal: ${activeEntry.title}`, content);
+  };
 
   return (
     <div className="journal">
@@ -87,21 +109,27 @@ export default function Journal() {
             {activeEntry ? (
               <>
                 <div className="journal-detail-title">{activeEntry.title}</div>
-                <div className="journal-detail-meta">
-                  {new Date(activeEntry.createdAt).toLocaleString()}
-                </div>
+                <div className="journal-detail-meta">{formatDateTime(activeEntry.createdAt)}</div>
                 <div className="journal-content">{activeEntry.content}</div>
               </>
             ) : (
               <div className="panel-copy">Select a journal entry to view its details.</div>
             )}
             <div className="button-row" style={{ marginTop: "1.2rem" }}>
-              <button className="secondary-button">Export Markdown</button>
-              <button className="secondary-button">Export PDF</button>
+              <button className="secondary-button" onClick={handleExportMarkdown}>
+                Export Markdown
+              </button>
+              <button className="secondary-button" onClick={handleExportPdf}>
+                Export PDF
+              </button>
             </div>
           </div>
         </section>
       </div>
     </div>
   );
+}
+
+function formatDateTime(value: string): string {
+  return new Date(value).toLocaleString();
 }

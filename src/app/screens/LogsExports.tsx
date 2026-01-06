@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { listAiLogs } from "../data/ai_logs";
 import type { AiLogEntry } from "../data/ai_logs";
+import { downloadTextFile, openPrintWindow, toFilename } from "../ui/exports";
 
 const kindLabels: Record<AiLogEntry["kind"], string> = {
   dm: "DM",
@@ -45,6 +46,27 @@ export default function LogsExports() {
 
   const activeEntry =
     filteredEntries.find((entry) => entry.id === selectedId) ?? filteredEntries[0];
+
+  const handleExportMarkdown = () => {
+    if (!activeEntry) {
+      return;
+    }
+    const content = `# ${kindLabels[activeEntry.kind]} Log\n\nCaptured: ${formatDateTime(
+      activeEntry.createdAt
+    )}\n\n${activeEntry.content}\n`;
+    const filename = toFilename(`${kindLabels[activeEntry.kind]}-log`, "transcript", "md");
+    downloadTextFile(filename, content, "text/markdown");
+  };
+
+  const handleExportPdf = () => {
+    if (!activeEntry) {
+      return;
+    }
+    const content = `${kindLabels[activeEntry.kind]} Log\n\nCaptured: ${formatDateTime(
+      activeEntry.createdAt
+    )}\n\n${activeEntry.content}\n`;
+    openPrintWindow(`${kindLabels[activeEntry.kind]} Log`, content);
+  };
 
   return (
     <div className="logs">
@@ -96,21 +118,27 @@ export default function LogsExports() {
             {activeEntry ? (
               <>
                 <div className="log-detail-title">{kindLabels[activeEntry.kind]} Log</div>
-                <div className="log-detail-meta">
-                  {new Date(activeEntry.createdAt).toLocaleString()}
-                </div>
+                <div className="log-detail-meta">{formatDateTime(activeEntry.createdAt)}</div>
                 <div className="log-content">{activeEntry.content}</div>
               </>
             ) : (
               <div className="panel-copy">Select a log entry to review its contents.</div>
             )}
             <div className="button-row" style={{ marginTop: "1.2rem" }}>
-              <button className="secondary-button">Export Markdown</button>
-              <button className="secondary-button">Export PDF</button>
+              <button className="secondary-button" onClick={handleExportMarkdown}>
+                Export Markdown
+              </button>
+              <button className="secondary-button" onClick={handleExportPdf}>
+                Export PDF
+              </button>
             </div>
           </div>
         </section>
       </div>
     </div>
   );
+}
+
+function formatDateTime(value: string): string {
+  return new Date(value).toLocaleString();
 }
