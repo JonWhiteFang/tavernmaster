@@ -1,5 +1,6 @@
 import type { AbilityScore, CharacterRole } from "./types";
 import { getDatabase } from "./db";
+import { encryptValue } from "./encryption";
 
 const abilityOrder: AbilityScore[] = ["str", "dex", "con", "int", "wis", "cha"];
 
@@ -92,46 +93,32 @@ export async function seedDatabase(): Promise<void> {
   const now = new Date().toISOString();
   const campaignId = "seed-campaign";
 
+  const campaignSummary = await encryptValue(
+    "A coastal relic hunt with storms, rival crews, and ancient wards."
+  );
   await db.execute(
     `INSERT INTO campaigns (id, name, summary, active_scene_id, created_at, updated_at)
      VALUES (?, ?, ?, ?, ?, ?)`,
-    [
-      campaignId,
-      "Copperbound",
-      "A coastal relic hunt with storms, rival crews, and ancient wards.",
-      null,
-      now,
-      now
-    ]
+    [campaignId, "Copperbound", campaignSummary, null, now, now]
   );
 
+  const sessionRecap = await encryptValue(
+    "The crew assembled at the Salted Eel, negotiated passage, and charted the Sunken Vault."
+  );
   await db.execute(
     `INSERT INTO sessions (id, campaign_id, title, started_at, ended_at, recap, created_at, updated_at)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    [
-      "seed-session-1",
-      campaignId,
-      "Session Zero",
-      now,
-      now,
-      "The crew assembled at the Salted Eel, negotiated passage, and charted the Sunken Vault.",
-      now,
-      now
-    ]
+    ["seed-session-1", campaignId, "Session Zero", now, now, sessionRecap, now, now]
   );
 
+  const journalContent = await encryptValue(
+    "The crew assembles at the Salted Eel to negotiate passage into the Sunken Vault."
+  );
+  const journalTitle = await encryptValue("Session Zero");
   await db.execute(
     `INSERT INTO journal_entries (id, campaign_id, title, content, tags, created_at, updated_at)
      VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    [
-      "seed-journal-1",
-      campaignId,
-      "Session Zero",
-      "The crew assembles at the Salted Eel to negotiate passage into the Sunken Vault.",
-      "setup",
-      now,
-      now
-    ]
+    ["seed-journal-1", campaignId, journalTitle, journalContent, "setup", now, now]
   );
 
   for (const character of demoCharacters) {

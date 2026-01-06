@@ -1,4 +1,5 @@
 import { getDatabase } from "./db";
+import { decryptValue, encryptValue } from "./encryption";
 import type { Campaign } from "./types";
 
 type CampaignRow = {
@@ -26,17 +27,24 @@ export async function listCampaigns(): Promise<Campaign[]> {
   const rows = await db.select<CampaignRow[]>(
     "SELECT id, name, summary, active_scene_id, created_at, updated_at FROM campaigns ORDER BY updated_at DESC"
   );
-  return rows.map(mapCampaign);
+  const campaigns = await Promise.all(
+    rows.map(async (row) => {
+      const summary = await decryptValue(row.summary);
+      return mapCampaign({ ...row, summary });
+    })
+  );
+  return campaigns;
 }
 
 export async function createCampaign(input: { name: string; summary?: string }): Promise<Campaign> {
   const db = await getDatabase();
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
+  const summary = await encryptValue(input.summary ?? null);
 
   await db.execute(
     "INSERT INTO campaigns (id, name, summary, active_scene_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
-    [id, input.name, input.summary ?? null, null, now, now]
+    [id, input.name, summary, null, now, now]
   );
 
   return {

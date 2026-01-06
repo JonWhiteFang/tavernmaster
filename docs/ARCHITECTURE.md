@@ -17,6 +17,7 @@ Tavern Master is a Tauri desktop app with a React + TypeScript UI and a Rust hos
 2. Rules module validates the action and returns computed outcomes.
 3. AI module proposes narrative or party actions, returning structured JSON.
 4. State updates persist to SQLite, then sync to Supabase on a debounce cycle.
+5. Sensitive narrative content is encrypted at rest via Tauri keychain-backed crypto commands.
 
 ## Local LLM Contract
 

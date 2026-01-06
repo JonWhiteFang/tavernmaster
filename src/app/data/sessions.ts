@@ -1,5 +1,6 @@
 import { getDatabase } from "./db";
 import type { Session } from "./types";
+import { decryptValue } from "./encryption";
 
 type SessionRow = {
   id: string;
@@ -35,5 +36,11 @@ export async function listSessions(campaignId: string): Promise<Session[]> {
     [campaignId]
   );
 
-  return rows.map(mapSession);
+  const sessions = await Promise.all(
+    rows.map(async (row) => {
+      const recap = await decryptValue(row.recap);
+      return mapSession({ ...row, recap });
+    })
+  );
+  return sessions;
 }

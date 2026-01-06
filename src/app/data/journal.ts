@@ -1,5 +1,6 @@
 import type { JournalEntry } from "./types";
 import { getDatabase } from "./db";
+import { decryptValue, encryptValue } from "./encryption";
 
 type JournalRow = {
   id: string;
@@ -20,14 +21,17 @@ export async function listJournalEntries(campaignId: string): Promise<JournalEnt
     [campaignId]
   );
 
-  return rows.map((row) => ({
-    id: row.id,
-    campaignId: row.campaign_id,
-    title: row.title,
-    content: row.content,
-    createdAt: row.created_at,
-    updatedAt: row.updated_at
-  }));
+  const entries = await Promise.all(
+    rows.map(async (row) => ({
+      id: row.id,
+      campaignId: row.campaign_id,
+      title: (await decryptValue(row.title)) ?? row.title,
+      content: (await decryptValue(row.content)) ?? row.content,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at
+    }))
+  );
+  return entries;
 }
 
 export async function createJournalEntry(input: {
@@ -38,12 +42,14 @@ export async function createJournalEntry(input: {
   const db = await getDatabase();
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
+  const title = await encryptValue(input.title);
+  const content = await encryptValue(input.content);
 
   await db.execute(
     `INSERT INTO journal_entries
       (id, campaign_id, title, content, tags, created_at, updated_at)
      VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    [id, input.campaignId, input.title, input.content, null, now, now]
+    [id, input.campaignId, title, content, null, now, now]
   );
 
   return {

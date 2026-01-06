@@ -1,4 +1,5 @@
 import { getDatabase } from "./db";
+import { decryptValue, encryptValue } from "./encryption";
 
 export type AiLogKind = "dm" | "party" | "summary" | "system" | "user";
 
@@ -23,20 +24,13 @@ export async function insertAiLog(entry: {
   const db = await getDatabase();
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
+  const content = await encryptValue(entry.content);
+  const payload = entry.payload ? await encryptValue(JSON.stringify(entry.payload)) : null;
 
   await db.execute(
     `INSERT INTO ai_logs (id, campaign_id, session_id, kind, content, payload_json, created_at, updated_at)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    [
-      id,
-      entry.campaignId ?? null,
-      entry.sessionId ?? null,
-      entry.kind,
-      entry.content,
-      entry.payload ? JSON.stringify(entry.payload) : null,
-      now,
-      now
-    ]
+    [id, entry.campaignId ?? null, entry.sessionId ?? null, entry.kind, content, payload, now, now]
   );
 
   return {
@@ -92,14 +86,21 @@ export async function listAiLogs(params: {
     [...values, limit]
   );
 
-  return rows.map((row) => ({
-    id: row.id,
-    campaignId: row.campaign_id ?? undefined,
-    sessionId: row.session_id ?? undefined,
-    kind: row.kind,
-    content: row.content,
-    payload: row.payload_json ? JSON.parse(row.payload_json) : undefined,
-    createdAt: row.created_at,
-    updatedAt: row.updated_at
-  }));
+  const entries = await Promise.all(
+    rows.map(async (row) => {
+      const content = await decryptValue(row.content);
+      const payloadRaw = await decryptValue(row.payload_json);
+      return {
+        id: row.id,
+        campaignId: row.campaign_id ?? undefined,
+        sessionId: row.session_id ?? undefined,
+        kind: row.kind,
+        content: content ?? row.content,
+        payload: payloadRaw ? JSON.parse(payloadRaw) : undefined,
+        createdAt: row.created_at,
+        updatedAt: row.updated_at
+      };
+    })
+  );
+  return entries;
 }
