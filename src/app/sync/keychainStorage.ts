@@ -2,6 +2,7 @@ import { deleteSecret, getSecret, setSecret } from "./secure";
 
 const PREFIX = "supabase:";
 const KEYCHAIN_TIMEOUT_MS = 1500;
+let keychainEnabled = true;
 
 function toKeychainKey(key: string): string {
   return `${PREFIX}${key}`;
@@ -32,23 +33,37 @@ function safeGetLocalStorage() {
 
 export const keychainStorage = {
   async getItem(key: string): Promise<string | null> {
+    if (!keychainEnabled) {
+      return safeGetLocalStorage()?.getItem(key) ?? null;
+    }
     try {
       return await withTimeout(getSecret(toKeychainKey(key)), KEYCHAIN_TIMEOUT_MS);
     } catch {
+      keychainEnabled = false;
       return safeGetLocalStorage()?.getItem(key) ?? null;
     }
   },
   async setItem(key: string, value: string): Promise<void> {
+    if (!keychainEnabled) {
+      safeGetLocalStorage()?.setItem(key, value);
+      return;
+    }
     try {
       await withTimeout(setSecret(toKeychainKey(key), value), KEYCHAIN_TIMEOUT_MS);
     } catch {
+      keychainEnabled = false;
       safeGetLocalStorage()?.setItem(key, value);
     }
   },
   async removeItem(key: string): Promise<void> {
+    if (!keychainEnabled) {
+      safeGetLocalStorage()?.removeItem(key);
+      return;
+    }
     try {
       await withTimeout(deleteSecret(toKeychainKey(key)), KEYCHAIN_TIMEOUT_MS);
     } catch {
+      keychainEnabled = false;
       safeGetLocalStorage()?.removeItem(key);
     }
   }
