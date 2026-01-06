@@ -94,12 +94,12 @@ export async function enqueueUpsert(entityType: SyncedTable, entityId: string, p
 
 export async function listPendingOps(limit = 100): Promise<SyncQueueRow[]> {
   const db = await getDatabase();
+  const safeLimit = Math.max(1, Math.min(1000, Math.floor(limit)));
   return db.select<SyncQueueRow[]>(
     `SELECT id, entity_type, entity_id, op_type, payload_json, created_at, updated_at
      FROM sync_queue
      ORDER BY created_at ASC
-     LIMIT ?`,
-    [limit]
+     LIMIT ${safeLimit}`
   );
 }
 
