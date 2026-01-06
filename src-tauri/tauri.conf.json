@@ -1,7 +1,7 @@
 {
   "productName": "Tavern Master",
   "version": "0.1.0",
-  "identifier": "com.tavernmaster.app",
+  "identifier": "com.tavernmaster",
   "build": {
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run build",
