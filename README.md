@@ -8,6 +8,7 @@ Tavern Master is a Mac desktop AI Dungeon Master for solo D&D 5e (SRD-only). It 
 - SRD-backed rules helpers for combat, conditions, and spellcasting.
 - Tactical encounter tools: initiative, map studio, journal, and exports.
 - Fantasy-luxury UI designed for long-form solo play.
+- Crash recovery snapshots for in-progress encounters.
 
 ## Quickstart
 
@@ -23,6 +24,8 @@ npm install
 npm run tauri:dev
 ```
 
+Vite binds to `127.0.0.1:5173` by default (see `vite.config.ts`).
+
 3. Build the desktop bundle:
 
 ```bash
@@ -34,6 +37,7 @@ npm run tauri:build
 ```bash
 npm run lint
 npm run test
+npm run format:check
 ```
 
 ## Local LLM Setup
@@ -51,3 +55,11 @@ Recommended default model: `llama3.1:8b` (swap as needed for your Mac).
 - Sync strategy: `docs/SUPABASE_SYNC.md`
 - UI style: `docs/UI_STYLE.md`
 - Implementation plan: `IMPLEMENTATION_PLAN.md`
+
+## App Icons
+
+Icons live in `src-tauri/icons`. Regenerate them with:
+
+```bash
+npx --no-install tauri icon src-tauri/icons/icon.png
+```

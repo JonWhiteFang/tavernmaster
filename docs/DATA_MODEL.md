@@ -37,5 +37,5 @@ The local database is the source of truth. All tables include `id`, `created_at`
 
 ## App Settings & AI Logs
 
-- `app_settings`: key, value_json (stores LLM config and app preferences).
+- `app_settings`: key, value_json (stores LLM config, app preferences, and `encounter_recovery` snapshots).
 - `ai_logs`: campaign_id, session_id, kind (dm/party/summary/user), content, payload_json.

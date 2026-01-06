@@ -23,3 +23,7 @@ Tavern Master talks to local LLMs via an OpenAI-compatible API (Ollama or LM Stu
 - Require JSON output for actions to keep results deterministic.
 - Summarize long conversations into `session_summary` every N turns to keep context tight.
 - Attempt a single JSON repair pass when output is malformed.
+
+## Settings Storage
+
+- LLM runtime settings are persisted in the local SQLite `app_settings` table.

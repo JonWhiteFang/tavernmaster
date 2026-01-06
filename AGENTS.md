@@ -61,6 +61,7 @@ Until the user answers the clarifying questions, do not:
 - `npm install`: install frontend dependencies.
 - `npm run dev`: run the Vite dev server.
 - `npm run build`: build the frontend bundle.
+- `npm run format:check`: verify formatting.
 - `npm run tauri:dev`: run the desktop app in dev mode.
 - `npm run tauri:build`: build the desktop app bundle.
 
@@ -73,7 +74,8 @@ Until the user answers the clarifying questions, do not:
 
 ## Testing Guidelines
 
-- Tests are not set up yet. When added, place unit tests near modules and name them `*.test.ts` or `*.test.tsx`.
+- Use `npm run test` (Vitest) for unit checks.
+- Place unit tests near modules and name them `*.test.ts` or `*.test.tsx`.
 - Prioritize rules engine tests first (dice, conditions, action validation, initiative).
 
 ## Commit & Pull Request Guidelines

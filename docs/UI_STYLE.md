@@ -24,3 +24,7 @@ The visual language is "fantasy-luxury": rich materials, gilded accents, and edi
 - Panels: rounded, softly elevated, with warm highlights.
 - Tags: pill-shaped, uppercase, tactical cues.
 - Logs: cinematic transcript styling with clear timestamps.
+
+## Iconography
+
+- The app icon should echo the velvet-and-gold palette; the current icon set is a placeholder and should be replaced before release.

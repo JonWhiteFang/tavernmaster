@@ -18,6 +18,7 @@ A living plan to track progress for the AI Dungeon Master desktop app (Mac, offl
 - [x] Document architecture, data model, LLM runtime, Supabase strategy.
 - [x] Add formatting/linting (Prettier + ESLint, rustfmt config).
 - [x] Add CI workflow for build + lint + tests.
+- [x] Generate app icon set and bundle identifier.
 
 ### 2) Data Layer & Persistence (SQLite)
 

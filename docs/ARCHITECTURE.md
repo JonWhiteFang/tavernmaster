@@ -18,7 +18,13 @@ Tavern Master is a Tauri desktop app with a React + TypeScript UI and a Rust hos
 3. AI module proposes narrative or party actions, returning structured JSON.
 4. State updates persist to SQLite, then sync to Supabase on a debounce cycle.
 5. Sensitive narrative content is encrypted at rest via Tauri keychain-backed crypto commands.
+6. Encounter flow snapshots are stored in `app_settings` to recover in-progress combat after crashes.
 
 ## Local LLM Contract
 
 The AI system expects OpenAI-compatible endpoints (Ollama/LM Studio). Prompts always request structured JSON for action proposals, and outputs are cached into the session log for traceability.
+
+## Crash Recovery
+
+- Encounter Flow persists a snapshot (rules state, combat log, RNG seed) under the `encounter_recovery` key in `app_settings`.
+- On launch, the Encounter screen restores the latest snapshot and lets the user start fresh if needed.
