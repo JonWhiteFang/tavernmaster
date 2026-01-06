@@ -11,6 +11,8 @@ import {
   subscribeSyncStatus,
   syncNow
 } from "../sync/client";
+import { countOpenConflicts, listOpenConflicts, type SyncConflictRow } from "../sync/conflicts";
+import { keepLocalForConflict, keepRemoteForConflict } from "../sync/resolve";
 
 const testMessages: ChatMessage[] = [
   { role: "system", content: "Reply with 'OK' if you can read this." },
@@ -33,6 +35,11 @@ export default function Settings() {
   const [syncPassword, setSyncPassword] = useState("");
   const [syncActionStatus, setSyncActionStatus] = useState<"idle" | "working" | "error">("idle");
   const [syncActionMessage, setSyncActionMessage] = useState<string | null>(null);
+  const [conflictCount, setConflictCount] = useState(0);
+  const [conflicts, setConflicts] = useState<SyncConflictRow[]>([]);
+  const [selectedConflictKey, setSelectedConflictKey] = useState<string | null>(null);
+  const [conflictStatus, setConflictStatus] = useState<"idle" | "working" | "error">("idle");
+  const [conflictMessage, setConflictMessage] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -52,6 +59,28 @@ export default function Settings() {
     return subscribeSyncStatus((nextStatus, nextMessage) => {
       setSyncState({ status: nextStatus, message: nextMessage });
     });
+  }, []);
+
+  const refreshConflicts = async () => {
+    const [count, rows] = await Promise.all([countOpenConflicts(), listOpenConflicts(50)]);
+    setConflictCount(count);
+    setConflicts(rows);
+    if (
+      selectedConflictKey &&
+      !rows.some((row) => `${row.entity_type}:${row.entity_id}` === selectedConflictKey)
+    ) {
+      setSelectedConflictKey(null);
+    }
+  };
+
+  useEffect(() => {
+    void refreshConflicts();
+    const id = window.setInterval(() => {
+      void refreshConflicts();
+    }, 5000);
+    return () => {
+      window.clearInterval(id);
+    };
   }, []);
 
   const hasChanges = useMemo(() => {
@@ -169,6 +198,47 @@ export default function Settings() {
     } catch (error) {
       setSyncActionStatus("error");
       setSyncActionMessage(error instanceof Error ? error.message : "Sync failed.");
+    }
+  };
+
+  const selected = selectedConflictKey
+    ? (conflicts.find((row) => `${row.entity_type}:${row.entity_id}` === selectedConflictKey) ??
+      null)
+    : null;
+
+  const handleKeepRemote = async () => {
+    if (!selected) {
+      return;
+    }
+    setConflictStatus("working");
+    setConflictMessage(null);
+    try {
+      await keepRemoteForConflict(selected.entity_type, selected.entity_id);
+      setConflictStatus("idle");
+      setConflictMessage("Applied remote version locally.");
+      await refreshConflicts();
+    } catch (error) {
+      setConflictStatus("error");
+      setConflictMessage(
+        error instanceof Error ? error.message : "Failed to apply remote version."
+      );
+    }
+  };
+
+  const handleKeepLocal = async () => {
+    if (!selected) {
+      return;
+    }
+    setConflictStatus("working");
+    setConflictMessage(null);
+    try {
+      await keepLocalForConflict(selected.entity_type, selected.entity_id);
+      setConflictStatus("idle");
+      setConflictMessage("Kept local version (will push on next sync).");
+      await refreshConflicts();
+    } catch (error) {
+      setConflictStatus("error");
+      setConflictMessage(error instanceof Error ? error.message : "Failed to keep local version.");
     }
   };
 
@@ -327,6 +397,21 @@ export default function Settings() {
                 />
               </label>
               <label className="form-field">
+                <span className="form-label">Conflicts</span>
+                <input
+                  className="form-input"
+                  value={
+                    conflictMessage ??
+                    (conflictStatus === "working"
+                      ? "Resolving..."
+                      : conflictCount
+                        ? `${conflictCount} pending`
+                        : "None")
+                  }
+                  disabled
+                />
+              </label>
+              <label className="form-field">
                 <span className="form-label">SRD Source</span>
                 <input className="form-input" value="Bundled 5e SRD" disabled />
               </label>
@@ -356,6 +441,64 @@ export default function Settings() {
                 </button>
               </div>
             </div>
+
+            {conflicts.length ? (
+              <div style={{ marginTop: "1rem" }}>
+                <div className="panel-subtitle" style={{ marginBottom: "0.6rem" }}>
+                  Resolve conflicts (remote is newer than local queued changes).
+                </div>
+                <div className="form-grid">
+                  <label className="form-field" style={{ gridColumn: "1 / -1" }}>
+                    <span className="form-label">Select Conflict</span>
+                    <select
+                      className="form-input"
+                      value={selectedConflictKey ?? ""}
+                      onChange={(event) => setSelectedConflictKey(event.target.value || null)}
+                    >
+                      <option value="">Choose…</option>
+                      {conflicts.map((row) => {
+                        const key = `${row.entity_type}:${row.entity_id}`;
+                        const local = row.local_updated_at ?? "unknown";
+                        const remote = row.remote_updated_at ?? "unknown";
+                        return (
+                          <option key={key} value={key}>
+                            {row.entity_type} • {row.entity_id} (local {local} / remote {remote})
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </label>
+                </div>
+
+                {selected ? (
+                  <>
+                    <div className="button-row" style={{ marginTop: "0.8rem" }}>
+                      <button className="secondary-button" onClick={handleKeepRemote}>
+                        Keep Remote
+                      </button>
+                      <button className="secondary-button" onClick={handleKeepLocal}>
+                        Keep Local
+                      </button>
+                    </div>
+                    <details style={{ marginTop: "0.8rem" }}>
+                      <summary className="panel-copy">View payloads</summary>
+                      <div className="panel-copy" style={{ marginTop: "0.6rem" }}>
+                        Local
+                      </div>
+                      <pre className="panel-copy" style={{ maxHeight: 200, overflow: "auto" }}>
+                        {selected.local_payload_json}
+                      </pre>
+                      <div className="panel-copy" style={{ marginTop: "0.6rem" }}>
+                        Remote
+                      </div>
+                      <pre className="panel-copy" style={{ maxHeight: 200, overflow: "auto" }}>
+                        {selected.remote_payload_json}
+                      </pre>
+                    </details>
+                  </>
+                ) : null}
+              </div>
+            ) : null}
           </div>
         </section>
       </div>

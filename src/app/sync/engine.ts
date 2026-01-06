@@ -2,6 +2,8 @@ import { getDatabase } from "../data/db";
 import { getSupabaseClient } from "./supabase";
 import { deleteOp, ensureSyncState, hasPendingOp, listPendingOps, updateSyncState } from "./queue";
 import { buildSqliteUpsertStatement, getTableSpec, syncedTables, type SyncedTable } from "./tables";
+import { hasOpenConflict, upsertConflict } from "./conflicts";
+import { shouldCreateConflict } from "./conflicts.logic";
 
 type SyncResult = { ok: true } | { ok: false; error: string };
 
@@ -33,6 +35,11 @@ export async function pushPendingOps(): Promise<SyncResult> {
   const ops = await listPendingOps(200);
   for (const op of ops) {
     if (op.op_type !== "upsert") {
+      continue;
+    }
+
+    const conflict = await hasOpenConflict(op.entity_type, op.entity_id);
+    if (conflict) {
       continue;
     }
 
@@ -78,13 +85,44 @@ async function applyRemoteRow(table: SyncedTable, row: Record<string, unknown>):
     return;
   }
 
+  const hasConflict = await hasOpenConflict(table, primaryKeyValue);
+  if (hasConflict) {
+    return;
+  }
+
   const isQueued = await hasPendingOp(table, primaryKeyValue);
+
+  const remoteUpdatedAt = typeof row.updated_at === "string" ? row.updated_at : null;
+  const localUpdatedAt = await getLocalUpdatedAt(table, spec.primaryKey, primaryKeyValue);
+  if (
+    shouldCreateConflict({
+      hasPendingLocalOp: isQueued,
+      localUpdatedAt,
+      remoteUpdatedAt
+    })
+  ) {
+    const db = await getDatabase();
+    const localRows = await db.select<Record<string, unknown>[]>(
+      `SELECT ${spec.columns.join(", ")} FROM ${table} WHERE ${spec.primaryKey} = ? LIMIT 1`,
+      [primaryKeyValue]
+    );
+    const localPayload = localRows[0] ?? { [spec.primaryKey]: primaryKeyValue };
+
+    await upsertConflict({
+      entityType: table,
+      entityId: primaryKeyValue,
+      localPayload,
+      remotePayload: row,
+      localUpdatedAt,
+      remoteUpdatedAt
+    });
+    return;
+  }
+
   if (isQueued) {
     return;
   }
 
-  const remoteUpdatedAt = typeof row.updated_at === "string" ? row.updated_at : null;
-  const localUpdatedAt = await getLocalUpdatedAt(table, spec.primaryKey, primaryKeyValue);
   if (remoteUpdatedAt && localUpdatedAt && localUpdatedAt > remoteUpdatedAt) {
     return;
   }

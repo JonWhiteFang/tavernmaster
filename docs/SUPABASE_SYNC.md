@@ -6,7 +6,7 @@ Sync is designed for one person using multiple Macs. The local SQLite database i
 
 - Use Supabase Auth with a single signed-in user (email/password).
 - Push local mutations into `sync_queue` and batch upload on a debounce timer.
-- Pull updates by `updated_at` and resolve conflicts by latest timestamp, with a manual override screen.
+- Pull updates by `updated_at`; if a queued local change collides with a newer remote row, record a conflict and require manual resolution.
 
 ## Supabase Schema
 
@@ -23,6 +23,7 @@ Schema lives in `supabase/migrations/20260106160000_schema_mirror.sql`.
 - Configure `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (e.g. via `.env`).
 - Sign in via `Settings → Sync & SRD` to enable background sync.
 - Local writes enqueue upserts; sync debounces pushes and polls pulls periodically.
+- Conflicts appear in `Settings → Sync & SRD` with “Keep Remote” / “Keep Local”.
 
 ## Security
 
@@ -31,4 +32,4 @@ Schema lives in `supabase/migrations/20260106160000_schema_mirror.sql`.
 
 ## Status
 
-- Supabase schema migration and baseline push/pull are in place; conflict UI and keychain-backed credentials are still pending.
+- Supabase schema migration, push/pull, and conflict resolution UI are in place; keychain-backed credentials are still pending.

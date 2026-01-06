@@ -116,3 +116,8 @@ export async function deleteOp(id: string): Promise<void> {
   const db = await getDatabase();
   await db.execute("DELETE FROM sync_queue WHERE id = ?", [id]);
 }
+
+export async function deleteOpForEntity(entityType: SyncedTable, entityId: string): Promise<void> {
+  const id = makeSyncQueueId(entityType, entityId);
+  await deleteOp(id);
+}
