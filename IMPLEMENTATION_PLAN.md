@@ -75,7 +75,7 @@ A living plan to track progress for the AI Dungeon Master desktop app (Mac, offl
 ### 8) Testing & Release
 
 - [ ] Unit tests for rules engine and dice roller.
-- [ ] Integration tests for sync + SRD ingestion.
+- [x] Integration tests for sync + SRD ingestion.
 - [ ] Build automation for DMG + notarization.
 - [ ] Release checklist and user docs.
 
