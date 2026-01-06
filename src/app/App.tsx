@@ -1,11 +1,11 @@
 import { useEffect } from "react";
-import { initDatabase } from "./data/db";
+import { initializeData } from "./data/init";
 import Dashboard from "./screens/Dashboard";
 
 export default function App() {
   useEffect(() => {
-    void initDatabase().catch((error) => {
-      console.error("Failed to initialize database", error);
+    void initializeData().catch((error) => {
+      console.error("Failed to initialize app data", error);
     });
   }, []);
 

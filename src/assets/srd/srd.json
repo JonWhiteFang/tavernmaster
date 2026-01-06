@@ -1,0 +1,62 @@
+{
+  "spells": [
+    {
+      "id": "spell-fire-bolt",
+      "name": "Fire Bolt",
+      "data": {
+        "level": 0,
+        "school": "Evocation",
+        "casting_time": "1 action",
+        "range": "120 feet",
+        "components": ["V", "S"],
+        "duration": "Instantaneous",
+        "damage": "1d10 fire",
+        "description": "You hurl a mote of fire at a creature or object within range."
+      }
+    }
+  ],
+  "items": [
+    {
+      "id": "item-healing-potion",
+      "name": "Potion of Healing",
+      "data": {
+        "type": "Potion",
+        "rarity": "Common",
+        "description": "You regain 2d4 + 2 hit points when you drink this potion."
+      }
+    }
+  ],
+  "monsters": [
+    {
+      "id": "monster-goblin",
+      "name": "Goblin",
+      "data": {
+        "size": "Small",
+        "type": "Humanoid",
+        "alignment": "Neutral Evil",
+        "armor_class": 15,
+        "hit_points": 7,
+        "speed": "30 ft.",
+        "abilities": { "str": 8, "dex": 14, "con": 10, "int": 10, "wis": 8, "cha": 8 }
+      }
+    }
+  ],
+  "conditions": [
+    {
+      "id": "condition-prone",
+      "name": "Prone",
+      "data": {
+        "summary": "A prone creature has disadvantage on attack rolls and grants advantage to attackers within 5 feet."
+      }
+    }
+  ],
+  "rules": [
+    {
+      "id": "rule-advantage-disadvantage",
+      "name": "Advantage & Disadvantage",
+      "data": {
+        "summary": "Roll two d20s and take the higher or lower as appropriate."
+      }
+    }
+  ]
+}

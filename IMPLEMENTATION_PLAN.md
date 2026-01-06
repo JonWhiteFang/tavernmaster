@@ -24,9 +24,9 @@ A living plan to track progress for the AI Dungeon Master desktop app (Mac, offl
 - [x] Choose SQLite adapter and migration tool (tauri-plugin-sql).
 - [x] Implement schema initialization from `docs/DATA_MODEL.md`.
 - [x] Add baseline repository for Campaigns.
-- [ ] Add repositories for Characters, Encounters, Journal.
-- [ ] Implement SRD import on first launch (from bundled JSON).
-- [ ] Add seed data for demo campaign and sample characters.
+- [x] Add repositories for Characters, Encounters, Journal.
+- [x] Implement SRD import on first launch (from bundled JSON).
+- [x] Add seed data for demo campaign and sample characters.
 
 ### 3) Rules Engine (5e SRD)
 
