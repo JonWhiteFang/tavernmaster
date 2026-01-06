@@ -139,20 +139,25 @@ export async function seedDatabase(): Promise<void> {
   if (characterCount === 0) {
     for (const character of demoCharacters) {
       const characterId = crypto.randomUUID();
+      const controlMode = character.role === "player" ? "player" : "ai";
 
       await db.execute(
         `INSERT INTO characters
-          (id, name, role, level, class_name, ancestry, background, alignment, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          (id, name, role, control_mode, level, class_name, ancestry, background, alignment,
+           proficiencies_json, ancestry_bonus_json, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           characterId,
           character.name,
           character.role,
+          controlMode,
           character.level,
           character.className,
           character.ancestry,
           character.background,
           character.alignment,
+          "[]",
+          "[]",
           now,
           now
         ]

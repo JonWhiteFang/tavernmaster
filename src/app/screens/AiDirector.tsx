@@ -57,11 +57,14 @@ export default function AiDirector() {
 
   useEffect(() => {
     void listCharacters().then((characters) => {
-      if (!characters.length) {
+      const aiCharacters = characters.filter((character) => character.controlMode === "ai");
+      if (!aiCharacters.length) {
+        setPartyRoster("No AI-controlled party members available.");
+        setRulesState(null);
         return;
       }
-      setPartyRoster(buildRoster(characters));
-      setRulesState(buildRulesState(characters));
+      setPartyRoster(buildRoster(aiCharacters));
+      setRulesState(buildRulesState(aiCharacters));
     });
   }, []);
 

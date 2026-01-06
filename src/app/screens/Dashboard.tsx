@@ -2,12 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 import type { Campaign, Session } from "../data/types";
 import { listCampaigns } from "../data/campaigns";
 import { listSessions } from "../data/sessions";
+import { listCharacters } from "../data/characters";
 
 export default function Dashboard() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [activeCampaignId, setActiveCampaignId] = useState<string | null>(null);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+  const [partyCount, setPartyCount] = useState(0);
 
   useEffect(() => {
     void listCampaigns().then((data) => {
@@ -30,6 +32,12 @@ export default function Dashboard() {
     });
   }, [activeCampaignId, activeSessionId]);
 
+  useEffect(() => {
+    void listCharacters().then((data) => {
+      setPartyCount(data.length);
+    });
+  }, []);
+
   const activeCampaign = useMemo(
     () => campaigns.find((campaign) => campaign.id === activeCampaignId) ?? campaigns[0],
     [campaigns, activeCampaignId]
@@ -39,6 +47,8 @@ export default function Dashboard() {
     () => sessions.find((session) => session.id === activeSessionId) ?? sessions[0],
     [sessions, activeSessionId]
   );
+
+  const hasParty = partyCount > 0;
 
   return (
     <div className="dashboard">
@@ -138,6 +148,20 @@ export default function Dashboard() {
                         <div className="panel-copy">Select a session to view summary.</div>
                       )}
                     </div>
+                  </div>
+                </div>
+
+                <div className="session-block">
+                  <div className="panel-title">Campaign Actions</div>
+                  <div className="panel-copy">
+                    {hasParty
+                      ? "Party assembled. You can continue the campaign."
+                      : "Add party members in Party Sheets before continuing."}
+                  </div>
+                  <div className="button-row" style={{ marginTop: "1rem" }}>
+                    <button className="primary-button" disabled={!hasParty}>
+                      Start/Continue Campaign
+                    </button>
                   </div>
                 </div>
               </>

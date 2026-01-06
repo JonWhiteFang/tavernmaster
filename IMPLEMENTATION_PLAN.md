@@ -52,6 +52,7 @@ A living plan to track progress for the AI Dungeon Master desktop app (Mac, offl
 - [x] Campaign dashboard with session picker and summaries.
 - [x] Encounter screen (initiative tracker, combat log, conditions).
 - [x] Party sheets (character stats, inventory, spells).
+- [x] Party management (SRD creation flow, edit/delete, AI control toggles, campaign gating).
 - [x] Map Studio (image import, tokens, fog, rulers).
 - [x] Journal + narrative transcript with export.
 - [x] Logs & Exports screen (transcript viewer + export stub).

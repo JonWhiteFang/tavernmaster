@@ -152,6 +152,48 @@ export class FakeDb {
       return [projected] as unknown as T;
     }
 
+    const selectCharactersMatch = normalized.match(
+      /^SELECT (.+) FROM characters WHERE deleted_at IS NULL ORDER BY name$/i
+    );
+    if (selectCharactersMatch) {
+      const [, columnsRaw] = selectCharactersMatch;
+      const columns = splitColumns(columnsRaw);
+      const table = this.getTable("characters");
+      const rows = Array.from(table.values()).filter((row) => row.deleted_at == null);
+      rows.sort((a, b) => String(a.name).localeCompare(String(b.name)));
+      return rows.map((row) => projectRow(row, columns)) as unknown as T;
+    }
+
+    const selectByCharacterIdMatch = normalized.match(
+      /^SELECT (.+) FROM ([a-z_]+) WHERE character_id = \? AND deleted_at IS NULL(?: LIMIT 1)?$/i
+    );
+    if (selectByCharacterIdMatch) {
+      const [, columnsRaw, tableName] = selectByCharacterIdMatch;
+      const columns = splitColumns(columnsRaw);
+      const characterId = String(params[0] ?? "");
+      const table = this.getTable(tableName);
+      const rows = Array.from(table.values()).filter(
+        (row) => row.character_id === characterId && row.deleted_at == null
+      );
+      const projected = rows.map((row) => projectRow(row, columns));
+      return normalized.endsWith("LIMIT 1")
+        ? (projected.slice(0, 1) as unknown as T)
+        : (projected as unknown as T);
+    }
+
+    const selectRowNoLimitMatch = normalized.match(/^SELECT (.+) FROM ([a-z_]+) WHERE id = \?$/i);
+    if (selectRowNoLimitMatch) {
+      const [, columnsRaw, tableName] = selectRowNoLimitMatch;
+      const id = String(params[0] ?? "");
+      const table = this.getTable(tableName);
+      const row = table.get(id);
+      if (!row) {
+        return [] as unknown as T;
+      }
+      const columns = splitColumns(columnsRaw);
+      return [projectRow(row, columns)] as unknown as T;
+    }
+
     throw new Error(`FakeDb.select unhandled query: ${normalized}`);
   }
 
@@ -273,6 +315,38 @@ export class FakeDb {
       return;
     }
 
+    const insertMatch = normalized.match(/^INSERT INTO ([a-z_]+) \((.+)\) VALUES \((.+)\)$/i);
+    if (insertMatch) {
+      const [, tableName, columnsRaw] = insertMatch;
+      const columns = splitColumns(columnsRaw);
+      const row: Row = {};
+      columns.forEach((column, index) => {
+        row[column] = params[index] === undefined ? null : params[index];
+      });
+      const table = this.getTable(tableName);
+      const id = this.getRowKey(tableName, row);
+      table.set(id, row);
+      return;
+    }
+
+    const updateMatch = normalized.match(/^UPDATE ([a-z_]+) SET (.+) WHERE (id|key) = \?$/i);
+    if (updateMatch) {
+      const [, tableName, setClause] = updateMatch;
+      const columns = setClause.split(",").map((entry) => entry.trim().split(" = ")[0]);
+      const id = String(params[columns.length] ?? "");
+      const table = this.getTable(tableName);
+      const existing = table.get(id);
+      if (!existing) {
+        throw new Error(`${tableName} missing row ${id}`);
+      }
+      const next: Row = { ...existing };
+      columns.forEach((column, index) => {
+        next[column] = params[index] === undefined ? null : params[index];
+      });
+      table.set(id, next);
+      return;
+    }
+
     const upsertMatch = normalized.match(
       /^INSERT INTO ([a-z_]+) \((.+)\) VALUES \((.+)\) ON CONFLICT\((id|key)\) DO UPDATE SET /i
     );
@@ -303,4 +377,16 @@ export class FakeDb {
     const table = this.getTable(tableName);
     return table.get(id) ?? null;
   }
+
+  getTableRows(tableName: string): Row[] {
+    return Array.from(this.getTable(tableName).values());
+  }
+}
+
+function projectRow(row: Row, columns: string[]): Row {
+  const projected: Row = {};
+  for (const column of columns) {
+    projected[column] = row[column];
+  }
+  return projected;
 }

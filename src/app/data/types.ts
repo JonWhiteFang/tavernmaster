@@ -2,15 +2,37 @@ export type AbilityScore = "str" | "dex" | "con" | "int" | "wis" | "cha";
 
 export type CharacterRole = "player" | "ally" | "npc";
 
+export type CharacterControl = "player" | "ai";
+
+export type CharacterInventoryItem = {
+  id: string;
+  itemId: string;
+  name: string;
+  quantity: number;
+  attuned: boolean;
+};
+
+export type CharacterSpell = {
+  id: string;
+  spellId: string;
+  name: string;
+  level?: number;
+  school?: string;
+  prepared: boolean;
+  slotsUsed: number;
+};
+
 export interface Character {
   id: string;
   name: string;
   role: CharacterRole;
+  controlMode: CharacterControl;
   level: number;
   className: string;
   ancestry: string;
   background: string;
   alignment: string;
+  ancestryBonusSelections: AbilityScore[];
   hitPoints: number;
   hitPointMax: number;
   armorClass: number;
@@ -18,7 +40,8 @@ export interface Character {
   speed: number;
   abilities: Record<AbilityScore, number>;
   proficiencies: string[];
-  inventory: string[];
+  inventory: CharacterInventoryItem[];
+  spells: CharacterSpell[];
 }
 
 export interface Campaign {

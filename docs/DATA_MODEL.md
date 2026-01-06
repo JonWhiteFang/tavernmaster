@@ -11,7 +11,7 @@ User-authored tables also include nullable `deleted_at` for soft deletes (used b
 
 ## Characters & Party
 
-- `characters`: name, role (player/ally/npc), level, class, ancestry, background, alignment.
+- `characters`: name, role (player/ally/npc), control_mode (player/ai), level, class, ancestry, background, alignment, proficiencies_json, ancestry_bonus_json.
 - `character_stats`: character_id, hp, hp_max, ac, initiative_bonus, speed.
 - `character_abilities`: character_id, ability, score, save_bonus.
 - `character_inventory`: character_id, item_id, quantity, attuned.
