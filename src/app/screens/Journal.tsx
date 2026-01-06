@@ -5,6 +5,7 @@ import { listJournalEntries } from "../data/journal";
 export default function Journal() {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     void listJournalEntries("seed-campaign").then((data) => {
@@ -13,9 +14,28 @@ export default function Journal() {
         setSelectedId(data[0].id);
       }
     });
-  }, [selectedId]);
+  }, []);
 
-  const activeEntry = entries.find((entry) => entry.id === selectedId) ?? entries[0];
+  const filteredEntries = entries.filter((entry) => {
+    if (!searchTerm.trim()) {
+      return true;
+    }
+    const query = searchTerm.toLowerCase();
+    return entry.title.toLowerCase().includes(query) || entry.content.toLowerCase().includes(query);
+  });
+
+  useEffect(() => {
+    if (!filteredEntries.length) {
+      setSelectedId(null);
+      return;
+    }
+    if (!selectedId || !filteredEntries.some((entry) => entry.id === selectedId)) {
+      setSelectedId(filteredEntries[0].id);
+    }
+  }, [filteredEntries, selectedId]);
+
+  const activeEntry =
+    filteredEntries.find((entry) => entry.id === selectedId) ?? filteredEntries[0];
 
   return (
     <div className="journal">
@@ -24,16 +44,28 @@ export default function Journal() {
         <div className="panel-subtitle">
           Curate the narrative log, capture key beats, and export session notes.
         </div>
+        <div className="search-row" style={{ marginTop: "1rem" }}>
+          <label className="form-field search-field">
+            <span className="form-label">Search</span>
+            <input
+              className="form-input"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="Search title or notes"
+            />
+          </label>
+          <span className="status-chip">Matches {filteredEntries.length}</span>
+        </div>
       </section>
 
       <div className="journal-grid">
         <section className="panel journal-list">
           <div className="panel-title">Entries</div>
           <div className="panel-body">
-            {entries.length === 0 ? (
+            {filteredEntries.length === 0 ? (
               <div className="panel-copy">No journal entries available.</div>
             ) : (
-              entries.map((entry) => (
+              filteredEntries.map((entry) => (
                 <button
                   key={entry.id}
                   className={`journal-card ${entry.id === selectedId ? "is-active" : ""}`}

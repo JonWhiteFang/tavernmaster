@@ -13,6 +13,7 @@ const kindLabels: Record<AiLogEntry["kind"], string> = {
 export default function LogsExports() {
   const [entries, setEntries] = useState<AiLogEntry[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     void listAiLogs({ limit: 40 }).then((data) => {
@@ -21,9 +22,29 @@ export default function LogsExports() {
         setSelectedId(data[0].id);
       }
     });
-  }, [selectedId]);
+  }, []);
 
-  const activeEntry = entries.find((entry) => entry.id === selectedId) ?? entries[0];
+  const filteredEntries = entries.filter((entry) => {
+    if (!searchTerm.trim()) {
+      return true;
+    }
+    const query = searchTerm.toLowerCase();
+    const label = kindLabels[entry.kind].toLowerCase();
+    return label.includes(query) || entry.content.toLowerCase().includes(query);
+  });
+
+  useEffect(() => {
+    if (!filteredEntries.length) {
+      setSelectedId(null);
+      return;
+    }
+    if (!selectedId || !filteredEntries.some((entry) => entry.id === selectedId)) {
+      setSelectedId(filteredEntries[0].id);
+    }
+  }, [filteredEntries, selectedId]);
+
+  const activeEntry =
+    filteredEntries.find((entry) => entry.id === selectedId) ?? filteredEntries[0];
 
   return (
     <div className="logs">
@@ -32,16 +53,28 @@ export default function LogsExports() {
         <div className="panel-subtitle">
           Review AI transcripts, capture rulings, and export session archives.
         </div>
+        <div className="search-row" style={{ marginTop: "1rem" }}>
+          <label className="form-field search-field">
+            <span className="form-label">Search</span>
+            <input
+              className="form-input"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="Search transcripts"
+            />
+          </label>
+          <span className="status-chip">Matches {filteredEntries.length}</span>
+        </div>
       </section>
 
       <div className="logs-grid">
         <section className="panel logs-list">
           <div className="panel-title">Transcript Feed</div>
           <div className="panel-body">
-            {entries.length === 0 ? (
+            {filteredEntries.length === 0 ? (
               <div className="panel-copy">No AI logs captured yet.</div>
             ) : (
-              entries.map((entry) => (
+              filteredEntries.map((entry) => (
                 <button
                   key={entry.id}
                   className={`log-card ${entry.id === selectedId ? "is-active" : ""}`}

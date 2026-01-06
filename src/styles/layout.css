@@ -456,6 +456,18 @@
   flex-wrap: wrap;
 }
 
+.search-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.search-field {
+  flex: 1;
+  min-width: 220px;
+}
+
 .button-row.right {
   justify-content: flex-end;
 }
