@@ -1,0 +1,254 @@
+import { useEffect, useMemo, useState } from "react";
+import type { Character } from "../data/types";
+import { listCharacters } from "../data/characters";
+import { advanceTurn, buildTurnOrder, rollInitiative, startEncounter } from "../rules/initiative";
+import { applyEffects } from "../rules/effects";
+import { createSeededRng } from "../rules/rng";
+import { resolveAction } from "../rules/actions";
+import type { RulesState, RulesParticipant } from "../rules/types";
+
+const demoAction = {
+  type: "attack",
+  attackerId: "",
+  targetId: "",
+  attackBonus: 5,
+  damage: "1d8+3",
+  damageType: "slashing",
+  isMelee: true
+} as const;
+
+export default function EncounterFlow() {
+  const [rulesState, setRulesState] = useState<RulesState | null>(null);
+  const [log, setLog] = useState<string[]>([]);
+  const [rngSeed, setRngSeed] = useState(42);
+
+  useEffect(() => {
+    void listCharacters().then((characters) => {
+      if (!characters.length) {
+        return;
+      }
+      const state = buildRulesState(characters);
+      setRulesState(state);
+      setLog([]);
+    });
+  }, []);
+
+  const turnOrder = useMemo(() => {
+    if (!rulesState) {
+      return [];
+    }
+    return rulesState.turnOrder.map((id) => rulesState.participants[id]);
+  }, [rulesState]);
+
+  const activeParticipant = useMemo(() => {
+    if (!rulesState || rulesState.turnOrder.length === 0) {
+      return null;
+    }
+    return rulesState.participants[rulesState.turnOrder[rulesState.activeTurnIndex]] ?? null;
+  }, [rulesState]);
+
+  const handleRollInitiative = () => {
+    if (!rulesState) {
+      return;
+    }
+    const rng = createSeededRng(rngSeed);
+    const participants = Object.values(rulesState.participants);
+    const rolls = rollInitiative(participants, rng);
+    const order = buildTurnOrder(rolls);
+    const nameLookup = new Map(
+      participants.map((participant) => [participant.id, participant.name])
+    );
+    setRulesState({
+      ...rulesState,
+      turnOrder: order,
+      activeTurnIndex: 0
+    });
+    setLog((current) => [
+      "Initiative rolled:",
+      ...rolls.map((roll) => `${nameLookup.get(roll.participantId)}: ${roll.total}`),
+      ...current
+    ]);
+  };
+
+  const handleStartEncounter = () => {
+    if (!rulesState) {
+      return;
+    }
+    const rng = createSeededRng(rngSeed);
+    const result = startEncounter(rulesState, rng);
+    setRulesState(result.state);
+    setLog((current) => [
+      "Encounter started.",
+      ...result.rolls.map((roll) => `${roll.label}: ${roll.total}`),
+      ...current
+    ]);
+  };
+
+  const handleAdvanceTurn = () => {
+    if (!rulesState) {
+      return;
+    }
+    setRulesState((current) => (current ? advanceTurn(current) : current));
+  };
+
+  const handleResolveDemo = () => {
+    if (!rulesState || rulesState.turnOrder.length < 2) {
+      return;
+    }
+    const rng = createSeededRng(rngSeed);
+    const attackerId = rulesState.turnOrder[0];
+    const targetId = rulesState.turnOrder[1];
+    const result = resolveAction({ ...demoAction, attackerId, targetId }, rulesState, rng);
+    if (result.ok) {
+      const nextState = applyEffects(rulesState, result.effects, rng);
+      setRulesState(nextState);
+      setLog((current) => [...result.log, ...current]);
+    }
+  };
+
+  return (
+    <div className="encounter">
+      <section className="panel" style={{ marginBottom: "1.4rem" }}>
+        <div className="panel-title">Encounter Flow</div>
+        <div className="panel-subtitle">
+          Initiative order, turn management, and condition tracking for active encounters.
+        </div>
+      </section>
+
+      <div className="encounter-grid">
+        <section className="panel">
+          <div className="panel-title">Initiative & Turn Order</div>
+          <div className="panel-body">
+            <div className="button-row">
+              <button className="secondary-button" onClick={handleRollInitiative}>
+                Roll Initiative
+              </button>
+              <button className="secondary-button" onClick={handleStartEncounter}>
+                Start Encounter
+              </button>
+              <button className="primary-button" onClick={handleAdvanceTurn}>
+                Advance Turn
+              </button>
+            </div>
+
+            <div className="form-field" style={{ maxWidth: 220 }}>
+              <span className="form-label">Seeded RNG</span>
+              <input
+                className="form-input"
+                type="number"
+                value={rngSeed}
+                onChange={(event) => setRngSeed(Number(event.target.value))}
+              />
+            </div>
+
+            {activeParticipant ? (
+              <div className="turn-active">
+                <div className="turn-label">Active Turn</div>
+                <div className="turn-name">{activeParticipant.name}</div>
+                <div className="turn-subtitle">
+                  Round {rulesState?.round ?? 1} · AC {activeParticipant.armorClass}
+                </div>
+              </div>
+            ) : null}
+
+            <div className="turn-list">
+              {turnOrder.map((participant, index) => (
+                <div
+                  key={participant.id}
+                  className={`turn-row ${
+                    activeParticipant?.id === participant.id ? "is-active" : ""
+                  }`}
+                >
+                  <span>{index + 1}</span>
+                  <span>{participant.name}</span>
+                  <span>HP {participant.hp}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="panel">
+          <div className="panel-title">Combat Actions</div>
+          <div className="panel-body">
+            <p className="panel-copy">
+              Quick-resolve a demo action using the rules engine for verification.
+            </p>
+            <button className="primary-button" onClick={handleResolveDemo}>
+              Resolve Sample Attack
+            </button>
+
+            <div className="output-panel" style={{ marginTop: "1.2rem" }}>
+              <div className="panel-subtitle">Combat Log</div>
+              <pre className="output-text">
+                {log.length ? log.join("\n") : "Awaiting combat events."}
+              </pre>
+            </div>
+          </div>
+        </section>
+
+        <section className="panel">
+          <div className="panel-title">Conditions</div>
+          <div className="panel-body">
+            <div className="condition-list">
+              {turnOrder.length === 0 ? (
+                <div className="panel-copy">No combatants loaded.</div>
+              ) : (
+                turnOrder.map((participant) => (
+                  <div key={participant.id} className="condition-row">
+                    <div>
+                      <div className="condition-name">{participant.name}</div>
+                      <div className="condition-meta">Conditions</div>
+                    </div>
+                    <div className="condition-tags">
+                      {participant.conditions.length ? (
+                        participant.conditions.map((condition) => (
+                          <span className="tag" key={condition.id}>
+                            {condition.name}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="tag">None</span>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+function buildRulesState(characters: Character[]): RulesState {
+  const participants: Record<string, RulesParticipant> = {};
+  for (const character of characters) {
+    participants[character.id] = {
+      id: character.id,
+      name: character.name,
+      maxHp: character.hitPointMax,
+      hp: character.hitPoints,
+      armorClass: character.armorClass,
+      initiativeBonus: character.initiativeBonus,
+      speed: character.speed,
+      abilities: character.abilities,
+      savingThrows: {},
+      proficiencyBonus: getProficiencyBonus(character.level),
+      conditions: []
+    };
+  }
+
+  return {
+    round: 1,
+    turnOrder: characters.map((character) => character.id),
+    activeTurnIndex: 0,
+    participants,
+    log: []
+  };
+}
+
+function getProficiencyBonus(level: number): number {
+  return Math.floor((level - 1) / 4) + 2;
+}
