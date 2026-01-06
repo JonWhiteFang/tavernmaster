@@ -60,7 +60,7 @@ A living plan to track progress for the AI Dungeon Master desktop app (Mac, offl
 
 ### 6) Supabase Sync (Single User)
 
-- [ ] Supabase schema mirroring local tables.
+- [x] Supabase schema mirroring local tables (`supabase/migrations/20260106160000_schema_mirror.sql`).
 - [ ] Sync queue + debounce push/pull.
 - [ ] Conflict resolution UI (latest‑wins with manual override).
 - [ ] Keychain storage for sync key and LLM settings.

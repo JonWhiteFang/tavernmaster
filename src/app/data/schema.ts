@@ -5,6 +5,7 @@ export const schemaStatements: string[] = [
     name TEXT NOT NULL,
     summary TEXT,
     active_scene_id TEXT,
+    deleted_at TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL
   );`,
@@ -15,6 +16,7 @@ export const schemaStatements: string[] = [
     started_at TEXT,
     ended_at TEXT,
     recap TEXT,
+    deleted_at TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,
     FOREIGN KEY (campaign_id) REFERENCES campaigns(id)
@@ -25,6 +27,7 @@ export const schemaStatements: string[] = [
     title TEXT NOT NULL,
     content TEXT NOT NULL,
     tags TEXT,
+    deleted_at TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,
     FOREIGN KEY (campaign_id) REFERENCES campaigns(id)
@@ -38,6 +41,7 @@ export const schemaStatements: string[] = [
     ancestry TEXT NOT NULL,
     background TEXT NOT NULL,
     alignment TEXT NOT NULL,
+    deleted_at TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL
   );`,
@@ -49,6 +53,7 @@ export const schemaStatements: string[] = [
     ac INTEGER NOT NULL,
     initiative_bonus INTEGER NOT NULL,
     speed INTEGER NOT NULL,
+    deleted_at TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,
     FOREIGN KEY (character_id) REFERENCES characters(id)
@@ -59,6 +64,7 @@ export const schemaStatements: string[] = [
     ability TEXT NOT NULL,
     score INTEGER NOT NULL,
     save_bonus INTEGER NOT NULL,
+    deleted_at TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,
     FOREIGN KEY (character_id) REFERENCES characters(id)
@@ -69,6 +75,7 @@ export const schemaStatements: string[] = [
     item_id TEXT NOT NULL,
     quantity INTEGER NOT NULL,
     attuned INTEGER NOT NULL,
+    deleted_at TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,
     FOREIGN KEY (character_id) REFERENCES characters(id)
@@ -79,6 +86,7 @@ export const schemaStatements: string[] = [
     spell_id TEXT NOT NULL,
     prepared INTEGER NOT NULL,
     slots_used INTEGER NOT NULL,
+    deleted_at TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,
     FOREIGN KEY (character_id) REFERENCES characters(id)
@@ -91,6 +99,7 @@ export const schemaStatements: string[] = [
     difficulty TEXT NOT NULL,
     round INTEGER NOT NULL,
     active_turn_id TEXT,
+    deleted_at TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,
     FOREIGN KEY (campaign_id) REFERENCES campaigns(id)
@@ -100,6 +109,7 @@ export const schemaStatements: string[] = [
     encounter_id TEXT NOT NULL,
     character_id TEXT NOT NULL,
     order_index INTEGER NOT NULL,
+    deleted_at TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,
     FOREIGN KEY (encounter_id) REFERENCES encounters(id),
@@ -110,6 +120,7 @@ export const schemaStatements: string[] = [
     name TEXT NOT NULL,
     rules_ref TEXT,
     duration_rounds INTEGER,
+    deleted_at TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL
   );`,
@@ -118,6 +129,7 @@ export const schemaStatements: string[] = [
     encounter_id TEXT NOT NULL,
     condition_id TEXT NOT NULL,
     target_id TEXT NOT NULL,
+    deleted_at TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,
     FOREIGN KEY (encounter_id) REFERENCES encounters(id),
@@ -130,6 +142,7 @@ export const schemaStatements: string[] = [
     summary TEXT NOT NULL,
     rules_refs TEXT NOT NULL,
     status TEXT NOT NULL,
+    deleted_at TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,
     FOREIGN KEY (encounter_id) REFERENCES encounters(id),
@@ -140,6 +153,7 @@ export const schemaStatements: string[] = [
     encounter_id TEXT NOT NULL,
     entry_type TEXT NOT NULL,
     payload_json TEXT NOT NULL,
+    deleted_at TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,
     FOREIGN KEY (encounter_id) REFERENCES encounters(id)
@@ -199,6 +213,7 @@ export const schemaStatements: string[] = [
   `CREATE TABLE IF NOT EXISTS app_settings (
     key TEXT PRIMARY KEY,
     value_json TEXT NOT NULL,
+    deleted_at TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL
   );`,
@@ -209,6 +224,7 @@ export const schemaStatements: string[] = [
     kind TEXT NOT NULL,
     content TEXT NOT NULL,
     payload_json TEXT,
+    deleted_at TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,
     FOREIGN KEY (campaign_id) REFERENCES campaigns(id),

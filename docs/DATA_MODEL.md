@@ -1,6 +1,7 @@
 # Data Model
 
 The local database is the source of truth. All tables include `id`, `created_at`, and `updated_at` fields unless noted.
+User-authored tables also include nullable `deleted_at` for soft deletes (used by sync).
 
 ## Campaign & Session
 
