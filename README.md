@@ -11,19 +11,19 @@ Tavern Master is a Mac desktop AI Dungeon Master for solo D&D 5e (SRD-only). It 
 
 ## Quickstart
 
-1) Install dependencies:
+1. Install dependencies:
 
 ```bash
 npm install
 ```
 
-2) Run the desktop app in development:
+2. Run the desktop app in development:
 
 ```bash
 npm run tauri:dev
 ```
 
-3) Build the desktop bundle:
+3. Build the desktop bundle:
 
 ```bash
 npm run tauri:build

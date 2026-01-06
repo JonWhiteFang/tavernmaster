@@ -30,12 +30,12 @@ A living plan to track progress for the AI Dungeon Master desktop app (Mac, offl
 
 ### 3) Rules Engine (5e SRD)
 
-- [ ] Dice roller utilities (advantage/disadvantage, parsing `2d6+3`).
-- [ ] Action validation for combat (attack, cast, dash, dodge, help, etc.).
-- [ ] Conditions and durations (start/end of turn handling).
-- [ ] Initiative and turn order management.
-- [ ] Spellcasting resources and status effects.
-- [ ] Encounter difficulty and CR helpers.
+- [x] Dice roller utilities (advantage/disadvantage, parsing `2d6+3`).
+- [x] Action validation for combat (attack, cast, dash, dodge, help, etc.).
+- [x] Conditions and durations (start/end of turn handling).
+- [x] Initiative and turn order management.
+- [x] Spellcasting resources and status effects.
+- [x] Encounter difficulty and CR helpers.
 
 ### 4) AI Orchestration (Local LLM)
 

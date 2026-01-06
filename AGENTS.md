@@ -25,11 +25,12 @@ When questions are needed, respond with:
 
 - A one-sentence summary of what you believe the user wants.
 - A **numbered list** of concise questions (aim for 1–5).
-- (Optional) The **default assumption** you would use *if the user explicitly tells you to proceed without answers*.
+- (Optional) The **default assumption** you would use _if the user explicitly tells you to proceed without answers_.
 
 ### If no questions are needed
 
 State: **“No clarifying questions needed.”** Then:
+
 - Briefly restate the task in your own words.
 - Propose a short plan (3–7 bullets).
 - Proceed with implementation.
@@ -37,6 +38,7 @@ State: **“No clarifying questions needed.”** Then:
 ### Do NOT proceed if questions are pending
 
 Until the user answers the clarifying questions, do not:
+
 - Edit files
 - Run commands
 - Create commits/PRs

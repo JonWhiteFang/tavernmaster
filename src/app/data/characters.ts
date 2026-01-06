@@ -39,10 +39,13 @@ export type NewCharacterInput = {
 };
 
 function mapCharacter(row: CharacterRow, abilities: AbilityRow[]): Character {
-  const abilityMap = abilities.reduce<Record<AbilityScore, number>>((acc, ability) => {
-    acc[ability.ability] = ability.score;
-    return acc;
-  }, { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 });
+  const abilityMap = abilities.reduce<Record<AbilityScore, number>>(
+    (acc, ability) => {
+      acc[ability.ability] = ability.score;
+      return acc;
+    },
+    { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 }
+  );
 
   return {
     id: row.id,

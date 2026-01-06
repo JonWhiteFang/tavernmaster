@@ -16,8 +16,8 @@ export default function Dashboard() {
           <div className="hero-kicker">Act II: The Drowned Reliquary</div>
           <h1 className="hero-title">Storm the reliquary before the tide turns.</h1>
           <p className="hero-copy">
-            The AI Dungeon Master is staging a layered encounter with environmental hazards,
-            faction agendas, and a time pressure clock.
+            The AI Dungeon Master is staging a layered encounter with environmental hazards, faction
+            agendas, and a time pressure clock.
           </p>
         </div>
         <div className="hero-actions">
@@ -40,7 +40,11 @@ export default function Dashboard() {
       </section>
 
       <section className="panel-grid">
-        <Panel title="Encounter Control" subtitle="Initiative, conditions, and battlefield tools" delay={240}>
+        <Panel
+          title="Encounter Control"
+          subtitle="Initiative, conditions, and battlefield tools"
+          delay={240}
+        >
           <ul className="feature-list">
             <li>Track initiative, legendary actions, lair effects.</li>
             <li>Pin conditions with rules references and durations.</li>

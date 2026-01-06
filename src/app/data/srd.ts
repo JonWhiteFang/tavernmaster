@@ -29,9 +29,7 @@ async function insertEntries(table: string, entries: SrdEntry[], now: string): P
 
 export async function importSrdIfNeeded(): Promise<void> {
   const db = await getDatabase();
-  const rows = await db.select<{ count: number }[]>(
-    "SELECT COUNT(*) as count FROM srd_spells"
-  );
+  const rows = await db.select<{ count: number }[]>("SELECT COUNT(*) as count FROM srd_spells");
   const count = rows[0]?.count ?? 0;
 
   if (count > 0) {
