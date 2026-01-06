@@ -3,6 +3,7 @@ import { initializeData } from "./data/init";
 import Dashboard from "./screens/Dashboard";
 import AiDirector from "./screens/AiDirector";
 import EncounterFlow from "./screens/EncounterFlow";
+import Journal from "./screens/Journal";
 import PartySheets from "./screens/PartySheets";
 import Settings from "./screens/Settings";
 
@@ -47,6 +48,8 @@ export default function App() {
         return <AiDirector />;
       case "encounter":
         return <EncounterFlow />;
+      case "journal":
+        return <Journal />;
       case "party":
         return <PartySheets />;
       case "dashboard":

@@ -90,7 +90,7 @@ export async function seedDatabase(): Promise<void> {
   }
 
   const now = new Date().toISOString();
-  const campaignId = crypto.randomUUID();
+  const campaignId = "seed-campaign";
 
   await db.execute(
     `INSERT INTO campaigns (id, name, summary, active_scene_id, created_at, updated_at)
@@ -109,7 +109,7 @@ export async function seedDatabase(): Promise<void> {
     `INSERT INTO journal_entries (id, campaign_id, title, content, tags, created_at, updated_at)
      VALUES (?, ?, ?, ?, ?, ?, ?)`,
     [
-      crypto.randomUUID(),
+      "seed-journal-1",
       campaignId,
       "Session Zero",
       "The crew assembles at the Salted Eel to negotiate passage into the Sunken Vault.",
