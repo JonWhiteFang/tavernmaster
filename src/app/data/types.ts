@@ -30,6 +30,17 @@ export interface Campaign {
   activeSceneId?: string;
 }
 
+export interface Session {
+  id: string;
+  campaignId: string;
+  title: string;
+  startedAt?: string;
+  endedAt?: string;
+  recap?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Encounter {
   id: string;
   campaignId: string;

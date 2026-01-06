@@ -106,6 +106,21 @@ export async function seedDatabase(): Promise<void> {
   );
 
   await db.execute(
+    `INSERT INTO sessions (id, campaign_id, title, started_at, ended_at, recap, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      "seed-session-1",
+      campaignId,
+      "Session Zero",
+      now,
+      now,
+      "The crew assembled at the Salted Eel, negotiated passage, and charted the Sunken Vault.",
+      now,
+      now
+    ]
+  );
+
+  await db.execute(
     `INSERT INTO journal_entries (id, campaign_id, title, content, tags, created_at, updated_at)
      VALUES (?, ?, ?, ?, ?, ?, ?)`,
     [

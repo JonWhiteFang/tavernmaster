@@ -48,7 +48,7 @@ A living plan to track progress for the AI Dungeon Master desktop app (Mac, offl
 ### 5) UI/UX (Fantasy‑Luxury Desktop)
 
 - [x] Dashboard shell layout with panels and inspector.
-- [ ] Campaign dashboard with session picker and summaries.
+- [x] Campaign dashboard with session picker and summaries.
 - [x] Encounter screen (initiative tracker, combat log, conditions).
 - [x] Party sheets (character stats, inventory, spells).
 - [x] Map Studio (image import, tokens, fog, rulers).

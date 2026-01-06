@@ -1,78 +1,152 @@
-import type { CSSProperties } from "react";
-import Panel from "../ui/Panel";
-
-const quickStats = [
-  { label: "Party HP", value: "118 / 142" },
-  { label: "Initiative", value: "Round 2" },
-  { label: "Threat", value: "Deadly" },
-  { label: "Location", value: "Sunken Vault" }
-];
+import { useEffect, useMemo, useState } from "react";
+import type { Campaign, Session } from "../data/types";
+import { listCampaigns } from "../data/campaigns";
+import { listSessions } from "../data/sessions";
 
 export default function Dashboard() {
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [sessions, setSessions] = useState<Session[]>([]);
+  const [activeCampaignId, setActiveCampaignId] = useState<string | null>(null);
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+
+  useEffect(() => {
+    void listCampaigns().then((data) => {
+      setCampaigns(data);
+      if (data.length && !activeCampaignId) {
+        setActiveCampaignId(data[0].id);
+      }
+    });
+  }, [activeCampaignId]);
+
+  useEffect(() => {
+    if (!activeCampaignId) {
+      return;
+    }
+    void listSessions(activeCampaignId).then((data) => {
+      setSessions(data);
+      if (data.length && !activeSessionId) {
+        setActiveSessionId(data[0].id);
+      }
+    });
+  }, [activeCampaignId, activeSessionId]);
+
+  const activeCampaign = useMemo(
+    () => campaigns.find((campaign) => campaign.id === activeCampaignId) ?? campaigns[0],
+    [campaigns, activeCampaignId]
+  );
+
+  const activeSession = useMemo(
+    () => sessions.find((session) => session.id === activeSessionId) ?? sessions[0],
+    [sessions, activeSessionId]
+  );
+
   return (
     <div className="dashboard">
-      <section className="hero panel" style={{ "--delay": "80ms" } as CSSProperties}>
-        <div>
-          <div className="hero-kicker">Act II: The Drowned Reliquary</div>
-          <h1 className="hero-title">Storm the reliquary before the tide turns.</h1>
-          <p className="hero-copy">
-            The AI Dungeon Master is staging a layered encounter with environmental hazards, faction
-            agendas, and a time pressure clock.
-          </p>
-        </div>
-        <div className="hero-actions">
-          <button className="primary-button">Resume Encounter</button>
-          <button className="ghost-button">Open Session Brief</button>
+      <section className="panel" style={{ marginBottom: "1.4rem" }}>
+        <div className="panel-title">Campaign Dashboard</div>
+        <div className="panel-subtitle">
+          Select a campaign and session to review summaries, notes, and progress.
         </div>
       </section>
 
-      <section className="stat-grid">
-        {quickStats.map((stat, index) => (
-          <div
-            key={stat.label}
-            className="stat-card panel"
-            style={{ "--delay": `${120 + index * 60}ms` } as CSSProperties}
-          >
-            <div className="stat-label">{stat.label}</div>
-            <div className="stat-value">{stat.value}</div>
+      <div className="campaign-grid">
+        <section className="panel campaign-list">
+          <div className="panel-title">Campaigns</div>
+          <div className="panel-body">
+            {campaigns.length === 0 ? (
+              <div className="panel-copy">No campaigns yet.</div>
+            ) : (
+              campaigns.map((campaign) => (
+                <button
+                  key={campaign.id}
+                  className={`campaign-card ${campaign.id === activeCampaignId ? "is-active" : ""}`}
+                  onClick={() => {
+                    setActiveCampaignId(campaign.id);
+                    setActiveSessionId(null);
+                  }}
+                >
+                  <div className="campaign-title">{campaign.name}</div>
+                  <div className="campaign-meta">
+                    Updated {new Date(campaign.updatedAt).toLocaleDateString()}
+                  </div>
+                </button>
+              ))
+            )}
           </div>
-        ))}
-      </section>
+        </section>
 
-      <section className="panel-grid">
-        <Panel
-          title="Encounter Control"
-          subtitle="Initiative, conditions, and battlefield tools"
-          delay={240}
-        >
-          <ul className="feature-list">
-            <li>Track initiative, legendary actions, lair effects.</li>
-            <li>Pin conditions with rules references and durations.</li>
-            <li>Stage environmental hazards and timed objectives.</li>
-          </ul>
-        </Panel>
-        <Panel title="Party Command" subtitle="AI-managed companions with approval" delay={300}>
-          <ul className="feature-list">
-            <li>Review proposed actions before they execute.</li>
-            <li>Set tactics profiles: protective, reckless, support.</li>
-            <li>Auto-handle inventory, spells, and reactions.</li>
-          </ul>
-        </Panel>
-        <Panel title="Map Studio" subtitle="Scene boards and tactical overlays" delay={360}>
-          <ul className="feature-list">
-            <li>Import static maps or sketch quick layouts.</li>
-            <li>Drop tokens, fog-of-war, and line-of-sight rulers.</li>
-            <li>Attach encounter notes and trigger zones.</li>
-          </ul>
-        </Panel>
-        <Panel title="Journal & Exports" subtitle="Narrative log and session handoff" delay={420}>
-          <ul className="feature-list">
-            <li>Curate a cinematic transcript with highlights.</li>
-            <li>Export to Markdown or PDF for sharing.</li>
-            <li>Sync sessions across Macs via Supabase.</li>
-          </ul>
-        </Panel>
-      </section>
+        <section className="panel campaign-detail">
+          <div className="panel-title">Campaign Overview</div>
+          <div className="panel-body">
+            {activeCampaign ? (
+              <>
+                <div className="detail-header">
+                  <div>
+                    <div className="detail-name">{activeCampaign.name}</div>
+                    <div className="detail-meta">
+                      Last updated {new Date(activeCampaign.updatedAt).toLocaleString()}
+                    </div>
+                  </div>
+                  <div className="detail-badges">
+                    <span className="status-chip">Sessions {sessions.length}</span>
+                    <span className="status-chip">SRD 5e</span>
+                  </div>
+                </div>
+                <div className="panel-copy">
+                  {activeCampaign.summary ?? "No campaign summary yet."}
+                </div>
+
+                <div className="session-block">
+                  <div className="panel-title">Sessions</div>
+                  <div className="session-grid">
+                    <div className="session-list">
+                      {sessions.length === 0 ? (
+                        <div className="panel-copy">No sessions recorded.</div>
+                      ) : (
+                        sessions.map((session) => (
+                          <button
+                            key={session.id}
+                            className={`session-card ${
+                              session.id === activeSessionId ? "is-active" : ""
+                            }`}
+                            onClick={() => setActiveSessionId(session.id)}
+                          >
+                            <div className="session-title">{session.title}</div>
+                            <div className="session-meta">
+                              {session.startedAt
+                                ? new Date(session.startedAt).toLocaleDateString()
+                                : "Unscheduled"}
+                            </div>
+                          </button>
+                        ))
+                      )}
+                    </div>
+                    <div className="session-detail">
+                      {activeSession ? (
+                        <>
+                          <div className="session-detail-title">{activeSession.title}</div>
+                          <div className="session-detail-meta">
+                            {activeSession.startedAt
+                              ? new Date(activeSession.startedAt).toLocaleString()
+                              : "No start time"}
+                          </div>
+                          <div className="panel-copy">
+                            {activeSession.recap ?? "No recap logged yet."}
+                          </div>
+                        </>
+                      ) : (
+                        <div className="panel-copy">Select a session to view summary.</div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="panel-copy">Select a campaign to view details.</div>
+            )}
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
