@@ -1,6 +1,7 @@
 import type { JournalEntry } from "./types";
 import { getDatabase } from "./db";
 import { decryptValue, encryptValue } from "./encryption";
+import { enqueueUpsertAndSchedule } from "../sync/ops";
 
 type JournalRow = {
   id: string;
@@ -51,6 +52,17 @@ export async function createJournalEntry(input: {
      VALUES (?, ?, ?, ?, ?, ?, ?)`,
     [id, input.campaignId, title, content, null, now, now]
   );
+
+  await enqueueUpsertAndSchedule("journal_entries", id, {
+    id,
+    campaign_id: input.campaignId,
+    title,
+    content,
+    tags: null,
+    deleted_at: null,
+    created_at: now,
+    updated_at: now
+  });
 
   return {
     id,

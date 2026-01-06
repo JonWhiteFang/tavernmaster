@@ -1,5 +1,6 @@
 import type { Encounter } from "./types";
 import { getDatabase } from "./db";
+import { enqueueUpsertAndSchedule } from "../sync/ops";
 
 type EncounterRow = {
   id: string;
@@ -100,6 +101,19 @@ export async function createEncounter(input: NewEncounterInput): Promise<Encount
       now
     ]
   );
+
+  await enqueueUpsertAndSchedule("encounters", id, {
+    id,
+    campaign_id: input.campaignId,
+    name: input.name,
+    environment: input.environment ?? null,
+    difficulty: input.difficulty,
+    round,
+    active_turn_id: null,
+    deleted_at: null,
+    created_at: now,
+    updated_at: now
+  });
 
   return {
     id,

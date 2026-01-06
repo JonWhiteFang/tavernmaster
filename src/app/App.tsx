@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { initializeData } from "./data/init";
+import { getSyncStatus, initializeSync, subscribeSyncStatus } from "./sync/client";
 import Dashboard from "./screens/Dashboard";
 import AiDirector from "./screens/AiDirector";
 import EncounterFlow from "./screens/EncounterFlow";
@@ -21,6 +22,7 @@ type ScreenKey =
 
 export default function App() {
   const [activeScreen, setActiveScreen] = useState<ScreenKey>("dashboard");
+  const [{ status: syncStatus }, setSyncStatus] = useState(getSyncStatus());
 
   const navItems = useMemo(
     () => [
@@ -37,9 +39,22 @@ export default function App() {
   );
 
   useEffect(() => {
-    void initializeData().catch((error) => {
-      console.error("Failed to initialize app data", error);
+    const unsubscribe = subscribeSyncStatus((status, message) => {
+      setSyncStatus({ status, message });
     });
+
+    void (async () => {
+      try {
+        await initializeData();
+        await initializeSync();
+      } catch (error) {
+        console.error("Failed to initialize app data", error);
+      }
+    })();
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   const renderScreen = () => {
@@ -82,7 +97,7 @@ export default function App() {
         </div>
         <div className="status-row">
           <div className="status-pill">LLM: Local</div>
-          <div className="status-pill">Sync: Ready</div>
+          <div className="status-pill">Sync: {syncStatus === "idle" ? "Ready" : syncStatus}</div>
           <div className="status-pill">Campaign: Copperbound</div>
         </div>
       </header>

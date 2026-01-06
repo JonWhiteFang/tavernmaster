@@ -1,5 +1,6 @@
 import { getDatabase } from "./db";
 import { decryptValue, encryptValue } from "./encryption";
+import { enqueueUpsertAndSchedule } from "../sync/ops";
 
 export type AiLogKind = "dm" | "party" | "summary" | "system" | "user";
 
@@ -32,6 +33,18 @@ export async function insertAiLog(entry: {
      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     [id, entry.campaignId ?? null, entry.sessionId ?? null, entry.kind, content, payload, now, now]
   );
+
+  await enqueueUpsertAndSchedule("ai_logs", id, {
+    id,
+    campaign_id: entry.campaignId ?? null,
+    session_id: entry.sessionId ?? null,
+    kind: entry.kind,
+    content,
+    payload_json: payload,
+    deleted_at: null,
+    created_at: now,
+    updated_at: now
+  });
 
   return {
     id,

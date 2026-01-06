@@ -1,5 +1,6 @@
 import type { AbilityScore, Character, CharacterRole } from "./types";
 import { getDatabase } from "./db";
+import { enqueueUpsertsAndSchedule } from "../sync/ops";
 
 type CharacterRow = {
   id: string;
@@ -131,24 +132,79 @@ export async function createCharacter(input: NewCharacterInput): Promise<Charact
     ]
   );
 
+  const abilityPayloads = (Object.keys(input.abilities) as AbilityScore[]).map((ability) => {
+    const abilityId = crypto.randomUUID();
+    return {
+      id: abilityId,
+      character_id: id,
+      ability,
+      score: input.abilities[ability],
+      save_bonus: Math.floor((input.abilities[ability] - 10) / 2),
+      deleted_at: null,
+      created_at: now,
+      updated_at: now
+    };
+  });
+
   await Promise.all(
-    (Object.keys(input.abilities) as AbilityScore[]).map((ability) =>
+    abilityPayloads.map((payload) =>
       db.execute(
         `INSERT INTO character_abilities
           (id, character_id, ability, score, save_bonus, created_at, updated_at)
          VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [
-          crypto.randomUUID(),
-          id,
-          ability,
-          input.abilities[ability],
-          Math.floor((input.abilities[ability] - 10) / 2),
+          payload.id,
+          payload.character_id,
+          payload.ability,
+          payload.score,
+          payload.save_bonus,
           now,
           now
         ]
       )
     )
   );
+
+  await enqueueUpsertsAndSchedule([
+    {
+      entityType: "characters",
+      entityId: id,
+      payload: {
+        id,
+        name: input.name,
+        role: input.role,
+        level: input.level,
+        class_name: input.className,
+        ancestry: input.ancestry,
+        background: input.background,
+        alignment: input.alignment,
+        deleted_at: null,
+        created_at: now,
+        updated_at: now
+      }
+    },
+    {
+      entityType: "character_stats",
+      entityId: statsId,
+      payload: {
+        id: statsId,
+        character_id: id,
+        hp: input.hitPoints,
+        hp_max: input.hitPointMax,
+        ac: input.armorClass,
+        initiative_bonus: input.initiativeBonus,
+        speed: input.speed,
+        deleted_at: null,
+        created_at: now,
+        updated_at: now
+      }
+    },
+    ...abilityPayloads.map((payload) => ({
+      entityType: "character_abilities" as const,
+      entityId: payload.id,
+      payload
+    }))
+  ]);
 
   return {
     id,

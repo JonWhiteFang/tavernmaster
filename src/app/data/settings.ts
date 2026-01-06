@@ -1,4 +1,5 @@
 import { getDatabase } from "./db";
+import { enqueueUpsertAndSchedule } from "../sync/ops";
 
 export type LlmSettings = {
   baseUrl: string;
@@ -52,6 +53,14 @@ export async function upsertAppSettings(settings: AppSettings): Promise<void> {
      ON CONFLICT(key) DO UPDATE SET value_json = excluded.value_json, updated_at = excluded.updated_at`,
     ["app_settings", JSON.stringify(settings), now, now]
   );
+
+  await enqueueUpsertAndSchedule("app_settings", "app_settings", {
+    key: "app_settings",
+    value_json: JSON.stringify(settings),
+    deleted_at: null,
+    created_at: now,
+    updated_at: now
+  });
 }
 
 export async function ensureSettings(): Promise<AppSettings> {

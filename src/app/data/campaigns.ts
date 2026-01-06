@@ -1,6 +1,7 @@
 import { getDatabase } from "./db";
 import { decryptValue, encryptValue } from "./encryption";
 import type { Campaign } from "./types";
+import { enqueueUpsertAndSchedule } from "../sync/ops";
 
 type CampaignRow = {
   id: string;
@@ -46,6 +47,16 @@ export async function createCampaign(input: { name: string; summary?: string }):
     "INSERT INTO campaigns (id, name, summary, active_scene_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
     [id, input.name, summary, null, now, now]
   );
+
+  await enqueueUpsertAndSchedule("campaigns", id, {
+    id,
+    name: input.name,
+    summary,
+    active_scene_id: null,
+    deleted_at: null,
+    created_at: now,
+    updated_at: now
+  });
 
   return {
     id,

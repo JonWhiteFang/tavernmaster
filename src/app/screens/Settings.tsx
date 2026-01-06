@@ -3,6 +3,14 @@ import { requestChatCompletion } from "../ai/client";
 import type { ChatMessage } from "../ai/types";
 import { getAppSettings, upsertAppSettings } from "../data/settings";
 import type { AppSettings } from "../data/settings";
+import {
+  getSyncStatus,
+  isSupabaseConfigured,
+  signInWithPassword,
+  signOut,
+  subscribeSyncStatus,
+  syncNow
+} from "../sync/client";
 
 const testMessages: ChatMessage[] = [
   { role: "system", content: "Reply with 'OK' if you can read this." },
@@ -20,6 +28,11 @@ export default function Settings() {
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [testStatus, setTestStatus] = useState<TestState>("idle");
   const [testMessage, setTestMessage] = useState<string | null>(null);
+  const [{ status: syncStatus, message: syncMessage }, setSyncState] = useState(getSyncStatus());
+  const [syncEmail, setSyncEmail] = useState("");
+  const [syncPassword, setSyncPassword] = useState("");
+  const [syncActionStatus, setSyncActionStatus] = useState<"idle" | "working" | "error">("idle");
+  const [syncActionMessage, setSyncActionMessage] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -33,6 +46,12 @@ export default function Settings() {
     return () => {
       isMounted = false;
     };
+  }, []);
+
+  useEffect(() => {
+    return subscribeSyncStatus((nextStatus, nextMessage) => {
+      setSyncState({ status: nextStatus, message: nextMessage });
+    });
   }, []);
 
   const hasChanges = useMemo(() => {
@@ -110,6 +129,46 @@ export default function Settings() {
       setTestStatus("error");
       setTestMessage("Connection failed. Check base URL and model.");
       console.error(error);
+    }
+  };
+
+  const handleSyncSignIn = async () => {
+    setSyncActionStatus("working");
+    setSyncActionMessage(null);
+    try {
+      await signInWithPassword(syncEmail.trim(), syncPassword);
+      setSyncPassword("");
+      setSyncActionStatus("idle");
+      setSyncActionMessage("Signed in.");
+    } catch (error) {
+      setSyncActionStatus("error");
+      setSyncActionMessage(error instanceof Error ? error.message : "Sign-in failed.");
+    }
+  };
+
+  const handleSyncSignOut = async () => {
+    setSyncActionStatus("working");
+    setSyncActionMessage(null);
+    try {
+      await signOut();
+      setSyncActionStatus("idle");
+      setSyncActionMessage("Signed out.");
+    } catch (error) {
+      setSyncActionStatus("error");
+      setSyncActionMessage(error instanceof Error ? error.message : "Sign-out failed.");
+    }
+  };
+
+  const handleSyncNow = async () => {
+    setSyncActionStatus("working");
+    setSyncActionMessage(null);
+    try {
+      await syncNow();
+      setSyncActionStatus("idle");
+      setSyncActionMessage("Sync complete.");
+    } catch (error) {
+      setSyncActionStatus("error");
+      setSyncActionMessage(error instanceof Error ? error.message : "Sync failed.");
     }
   };
 
@@ -216,18 +275,86 @@ export default function Settings() {
           <div className="panel-title">Sync & SRD</div>
           <div className="panel-body">
             <p className="panel-copy">
-              Supabase sync is configured for a single-user workflow. UI controls will be added
-              alongside the account keychain integration.
+              Supabase sync is configured for a single-user workflow. Configure Supabase env vars
+              and sign in to enable background push/pull.
             </p>
             <div className="form-grid">
               <label className="form-field">
                 <span className="form-label">Sync Status</span>
-                <input className="form-input" value="Offline-first" disabled />
+                <input className="form-input" value={syncMessage ?? syncStatus} disabled />
+              </label>
+              <label className="form-field">
+                <span className="form-label">Supabase Config</span>
+                <input
+                  className="form-input"
+                  value={
+                    isSupabaseConfigured()
+                      ? "Configured"
+                      : "Missing VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY"
+                  }
+                  disabled
+                />
+              </label>
+              <label className="form-field">
+                <span className="form-label">Email</span>
+                <input
+                  className="form-input"
+                  value={syncEmail}
+                  onChange={(event) => setSyncEmail(event.target.value)}
+                  placeholder="you@example.com"
+                  autoComplete="username"
+                />
+              </label>
+              <label className="form-field">
+                <span className="form-label">Password</span>
+                <input
+                  className="form-input"
+                  type="password"
+                  value={syncPassword}
+                  onChange={(event) => setSyncPassword(event.target.value)}
+                  placeholder="••••••••"
+                  autoComplete="current-password"
+                />
+              </label>
+              <label className="form-field">
+                <span className="form-label">Sync Actions</span>
+                <input
+                  className="form-input"
+                  value={
+                    syncActionMessage ?? (syncActionStatus === "working" ? "Working..." : "Ready")
+                  }
+                  disabled
+                />
               </label>
               <label className="form-field">
                 <span className="form-label">SRD Source</span>
                 <input className="form-input" value="Bundled 5e SRD" disabled />
               </label>
+            </div>
+            <div className="button-row" style={{ marginTop: "1rem" }}>
+              <button
+                className="secondary-button"
+                onClick={handleSyncSignIn}
+                disabled={!isSupabaseConfigured() || !syncEmail.trim() || !syncPassword}
+              >
+                Sign In
+              </button>
+              <button
+                className="secondary-button"
+                onClick={handleSyncSignOut}
+                disabled={!isSupabaseConfigured()}
+              >
+                Sign Out
+              </button>
+              <div className="button-row right">
+                <button
+                  className="primary-button"
+                  onClick={handleSyncNow}
+                  disabled={!isSupabaseConfigured()}
+                >
+                  Sync Now
+                </button>
+              </div>
             </div>
           </div>
         </section>

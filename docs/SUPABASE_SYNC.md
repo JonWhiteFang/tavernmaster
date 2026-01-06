@@ -4,7 +4,7 @@ Sync is designed for one person using multiple Macs. The local SQLite database i
 
 ## Strategy
 
-- Use a single `user_key` stored in the OS keychain.
+- Use Supabase Auth with a single signed-in user (email/password).
 - Push local mutations into `sync_queue` and batch upload on a debounce timer.
 - Pull updates by `updated_at` and resolve conflicts by latest timestamp, with a manual override screen.
 
@@ -18,11 +18,17 @@ Sync is designed for one person using multiple Macs. The local SQLite database i
 
 Schema lives in `supabase/migrations/20260106160000_schema_mirror.sql`.
 
+## App Wiring
+
+- Configure `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (e.g. via `.env`).
+- Sign in via `Settings → Sync & SRD` to enable background sync.
+- Local writes enqueue upserts; sync debounces pushes and polls pulls periodically.
+
 ## Security
 
-- Never store the `user_key` in plaintext. Use the OS keychain via the Tauri secure command.
-- Consider encrypting journal and narrative logs at rest.
+- Plan to store long-lived sync credentials (refresh tokens / keys) in the OS keychain via the Tauri secure commands.
+- Journal and AI log content is encrypted before being stored locally and synced (see `src/app/data/encryption.ts`).
 
 ## Status
 
-- Supabase schema migration exists; push/pull and conflict UI are still pending.
+- Supabase schema migration and baseline push/pull are in place; conflict UI and keychain-backed credentials are still pending.
