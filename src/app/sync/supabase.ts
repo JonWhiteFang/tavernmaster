@@ -1,4 +1,5 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { keychainStorage } from "./keychainStorage";
 
 let client: SupabaseClient | null = null;
 
@@ -15,7 +16,8 @@ export function getSupabaseClient(): SupabaseClient | null {
       auth: {
         persistSession: true,
         autoRefreshToken: true,
-        detectSessionInUrl: false
+        detectSessionInUrl: false,
+        storage: keychainStorage
       }
     });
   }

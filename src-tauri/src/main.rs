@@ -8,6 +8,7 @@ fn main() {
     .invoke_handler(tauri::generate_handler![
       commands::set_secret,
       commands::get_secret,
+      commands::delete_secret,
       commands::encrypt_text,
       commands::decrypt_text
     ])

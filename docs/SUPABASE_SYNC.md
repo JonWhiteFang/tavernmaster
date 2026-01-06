@@ -24,11 +24,13 @@ Schema lives in `supabase/migrations/20260106160000_schema_mirror.sql`.
 - Sign in via `Settings → Sync & SRD` to enable background sync.
 - Local writes enqueue upserts; sync debounces pushes and polls pulls periodically.
 - Conflicts appear in `Settings → Sync & SRD` with “Keep Remote” / “Keep Local”.
+- Supabase auth session is persisted in the OS keychain (not localStorage).
 
 ## Security
 
 - Plan to store long-lived sync credentials (refresh tokens / keys) in the OS keychain via the Tauri secure commands.
 - Journal and AI log content is encrypted before being stored locally and synced (see `src/app/data/encryption.ts`).
+- LLM settings are persisted in the OS keychain (see `src/app/data/settings.ts`).
 
 ## Status
 

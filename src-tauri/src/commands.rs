@@ -29,6 +29,16 @@ pub fn get_secret(key: String) -> Result<SecretResponse, String> {
 }
 
 #[tauri::command]
+pub fn delete_secret(key: String) -> Result<(), String> {
+  let entry = Entry::new(SERVICE_NAME, &key).map_err(|err| err.to_string())?;
+  match entry.delete_password() {
+    Ok(()) => Ok(()),
+    Err(keyring::Error::NoEntry) => Ok(()),
+    Err(err) => Err(err.to_string()),
+  }
+}
+
+#[tauri::command]
 pub fn encrypt_text(plain: String) -> Result<String, String> {
   let key = get_or_create_key()?;
   let cipher = Aes256Gcm::new_from_slice(&key).map_err(|err| err.to_string())?;

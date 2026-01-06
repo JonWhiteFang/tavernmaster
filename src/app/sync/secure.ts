@@ -8,3 +8,7 @@ export async function getSecret(key: string): Promise<string | null> {
   const result = await invoke<{ value: string | null }>("get_secret", { key });
   return result.value;
 }
+
+export async function deleteSecret(key: string): Promise<void> {
+  await invoke("delete_secret", { key });
+}

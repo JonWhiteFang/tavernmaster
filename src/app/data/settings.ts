@@ -1,5 +1,6 @@
 import { getDatabase } from "./db";
 import { enqueueUpsertAndSchedule } from "../sync/ops";
+import { getSecret, setSecret } from "../sync/secure";
 
 export type LlmSettings = {
   baseUrl: string;
@@ -25,7 +26,30 @@ const defaultSettings: AppSettings = {
   }
 };
 
+const LLM_SETTINGS_SECRET_KEY = "llm_settings";
+
+async function readLlmSettingsFromKeychain(): Promise<LlmSettings | null> {
+  const raw = await getSecret(LLM_SETTINGS_SECRET_KEY);
+  if (!raw) {
+    return null;
+  }
+  try {
+    return JSON.parse(raw) as LlmSettings;
+  } catch {
+    return null;
+  }
+}
+
+async function writeLlmSettingsToKeychain(settings: LlmSettings): Promise<void> {
+  await setSecret(LLM_SETTINGS_SECRET_KEY, JSON.stringify(settings));
+}
+
 export async function getAppSettings(): Promise<AppSettings> {
+  const keychain = await readLlmSettingsFromKeychain();
+  if (keychain) {
+    return { llm: keychain };
+  }
+
   const db = await getDatabase();
   const rows = await db.select<{ value_json: string }[]>(
     "SELECT value_json FROM app_settings WHERE key = ?",
@@ -33,12 +57,15 @@ export async function getAppSettings(): Promise<AppSettings> {
   );
 
   if (!rows.length) {
+    await writeLlmSettingsToKeychain(defaultSettings.llm);
     await upsertAppSettings(defaultSettings);
     return defaultSettings;
   }
 
   try {
-    return JSON.parse(rows[0].value_json) as AppSettings;
+    const parsed = JSON.parse(rows[0].value_json) as AppSettings;
+    await writeLlmSettingsToKeychain(parsed.llm);
+    return parsed;
   } catch {
     return defaultSettings;
   }
@@ -53,6 +80,8 @@ export async function upsertAppSettings(settings: AppSettings): Promise<void> {
      ON CONFLICT(key) DO UPDATE SET value_json = excluded.value_json, updated_at = excluded.updated_at`,
     ["app_settings", JSON.stringify(settings), now, now]
   );
+
+  await writeLlmSettingsToKeychain(settings.llm);
 
   await enqueueUpsertAndSchedule("app_settings", "app_settings", {
     key: "app_settings",
