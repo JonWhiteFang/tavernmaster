@@ -1,0 +1,56 @@
+name: Build macOS DMG (Unsigned)
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-dmg:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Tauri bundle (dmg)
+        run: npm run tauri:build -- --bundles dmg
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ""
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ""
+
+      - name: Collect artifacts
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p artifacts
+          find src-tauri/target/release/bundle -maxdepth 6 -type f -name "*.dmg" -print -exec cp -v {} artifacts/ \; || true
+          APP_PATH="$(find src-tauri/target/release/bundle -maxdepth 6 -type d -name '*.app' | head -n 1 || true)"
+          if [[ -n "${APP_PATH}" ]]; then
+            echo "Bundled app: ${APP_PATH}"
+            tar -czf artifacts/TavernMaster.app.tgz -C "$(dirname "${APP_PATH}")" "$(basename "${APP_PATH}")"
+          fi
+          ls -la artifacts
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: tavern-master-macos-unsigned
+          path: artifacts/*

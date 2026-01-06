@@ -49,6 +49,7 @@ Recommended default model: `llama3.1:8b` (swap as needed for your Mac).
 
 ## Documentation
 
+- User guide: `docs/USER_GUIDE.md`
 - Architecture: `docs/ARCHITECTURE.md`
 - Data model: `docs/DATA_MODEL.md`
 - LLM runtime: `docs/LLM_RUNTIME.md`

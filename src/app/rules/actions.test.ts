@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { resolveAction } from "./actions";
+import { resolveAction, validateAction } from "./actions";
 import type { RulesState } from "./types";
 
 function sequenceRng(values: number[]) {
@@ -66,5 +66,30 @@ describe("action resolution", () => {
     expect(result.ok).toBe(true);
     const damage = result.effects.find((effect) => effect.type === "damage");
     expect(damage && "amount" in damage ? damage.amount : 0).toBe(4);
+  });
+
+  it("validates missing targets", () => {
+    const result = validateAction(
+      {
+        type: "attack",
+        attackerId: "attacker",
+        targetId: "missing",
+        attackBonus: 5,
+        damage: "1d6+2",
+        damageType: "slashing"
+      },
+      baseState
+    );
+
+    expect(result.ok).toBe(false);
+    expect(result.errors.join(" ")).toContain("Target not found");
+  });
+
+  it("adds a dodging condition for the dodge action", () => {
+    const rng = sequenceRng([]);
+    const result = resolveAction({ type: "dodge", actorId: "attacker" }, baseState, rng);
+    expect(result.ok).toBe(true);
+    const effect = result.effects.find((entry) => entry.type === "addCondition");
+    expect(effect && "condition" in effect ? effect.condition.name : "").toBe("dodging");
   });
 });
