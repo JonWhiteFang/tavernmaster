@@ -16,5 +16,5 @@ Sync is designed for one person using multiple Macs. The local SQLite database i
 
 ## Security
 
-- Never store the `user_key` in plaintext.
+- Never store the `user_key` in plaintext. Use the OS keychain via the Tauri secure command.
 - Consider encrypting journal and narrative logs at rest.

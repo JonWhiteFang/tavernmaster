@@ -66,8 +66,9 @@ A living plan to track progress for the AI Dungeon Master desktop app (Mac, offl
 
 ### 7) Security & Reliability
 
-- [ ] Secure storage for keys, offline data encryption for logs.
-- [ ] Input validation for AI outputs (JSON schema checks).
+- [x] Secure storage for keys.
+- [ ] Offline data encryption for logs.
+- [x] Input validation for AI outputs (JSON schema checks).
 - [ ] Crash recovery for in‑progress encounters.
 
 ### 8) Testing & Release

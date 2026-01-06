@@ -7,6 +7,7 @@ import { requestChatCompletion, streamChatCompletion } from "./client";
 import { parseJsonWithRepair } from "./parser";
 import { dmJsonSchema, dmSystemPrompt, partyJsonSchema, partySystemPrompt } from "./prompts";
 import type { ChatMessage, DmPayload, PartyActionPayload, PartyActionProposal } from "./types";
+import { dmPayloadSchema, partyPayloadSchema } from "./validation";
 
 export type DmContext = {
   campaignId?: string;
@@ -72,7 +73,15 @@ export async function getDmNarration(context: DmContext): Promise<DmPayload | nu
   });
 
   const parsed = await parseJsonWithRepair<unknown>(settings.llm, response.content, 1);
-  return normalizeDmPayload(parsed);
+  const normalized = normalizeDmPayload(parsed);
+  if (!normalized) {
+    return null;
+  }
+  const validated = dmPayloadSchema.safeParse(normalized);
+  if (!validated.success) {
+    return null;
+  }
+  return validated.data;
 }
 
 export async function getPartyProposals(context: PartyContext): Promise<PartyActionPayload | null> {
@@ -89,7 +98,15 @@ export async function getPartyProposals(context: PartyContext): Promise<PartyAct
   });
 
   const parsed = await parseJsonWithRepair<unknown>(settings.llm, response.content, 1);
-  return normalizePartyPayload(parsed);
+  const normalized = normalizePartyPayload(parsed);
+  if (!normalized) {
+    return null;
+  }
+  const validated = partyPayloadSchema.safeParse(normalized);
+  if (!validated.success) {
+    return null;
+  }
+  return validated.data;
 }
 
 export function validatePartyProposals(
