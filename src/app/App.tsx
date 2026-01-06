@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { initializeData } from "./data/init";
 import Dashboard from "./screens/Dashboard";
+import AiDirector from "./screens/AiDirector";
 import Settings from "./screens/Settings";
 
 type ScreenKey =
@@ -40,6 +41,8 @@ export default function App() {
     switch (activeScreen) {
       case "settings":
         return <Settings />;
+      case "director":
+        return <AiDirector />;
       case "dashboard":
         return <Dashboard />;
       default:

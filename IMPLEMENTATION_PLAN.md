@@ -53,7 +53,7 @@ A living plan to track progress for the AI Dungeon Master desktop app (Mac, offl
 - [ ] Party sheets (character stats, inventory, spells).
 - [ ] Map Studio (image import, tokens, fog, rulers).
 - [ ] Journal + narrative transcript with export.
-- [ ] AI Director panel (approval queue, tone, tactics profiles).
+- [x] AI Director panel (approval queue, tone, tactics profiles).
 - [x] Settings UI (LLM config, sync, SRD source, theme).
 
 ### 6) Supabase Sync (Single User)
