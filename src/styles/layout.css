@@ -910,3 +910,83 @@
     grid-template-columns: 1fr;
   }
 }
+
+.map-studio {
+  display: flex;
+  flex-direction: column;
+}
+
+.map-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.4rem;
+}
+
+.map-preview {
+  min-height: 260px;
+  border-radius: 16px;
+  border: 1px solid rgba(58, 51, 43, 0.18);
+  background: rgba(255, 248, 237, 0.8);
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.map-placeholder {
+  text-align: center;
+}
+
+.map-image {
+  width: 100%;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.token-summary {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.token-list {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.token-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(58, 51, 43, 0.15);
+  background: rgba(255, 248, 237, 0.9);
+}
+
+.token-row.token-party {
+  border-color: rgba(47, 111, 95, 0.4);
+}
+
+.token-row.token-enemy {
+  border-color: rgba(195, 107, 63, 0.5);
+}
+
+.token-row.token-neutral {
+  border-color: rgba(90, 85, 78, 0.4);
+}
+
+.token-name {
+  font-family: var(--font-title);
+  font-size: 1rem;
+}
+
+.token-role {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+}

@@ -17,7 +17,9 @@ export default [
         window: "readonly",
         fetch: "readonly",
         TextDecoder: "readonly",
-        ReadableStream: "readonly"
+        ReadableStream: "readonly",
+        URL: "readonly",
+        File: "readonly"
       },
       parserOptions: {
         ecmaVersion: "latest",
