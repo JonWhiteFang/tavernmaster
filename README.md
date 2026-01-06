@@ -5,6 +5,7 @@ Tavern Master is a Mac desktop AI Dungeon Master for solo D&D 5e (SRD-only). It 
 ## Highlights
 
 - AI Dungeon Master narration with structured, player-approved party actions.
+- SRD party creation with point-buy, ancestry bonuses, inventory, and spell tracking.
 - SRD-backed rules helpers for combat, conditions, and spellcasting.
 - Tactical encounter tools: initiative, map studio, journal, and exports.
 - Fantasy-luxury UI designed for long-form solo play.

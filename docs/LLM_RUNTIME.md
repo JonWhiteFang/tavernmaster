@@ -10,11 +10,16 @@ Tavern Master talks to local LLMs via an OpenAI-compatible API (Ollama or LM Stu
 ## Roles
 
 - **Dungeon Master**: narration, scene framing, tactical consequences, and rules reminders.
-- **Party Controller**: proposes actions for non-player party members with SRD references.
+- **Party Controller**: proposes actions for AI-controlled party members (control_mode = `ai`) with SRD references.
+
+## Party Context
+
+- Party rosters are assembled from the Party Sheets roster and only include AI-controlled members.
+- If no AI-controlled characters exist, the Party Controller has no roster to act on.
 
 ## Approval Flow
 
-1. AI returns structured JSON proposals for each ally.
+1. AI returns structured JSON proposals for each AI-controlled ally.
 2. Player approves, edits, or rejects each proposal.
 3. Approved actions are resolved via the rules engine before narration.
 

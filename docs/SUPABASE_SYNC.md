@@ -13,6 +13,8 @@ Sync is designed for one person using multiple Macs. The local SQLite database i
 - Mirror the local tables with the same primary keys (`TEXT` ids).
 - Store timestamps as ISO `TEXT` (`created_at`, `updated_at`) for SQLite parity and stable lexical ordering.
 - Include `deleted_at` (`TEXT`, nullable) on user-authored tables for soft deletes.
+- `characters` includes `control_mode`, `proficiencies_json`, and `ancestry_bonus_json`.
+- `character_inventory` and `character_spells` sync SRD ids plus state (quantity, attuned, prepared, slots_used).
 - Index `updated_at` (and common foreign keys) for efficient pulls.
 - Apply RLS with authenticated-only access (single-user assumption).
 

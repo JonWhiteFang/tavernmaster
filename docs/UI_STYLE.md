@@ -24,6 +24,8 @@ The visual language is "fantasy-luxury": rich materials, gilded accents, and edi
 - Panels: rounded, softly elevated, with warm highlights.
 - Tags: pill-shaped, uppercase, tactical cues.
 - Logs: cinematic transcript styling with clear timestamps.
+- Form sections (ex: Party Sheets): nested card panels, clear section headers, and dense grids for SRD choices.
+- Line items (inventory/spells): row-based controls with soft borders and clear action buttons.
 
 ## Iconography
 

@@ -11,11 +11,14 @@ User-authored tables also include nullable `deleted_at` for soft deletes (used b
 
 ## Characters & Party
 
-- `characters`: name, role (player/ally/npc), control_mode (player/ai), level, class, ancestry, background, alignment, proficiencies_json, ancestry_bonus_json.
+- `characters`: name, role (player/ally/npc), control_mode (player/ai), level, class, ancestry,
+  background, alignment, proficiencies_json, ancestry_bonus_json.
+  - `proficiencies_json`: JSON array of proficiencies (skills, tools, languages).
+  - `ancestry_bonus_json`: JSON array of flexible ancestry bonus selections (ex: Half-Elf).
 - `character_stats`: character_id, hp, hp_max, ac, initiative_bonus, speed.
 - `character_abilities`: character_id, ability, score, save_bonus.
-- `character_inventory`: character_id, item_id, quantity, attuned.
-- `character_spells`: character_id, spell_id, prepared, slots_used.
+- `character_inventory`: character_id, item_id (SRD id), quantity, attuned.
+- `character_spells`: character_id, spell_id (SRD id), prepared, slots_used.
 
 ## Encounters & Combat
 

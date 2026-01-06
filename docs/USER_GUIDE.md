@@ -27,6 +27,52 @@ npm run tauri:dev
 npm run tauri:build
 ```
 
+## Party Sheets & Character Creation
+
+Party creation happens in `Party Sheets`. Each party member is created individually and can be set to either player- or AI-controlled.
+
+### Create a party member
+
+1. Open `Party Sheets`.
+2. Click `Create Character`.
+3. Fill out the core identity fields (name, controller, role, class, level, ancestry, background, alignment).
+
+### Ability Scores (SRD Point Buy)
+
+- Use the SRD point-buy system (27 points total; scores 8-15).
+- The UI shows points remaining and prevents saving if you exceed budget.
+- Ancestry bonuses apply on top of your base scores.
+- Flexible ancestry bonuses (ex: Half-Elf) require selecting distinct ability options.
+
+### Derived Stats
+
+- By default, hit points, AC, initiative, and speed auto-calculate from SRD defaults:
+  - HP uses the class hit die and average rolls (level 1 max, later levels average).
+  - AC and initiative use Dexterity modifier.
+  - Speed comes from ancestry.
+- Disable auto-calc if you want manual overrides.
+- Use `Recalculate Stats` to snap back to SRD defaults.
+
+### Inventory & Spells
+
+- Add SRD items and set quantity + attunement.
+- Add SRD spells, mark them prepared, and track slots used.
+
+### Proficiencies
+
+- Enter a comma-separated list (skills, tools, languages, etc.).
+
+### Edit, Delete, and Control
+
+- Select a character in the roster, then `Edit` to update their sheet.
+- Toggle controller between `Player` and `AI` during creation or in edits.
+- `Delete` soft-removes the character (kept for sync history).
+
+### Campaign Gating
+
+- `Start/Continue Campaign` is disabled until at least one party member exists.
+- The AI Director only uses AI-controlled party members for proposals.
+
 ## Local LLM Setup
 
 Tavern Master talks to an OpenAI-compatible HTTP endpoint.
