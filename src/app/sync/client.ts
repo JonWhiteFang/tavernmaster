@@ -55,8 +55,10 @@ export async function initializeSync(): Promise<void> {
     }, 30_000);
   }
 
-  await pullOnce();
-  await pushOnce();
+  const pulled = await pullOnce();
+  if (pulled) {
+    await pushOnce();
+  }
 }
 
 export function schedulePush(debounceMs = 2000) {
@@ -70,38 +72,43 @@ export function schedulePush(debounceMs = 2000) {
 }
 
 export async function syncNow(): Promise<void> {
-  await pushOnce();
+  const pushed = await pushOnce();
+  if (!pushed) {
+    return;
+  }
   await pullOnce();
 }
 
-async function pushOnce(): Promise<void> {
+async function pushOnce(): Promise<boolean> {
   if (!isSupabaseConfigured()) {
     setStatus("offline", "Supabase not configured");
-    return;
+    return false;
   }
 
   setStatus("syncing", "Pushing changes...");
   const result = await pushPendingOps();
   if (!result.ok) {
     setStatus(result.error === "Not signed in." ? "offline" : "error", result.error);
-    return;
+    return false;
   }
   setStatus("idle", null);
+  return true;
 }
 
-async function pullOnce(): Promise<void> {
+async function pullOnce(): Promise<boolean> {
   if (!isSupabaseConfigured()) {
     setStatus("offline", "Supabase not configured");
-    return;
+    return false;
   }
 
   setStatus("syncing", "Pulling changes...");
   const result = await pullRemoteChanges();
   if (!result.ok) {
     setStatus(result.error === "Not signed in." ? "offline" : "error", result.error);
-    return;
+    return false;
   }
   setStatus("idle", null);
+  return true;
 }
 
 export async function signInWithPassword(email: string, password: string): Promise<void> {

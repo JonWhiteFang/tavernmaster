@@ -7,6 +7,27 @@ import { shouldCreateConflict } from "./conflicts.logic";
 
 type SyncResult = { ok: true } | { ok: false; error: string };
 
+const SYNC_TIMEOUT_MS = 8000;
+
+async function withTimeout<T>(
+  promise: Promise<T>,
+  label: string,
+  ms = SYNC_TIMEOUT_MS
+): Promise<T> {
+  let timeoutId: ReturnType<typeof globalThis.setTimeout> | null = null;
+  const timeoutPromise = new Promise<T>((_resolve, reject) => {
+    timeoutId = globalThis.setTimeout(() => reject(new Error(`timeout:${label}`)), ms);
+  });
+
+  try {
+    return await Promise.race([promise, timeoutPromise]);
+  } finally {
+    if (timeoutId !== null) {
+      globalThis.clearTimeout(timeoutId);
+    }
+  }
+}
+
 function normalizeRow(row: Record<string, unknown>): Record<string, unknown> {
   const normalized: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(row)) {
@@ -16,6 +37,7 @@ function normalizeRow(row: Record<string, unknown>): Record<string, unknown> {
 }
 
 export async function pushPendingOps(): Promise<SyncResult> {
+  const startedAt = Date.now();
   const supabase = getSupabaseClient();
   if (!supabase) {
     return {
@@ -24,7 +46,17 @@ export async function pushPendingOps(): Promise<SyncResult> {
     };
   }
 
-  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+  let sessionResponse: Awaited<ReturnType<typeof supabase.auth.getSession>>;
+  try {
+    sessionResponse = await withTimeout(supabase.auth.getSession(), "auth.getSession");
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    return {
+      ok: false,
+      error: `Push timed out at auth session load (${message}). Try restarting the app and signing in again.`
+    };
+  }
+  const { data: sessionData, error: sessionError } = sessionResponse;
   if (sessionError) {
     return { ok: false, error: sessionError.message };
   }
@@ -32,13 +64,28 @@ export async function pushPendingOps(): Promise<SyncResult> {
     return { ok: false, error: "Not signed in." };
   }
 
-  const ops = await listPendingOps(200);
+  let ops: Awaited<ReturnType<typeof listPendingOps>>;
+  try {
+    ops = await withTimeout(listPendingOps(200), "sqlite.listPendingOps");
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    return { ok: false, error: `Push timed out reading local sync queue (${message}).` };
+  }
   for (const op of ops) {
     if (op.op_type !== "upsert") {
       continue;
     }
 
-    const conflict = await hasOpenConflict(op.entity_type, op.entity_id);
+    let conflict = false;
+    try {
+      conflict = await withTimeout(
+        hasOpenConflict(op.entity_type, op.entity_id),
+        "sqlite.hasOpenConflict"
+      );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      return { ok: false, error: `Push timed out checking conflicts (${message}).` };
+    }
     if (conflict) {
       continue;
     }
@@ -51,17 +98,44 @@ export async function pushPendingOps(): Promise<SyncResult> {
     }
 
     const row = normalizeRow(payload as Record<string, unknown>);
-    const { error } = await supabase.from(op.entity_type).upsert(row, {
-      onConflict: op.entity_type === "app_settings" ? "key" : "id"
-    });
+    let upsertResponse: Awaited<ReturnType<ReturnType<typeof supabase.from>["upsert"]>>;
+    try {
+      upsertResponse = await withTimeout(
+        supabase.from(op.entity_type).upsert(row, {
+          onConflict: op.entity_type === "app_settings" ? "key" : "id"
+        }),
+        `rest.upsert.${op.entity_type}`
+      );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      const elapsedMs = Date.now() - startedAt;
+      return {
+        ok: false,
+        error: `Push timed out upserting ${op.entity_type} (${message}) after ${elapsedMs}ms.`
+      };
+    }
+    const { error } = upsertResponse;
     if (error) {
       return { ok: false, error: error.message };
     }
 
-    await deleteOp(op.id);
+    try {
+      await withTimeout(deleteOp(op.id), "sqlite.deleteOp");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      return { ok: false, error: `Push timed out updating local queue (${message}).` };
+    }
   }
 
-  await updateSyncState({ lastPushedAt: new Date().toISOString() });
+  try {
+    await withTimeout(
+      updateSyncState({ lastPushedAt: new Date().toISOString() }),
+      "sqlite.updateSyncState"
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    return { ok: false, error: `Push completed but timed out updating sync state (${message}).` };
+  }
   return { ok: true };
 }
 
