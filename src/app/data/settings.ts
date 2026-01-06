@@ -27,10 +27,26 @@ const defaultSettings: AppSettings = {
 };
 
 const LLM_SETTINGS_SECRET_KEY = "llm_settings";
+const KEYCHAIN_TIMEOUT_MS = 1000;
+
+async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  let timeoutId: number | null = null;
+  const timeoutPromise = new Promise<T>((_resolve, reject) => {
+    timeoutId = window.setTimeout(() => reject(new Error("timeout")), ms);
+  });
+
+  try {
+    return await Promise.race([promise, timeoutPromise]);
+  } finally {
+    if (timeoutId !== null) {
+      window.clearTimeout(timeoutId);
+    }
+  }
+}
 
 async function readLlmSettingsFromKeychain(): Promise<LlmSettings | null> {
   try {
-    const raw = await getSecret(LLM_SETTINGS_SECRET_KEY);
+    const raw = await withTimeout(getSecret(LLM_SETTINGS_SECRET_KEY), KEYCHAIN_TIMEOUT_MS);
     if (!raw) {
       return null;
     }
@@ -42,7 +58,10 @@ async function readLlmSettingsFromKeychain(): Promise<LlmSettings | null> {
 
 async function writeLlmSettingsToKeychain(settings: LlmSettings): Promise<void> {
   try {
-    await setSecret(LLM_SETTINGS_SECRET_KEY, JSON.stringify(settings));
+    await withTimeout(
+      setSecret(LLM_SETTINGS_SECRET_KEY, JSON.stringify(settings)),
+      KEYCHAIN_TIMEOUT_MS
+    );
   } catch {
     // Keychain might not be available in a browser dev session; settings still persist in SQLite.
   }
