@@ -6,6 +6,7 @@ dist/
 # Tauri / Rust
 src-tauri/target/
 src-tauri/.cargo/
+src-tauri/gen/
 
 # Env
 .env
