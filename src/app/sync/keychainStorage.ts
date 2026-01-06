@@ -6,14 +6,34 @@ function toKeychainKey(key: string): string {
   return `${PREFIX}${key}`;
 }
 
+function safeGetLocalStorage() {
+  try {
+    return window.localStorage;
+  } catch {
+    return null;
+  }
+}
+
 export const keychainStorage = {
   async getItem(key: string): Promise<string | null> {
-    return getSecret(toKeychainKey(key));
+    try {
+      return await getSecret(toKeychainKey(key));
+    } catch {
+      return safeGetLocalStorage()?.getItem(key) ?? null;
+    }
   },
   async setItem(key: string, value: string): Promise<void> {
-    await setSecret(toKeychainKey(key), value);
+    try {
+      await setSecret(toKeychainKey(key), value);
+    } catch {
+      safeGetLocalStorage()?.setItem(key, value);
+    }
   },
   async removeItem(key: string): Promise<void> {
-    await deleteSecret(toKeychainKey(key));
+    try {
+      await deleteSecret(toKeychainKey(key));
+    } catch {
+      safeGetLocalStorage()?.removeItem(key);
+    }
   }
 };

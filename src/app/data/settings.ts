@@ -29,11 +29,11 @@ const defaultSettings: AppSettings = {
 const LLM_SETTINGS_SECRET_KEY = "llm_settings";
 
 async function readLlmSettingsFromKeychain(): Promise<LlmSettings | null> {
-  const raw = await getSecret(LLM_SETTINGS_SECRET_KEY);
-  if (!raw) {
-    return null;
-  }
   try {
+    const raw = await getSecret(LLM_SETTINGS_SECRET_KEY);
+    if (!raw) {
+      return null;
+    }
     return JSON.parse(raw) as LlmSettings;
   } catch {
     return null;
@@ -41,28 +41,31 @@ async function readLlmSettingsFromKeychain(): Promise<LlmSettings | null> {
 }
 
 async function writeLlmSettingsToKeychain(settings: LlmSettings): Promise<void> {
-  await setSecret(LLM_SETTINGS_SECRET_KEY, JSON.stringify(settings));
+  try {
+    await setSecret(LLM_SETTINGS_SECRET_KEY, JSON.stringify(settings));
+  } catch {
+    // Keychain might not be available in a browser dev session; settings still persist in SQLite.
+  }
 }
 
 export async function getAppSettings(): Promise<AppSettings> {
-  const keychain = await readLlmSettingsFromKeychain();
-  if (keychain) {
-    return { llm: keychain };
-  }
-
-  const db = await getDatabase();
-  const rows = await db.select<{ value_json: string }[]>(
-    "SELECT value_json FROM app_settings WHERE key = ?",
-    ["app_settings"]
-  );
-
-  if (!rows.length) {
-    await writeLlmSettingsToKeychain(defaultSettings.llm);
-    await upsertAppSettings(defaultSettings);
-    return defaultSettings;
-  }
-
   try {
+    const keychain = await readLlmSettingsFromKeychain();
+    if (keychain) {
+      return { llm: keychain };
+    }
+
+    const db = await getDatabase();
+    const rows = await db.select<{ value_json: string }[]>(
+      "SELECT value_json FROM app_settings WHERE key = ?",
+      ["app_settings"]
+    );
+
+    if (!rows.length) {
+      await upsertAppSettings(defaultSettings);
+      return defaultSettings;
+    }
+
     const parsed = JSON.parse(rows[0].value_json) as AppSettings;
     await writeLlmSettingsToKeychain(parsed.llm);
     return parsed;

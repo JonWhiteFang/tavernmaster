@@ -43,13 +43,22 @@ export default function Settings() {
 
   useEffect(() => {
     let isMounted = true;
-    void getAppSettings().then((loaded) => {
-      if (!isMounted) {
-        return;
-      }
-      setSettings(loaded);
-      setDraft(loaded);
-    });
+    void getAppSettings()
+      .then((loaded) => {
+        if (!isMounted) {
+          return;
+        }
+        setSettings(loaded);
+        setDraft(loaded);
+      })
+      .catch((error) => {
+        console.error("Failed to load settings", error);
+        if (!isMounted) {
+          return;
+        }
+        setStatus("error");
+        setStatusMessage("Failed to load settings.");
+      });
     return () => {
       isMounted = false;
     };
