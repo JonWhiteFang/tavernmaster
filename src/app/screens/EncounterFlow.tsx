@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Character } from "../data/types";
 import { listCharacters } from "../data/characters";
+import {
+  clearEncounterRecovery,
+  loadEncounterRecovery,
+  saveEncounterRecovery
+} from "../data/encounter_recovery";
 import { advanceTurn, buildTurnOrder, rollInitiative, startEncounter } from "../rules/initiative";
 import { applyEffects } from "../rules/effects";
 import { createSeededRng } from "../rules/rng";
@@ -23,15 +28,40 @@ export default function EncounterFlow() {
   const [rngSeed, setRngSeed] = useState(42);
 
   useEffect(() => {
-    void listCharacters().then((characters) => {
-      if (!characters.length) {
+    let isMounted = true;
+    void (async () => {
+      const recovery = await loadEncounterRecovery();
+      if (!isMounted) {
+        return;
+      }
+      if (recovery) {
+        setRulesState(recovery.rulesState);
+        setLog(recovery.log);
+        setRngSeed(recovery.rngSeed);
+        return;
+      }
+
+      const characters = await listCharacters();
+      if (!isMounted || !characters.length) {
         return;
       }
       const state = buildRulesState(characters);
       setRulesState(state);
       setLog([]);
-    });
+    })();
+    return () => {
+      isMounted = false;
+    };
   }, []);
+
+  useEffect(() => {
+    if (!rulesState) {
+      return;
+    }
+    void saveEncounterRecovery({ rulesState, log, rngSeed }).catch((error) => {
+      console.error("Failed to save encounter recovery snapshot.", error);
+    });
+  }, [rulesState, log, rngSeed]);
 
   const turnOrder = useMemo(() => {
     if (!rulesState) {
@@ -106,6 +136,25 @@ export default function EncounterFlow() {
     }
   };
 
+  const handleStartFresh = async () => {
+    try {
+      await clearEncounterRecovery();
+    } catch (error) {
+      console.error("Failed to clear encounter recovery snapshot.", error);
+    }
+
+    const characters = await listCharacters();
+    if (!characters.length) {
+      setRulesState(null);
+      setLog([]);
+      return;
+    }
+
+    const state = buildRulesState(characters);
+    setRulesState(state);
+    setLog([]);
+  };
+
   return (
     <div className="encounter">
       <section className="panel" style={{ marginBottom: "1.4rem" }}>
@@ -120,6 +169,9 @@ export default function EncounterFlow() {
           <div className="panel-title">Initiative & Turn Order</div>
           <div className="panel-body">
             <div className="button-row">
+              <button className="ghost-button" onClick={handleStartFresh}>
+                Start Fresh
+              </button>
               <button className="secondary-button" onClick={handleRollInitiative}>
                 Roll Initiative
               </button>

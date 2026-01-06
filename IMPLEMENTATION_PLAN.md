@@ -69,7 +69,7 @@ A living plan to track progress for the AI Dungeon Master desktop app (Mac, offl
 - [x] Secure storage for keys.
 - [x] Offline data encryption for logs.
 - [x] Input validation for AI outputs (JSON schema checks).
-- [ ] Crash recovery for in‑progress encounters.
+- [x] Crash recovery for in‑progress encounters.
 
 ### 8) Testing & Release
 
