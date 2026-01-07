@@ -16,19 +16,26 @@ Blocks: Phase 1+
 
 ### Tasks
 
-- [ ] Confirm "no default campaign/party" applies even if existing data is present.
-- [ ] Define which screens show empty states and which actions are disabled without a campaign.
-- [ ] List the tutorial milestones (campaign, session, party, play loop, exports, tools).
-- [ ] Decide tutorial entry points (auto-run, Settings link, optional Dashboard CTA).
+- [x] Confirm "no default campaign/party" applies even if existing data is present.
+- [x] Define which screens show empty states and which actions are disabled without a campaign.
+- [x] List the tutorial milestones (campaign, session, party, play loop, exports, tools).
+- [x] Decide tutorial entry points (auto-run, Settings link, optional Dashboard CTA).
+
+### Notes
+
+- Startup behavior: active campaign/session remain null until the user explicitly selects or creates one, even if data exists.
+- Empty states: Play Workspace, Journal, Logs & Exports, Encounter, Map Studio, and AI Director show CTAs to Dashboard and Party; navigation stays available.
+- Tutorial milestones: campaign, session, party roster, play loop (narration/actions/notes), AI Director, Journal, Logs & Exports, Encounter, Map Studio, Context Rail + Timeline, Settings + sync.
+- Tutorial entry points: auto-run once for new users, with Skip; restart entry in Settings (optional Dashboard CTA later if needed).
 
 ### Acceptance criteria
 
-- [ ] Requirements for startup behavior and tutorial flow are documented.
-- [ ] Empty state and tutorial scope are agreed.
+- [x] Requirements for startup behavior and tutorial flow are documented.
+- [x] Empty state and tutorial scope are agreed.
 
 ### Testing
 
-- [ ] N/A (planning-only phase).
+- [x] N/A (planning-only phase).
 
 ## Phase 1 - No default campaign/session/party on first load
 
