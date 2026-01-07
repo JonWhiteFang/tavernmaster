@@ -209,16 +209,10 @@ export default function AiDirector() {
                       <div className="status-chip status-error">{proposal.errors.join(" ")}</div>
                     ) : null}
                     <div className="button-row">
-                      <button
-                        className="secondary-button"
-                        onClick={() => approve(index)}
-                      >
+                      <button className="secondary-button" onClick={() => approve(index)}>
                         Approve
                       </button>
-                      <button
-                        className="ghost-button"
-                        onClick={() => reject(index)}
-                      >
+                      <button className="ghost-button" onClick={() => reject(index)}>
                         Reject
                       </button>
                     </div>

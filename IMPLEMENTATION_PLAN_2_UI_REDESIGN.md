@@ -56,7 +56,7 @@ Blocks: Phase 2+
 - [x] Topbar always shows active campaign/session and they are changeable.
 - [x] Changing campaign/session updates Journal and Logs immediately.
 - [x] Nav labels match the PLAY / REFERENCE / SYSTEM intent with routes intact.
-- [x] Dashboard actions exist and "Resume Play" placeholder is present (Play Workspace in Phase 3).
+- [x] Dashboard actions exist and "Resume Play" routes to Play Workspace.
 - [x] Campaign/session creation uses modal forms (no prompt dialogs).
 - [x] No hardcoded campaign/session IDs remain for Journal or Logs.
 
@@ -103,22 +103,22 @@ Blocks: Phase 4+
 
 ### Tasks
 
-- [ ] Add `src/app/screens/PlayWorkspace.tsx` as the new home.
-- [ ] Implement tabs: Narration, Actions, Notes.
-- [ ] Narration tab: streaming output + parsed highlights.
-- [ ] Actions tab: readable proposal cards + approve/reject + Approve All Safe.
-- [ ] Notes tab: quick capture + link to Journal + import latest narration.
-- [ ] Add `useDmNarration` hook (stream state, output, highlights, stream/clear).
-- [ ] Add `usePartyProposals` hook (generate, approve/reject, approveAllSafe).
-- [ ] Refactor `AiDirector.tsx` to use shared hooks (no logic duplication).
-- [ ] Add shared UI primitives needed here: Button, Chip, Modal, Tabs, ListCard.
-- [ ] Apply `Panel` consistently across Play Workspace subviews.
+- [x] Add `src/app/screens/PlayWorkspace.tsx` as the new home.
+- [x] Implement tabs: Narration, Actions, Notes.
+- [x] Narration tab: streaming output + parsed highlights.
+- [x] Actions tab: readable proposal cards + approve/reject + Approve All Safe.
+- [x] Notes tab: quick capture + link to Journal + import latest narration.
+- [x] Add `useDmNarration` hook (stream state, output, highlights, stream/clear).
+- [x] Add `usePartyProposals` hook (generate, approve/reject, approveAllSafe).
+- [x] Refactor `AiDirector.tsx` to use shared hooks (no logic duplication).
+- [x] Add shared UI primitives needed here: Button, Chip, Modal, Tabs, ListCard.
+- [x] Apply `Panel` consistently across Play Workspace subviews.
 
 ### Acceptance criteria
 
-- [ ] Play Workspace supports the solo loop (narration -> actions -> notes).
-- [ ] Hooks are shared between Play Workspace and AI Director.
-- [ ] UI primitives are in place and used consistently where introduced.
+- [x] Play Workspace supports the solo loop (narration -> actions -> notes).
+- [x] Hooks are shared between Play Workspace and AI Director.
+- [x] UI primitives are in place and used consistently where introduced.
 
 ### Testing
 

@@ -67,13 +67,15 @@ export function usePartyProposals(partyContext: PartyContext, rulesState: RulesS
     );
   }, []);
 
-  const approve = useCallback((index: number) => updateProposalStatus(index, "approved"), [
-    updateProposalStatus
-  ]);
+  const approve = useCallback(
+    (index: number) => updateProposalStatus(index, "approved"),
+    [updateProposalStatus]
+  );
 
-  const reject = useCallback((index: number) => updateProposalStatus(index, "rejected"), [
-    updateProposalStatus
-  ]);
+  const reject = useCallback(
+    (index: number) => updateProposalStatus(index, "rejected"),
+    [updateProposalStatus]
+  );
 
   const approveAllSafe = useCallback(() => {
     setProposals((current) =>

@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import type { PartyContext, DmContext } from "../ai/orchestrator";
 import { buildRoster, buildRulesState } from "../ai/partyRoster";
 import type { RulesState } from "../rules/types";
-import type { Character } from "../data/types";
 import { listCharacters } from "../data/characters";
 import { listAiLogs } from "../data/ai_logs";
 import { createJournalEntry } from "../data/journal";
@@ -42,9 +41,10 @@ export default function PlayWorkspace() {
   const [activeTab, setActiveTab] = useState<TabKey>("narration");
   const [noteTitle, setNoteTitle] = useState("");
   const [noteContent, setNoteContent] = useState("");
-  const [noteStatus, setNoteStatus] = useState<{ tone: "success" | "error"; message: string } | null>(
-    null
-  );
+  const [noteStatus, setNoteStatus] = useState<{
+    tone: "success" | "error";
+    message: string;
+  } | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
