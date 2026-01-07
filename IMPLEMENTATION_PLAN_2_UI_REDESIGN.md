@@ -251,20 +251,20 @@ Blocks: Release
 
 ### Tasks
 
-- [ ] Active campaign/session always visible and changeable in topbar.
-- [ ] Journal and Logs never hard-code seed IDs; they reflect selected context.
-- [ ] Core loop runs from Play Workspace without hunting.
-- [ ] Timeline drawer shows stored AI logs and is usable from any screen.
-- [ ] All existing features remain reachable from navigation.
-- [ ] Keyboard shortcuts work for major screens.
-- [ ] Basic accessibility: focus states, labels, keyboard activation on list items.
+- [x] Active campaign/session always visible and changeable in topbar.
+- [x] Journal and Logs never hard-code seed IDs; they reflect selected context.
+- [x] Core loop runs from Play Workspace without hunting.
+- [x] Timeline drawer shows stored AI logs and is usable from any screen.
+- [x] All existing features remain reachable from navigation.
+- [x] Keyboard shortcuts work for major screens.
+- [x] Basic accessibility: focus states, labels, keyboard activation on list items.
 
 ### Acceptance criteria
 
-- [ ] All checklist items above are complete.
+- [x] All checklist items above are complete.
 
 ### Testing
 
-- [ ] `npm run lint`
-- [ ] `npm run test`
-- [ ] `npm run format:check`
+- [x] `npm run lint`
+- [x] `npm run test`
+- [x] `npm run format:check`
