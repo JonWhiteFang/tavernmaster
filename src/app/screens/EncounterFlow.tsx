@@ -11,6 +11,8 @@ import { applyEffects } from "../rules/effects";
 import { createSeededRng } from "../rules/rng";
 import { resolveAction } from "../rules/actions";
 import type { RulesState, RulesParticipant } from "../rules/types";
+import Button from "../ui/Button";
+import Chip from "../ui/Chip";
 
 const demoAction = {
   type: "attack",
@@ -26,6 +28,7 @@ export default function EncounterFlow() {
   const [rulesState, setRulesState] = useState<RulesState | null>(null);
   const [log, setLog] = useState<string[]>([]);
   const [rngSeed, setRngSeed] = useState(42);
+  const [loadedRecovery, setLoadedRecovery] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -38,6 +41,7 @@ export default function EncounterFlow() {
         setRulesState(recovery.rulesState);
         setLog(recovery.log);
         setRngSeed(recovery.rngSeed);
+        setLoadedRecovery(true);
         return;
       }
 
@@ -48,6 +52,7 @@ export default function EncounterFlow() {
       const state = buildRulesState(characters);
       setRulesState(state);
       setLog([]);
+      setLoadedRecovery(false);
     })();
     return () => {
       isMounted = false;
@@ -148,6 +153,7 @@ export default function EncounterFlow() {
       console.error("Failed to clear encounter recovery snapshot.", error);
     }
 
+    setLoadedRecovery(false);
     const characters = await listCharacters();
     if (!characters.length) {
       setRulesState(null);
@@ -158,6 +164,15 @@ export default function EncounterFlow() {
     const state = buildRulesState(characters);
     setRulesState(state);
     setLog([]);
+  };
+
+  const handleClearSnapshot = async () => {
+    try {
+      await clearEncounterRecovery();
+      setLoadedRecovery(false);
+    } catch (error) {
+      console.error("Failed to clear encounter recovery snapshot.", error);
+    }
   };
 
   return (
@@ -174,20 +189,27 @@ export default function EncounterFlow() {
           <div className="panel-title">Initiative & Turn Order</div>
           <div className="panel-body">
             <div className="button-row">
-              <button className="ghost-button" onClick={handleStartFresh}>
+              <Button variant="ghost" onClick={handleStartFresh}>
                 Start Fresh
-              </button>
-              <button className="secondary-button" onClick={handleRollInitiative}>
+              </Button>
+              {loadedRecovery ? (
+                <Button variant="ghost" onClick={handleClearSnapshot}>
+                  Clear Snapshot
+                </Button>
+              ) : null}
+              <Button variant="secondary" onClick={handleRollInitiative}>
                 Roll Initiative
-              </button>
-              <button className="secondary-button" onClick={handleStartEncounter}>
+              </Button>
+              <Button variant="secondary" onClick={handleStartEncounter}>
                 Start Encounter
-              </button>
-              <button className="primary-button" onClick={handleAdvanceTurn}>
-                Advance Turn
-              </button>
+              </Button>
+              <Button onClick={handleAdvanceTurn}>Advance Turn</Button>
             </div>
-
+            <div className="status-row" style={{ marginTop: "1rem" }}>
+              <Chip>Round {rulesState?.round ?? 1}</Chip>
+              <Chip>Combatants {turnOrder.length}</Chip>
+              {loadedRecovery ? <Chip>Recovery Snapshot Loaded</Chip> : null}
+            </div>
             <div className="form-field" style={{ maxWidth: 220 }}>
               <span className="form-label">Seeded RNG</span>
               <input
@@ -209,6 +231,13 @@ export default function EncounterFlow() {
             ) : null}
 
             <div className="turn-list">
+              <div className="turn-row turn-row-header">
+                <span>#</span>
+                <span>Name</span>
+                <span>HP</span>
+                <span>AC</span>
+                <span>Cond</span>
+              </div>
               {turnOrder.map((participant, index) => (
                 <div
                   key={participant.id}
@@ -218,7 +247,11 @@ export default function EncounterFlow() {
                 >
                   <span>{index + 1}</span>
                   <span>{participant.name}</span>
-                  <span>HP {participant.hp}</span>
+                  <span>
+                    {participant.hp}/{participant.maxHp}
+                  </span>
+                  <span>{participant.armorClass}</span>
+                  <span>{participant.conditions.length}</span>
                 </div>
               ))}
             </div>
