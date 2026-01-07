@@ -73,3 +73,43 @@ export async function createJournalEntry(input: {
     updatedAt: now
   };
 }
+
+export async function updateJournalEntry(input: {
+  id: string;
+  campaignId: string;
+  title: string;
+  content: string;
+  createdAt: string;
+}): Promise<JournalEntry> {
+  const db = await getDatabase();
+  const now = new Date().toISOString();
+  const title = await encryptValue(input.title);
+  const content = await encryptValue(input.content);
+
+  await db.execute(
+    `UPDATE journal_entries
+     SET title = ?, content = ?, updated_at = ?
+     WHERE id = ? AND campaign_id = ?`,
+    [title, content, now, input.id, input.campaignId]
+  );
+
+  await enqueueUpsertAndSchedule("journal_entries", input.id, {
+    id: input.id,
+    campaign_id: input.campaignId,
+    title,
+    content,
+    tags: null,
+    deleted_at: null,
+    created_at: input.createdAt,
+    updated_at: now
+  });
+
+  return {
+    id: input.id,
+    campaignId: input.campaignId,
+    title: input.title,
+    content: input.content,
+    createdAt: input.createdAt,
+    updatedAt: now
+  };
+}
