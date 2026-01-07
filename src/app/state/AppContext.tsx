@@ -32,6 +32,14 @@ export function AppProvider({ children }: PropsWithChildren) {
     "tm.activeSessionId",
     null
   );
+  const [hasSelectedCampaign, setHasSelectedCampaign] = usePersistentState(
+    "tm.hasSelectedCampaign",
+    false
+  );
+  const [hasSelectedSession, setHasSelectedSession] = usePersistentState(
+    "tm.hasSelectedSession",
+    false
+  );
 
   const setCampaignId = useCallback(
     (id: string | null) => {
@@ -39,9 +47,28 @@ export function AppProvider({ children }: PropsWithChildren) {
         return;
       }
       setActiveCampaignId(id);
+      setHasSelectedCampaign(Boolean(id));
       setActiveSessionId(null);
+      setHasSelectedSession(false);
     },
-    [activeCampaignId, setActiveCampaignId, setActiveSessionId]
+    [
+      activeCampaignId,
+      setActiveCampaignId,
+      setActiveSessionId,
+      setHasSelectedCampaign,
+      setHasSelectedSession
+    ]
+  );
+
+  const setSessionId = useCallback(
+    (id: string | null) => {
+      if (id === activeSessionId) {
+        return;
+      }
+      setActiveSessionId(id);
+      setHasSelectedSession(Boolean(id));
+    },
+    [activeSessionId, setActiveSessionId, setHasSelectedSession]
   );
 
   const ensureDefaults = useCallback(
@@ -49,30 +76,57 @@ export function AppProvider({ children }: PropsWithChildren) {
       const campaignsToUse = nextCampaigns ?? campaigns;
       const sessionsToUse = nextSessions ?? sessions;
 
-      let nextCampaignId = activeCampaignId;
-      if (!nextCampaignId || !campaignsToUse.some((campaign) => campaign.id === nextCampaignId)) {
-        nextCampaignId = campaignsToUse[0]?.id ?? null;
-        if (nextCampaignId !== activeCampaignId) {
-          setCampaignId(nextCampaignId);
+      if (!hasSelectedCampaign) {
+        if (activeCampaignId !== null) {
+          setActiveCampaignId(null);
         }
+        if (activeSessionId !== null) {
+          setActiveSessionId(null);
+        }
+        if (hasSelectedSession) {
+          setHasSelectedSession(false);
+        }
+        return;
       }
 
-      if (!nextCampaignId) {
+      const campaignExists = activeCampaignId
+        ? campaignsToUse.some((campaign) => campaign.id === activeCampaignId)
+        : false;
+      if (!campaignExists) {
+        setActiveCampaignId(null);
+        setActiveSessionId(null);
+        setHasSelectedCampaign(false);
+        setHasSelectedSession(false);
+        return;
+      }
+
+      if (!hasSelectedSession) {
         if (activeSessionId !== null) {
           setActiveSessionId(null);
         }
         return;
       }
 
-      let nextSessionId = activeSessionId;
-      if (!nextSessionId || !sessionsToUse.some((session) => session.id === nextSessionId)) {
-        nextSessionId = sessionsToUse[0]?.id ?? null;
-        if (nextSessionId !== activeSessionId) {
-          setActiveSessionId(nextSessionId);
-        }
+      const sessionExists = activeSessionId
+        ? sessionsToUse.some((session) => session.id === activeSessionId)
+        : false;
+      if (!sessionExists) {
+        setActiveSessionId(null);
+        setHasSelectedSession(false);
       }
     },
-    [activeCampaignId, activeSessionId, campaigns, sessions, setActiveSessionId, setCampaignId]
+    [
+      activeCampaignId,
+      activeSessionId,
+      campaigns,
+      sessions,
+      hasSelectedCampaign,
+      hasSelectedSession,
+      setActiveCampaignId,
+      setActiveSessionId,
+      setHasSelectedCampaign,
+      setHasSelectedSession
+    ]
   );
 
   const refreshCampaigns = useCallback(async () => {
@@ -87,13 +141,14 @@ export function AppProvider({ children }: PropsWithChildren) {
       if (!resolvedCampaignId) {
         setSessions([]);
         setActiveSessionId(null);
+        setHasSelectedSession(false);
         return;
       }
       const data = await listSessions(resolvedCampaignId);
       setSessions(data);
       ensureDefaults(campaigns, data);
     },
-    [activeCampaignId, campaigns, ensureDefaults, setActiveSessionId]
+    [activeCampaignId, campaigns, ensureDefaults, setActiveSessionId, setHasSelectedSession]
   );
 
   useEffect(() => {
@@ -104,18 +159,19 @@ export function AppProvider({ children }: PropsWithChildren) {
     if (!activeCampaignId) {
       setSessions([]);
       setActiveSessionId(null);
+      setHasSelectedSession(false);
       return;
     }
     void refreshSessions(activeCampaignId);
-  }, [activeCampaignId, refreshSessions, setActiveSessionId]);
+  }, [activeCampaignId, refreshSessions, setActiveSessionId, setHasSelectedSession]);
 
   const activeCampaign = useMemo(
-    () => campaigns.find((campaign) => campaign.id === activeCampaignId) ?? campaigns[0] ?? null,
+    () => campaigns.find((campaign) => campaign.id === activeCampaignId) ?? null,
     [campaigns, activeCampaignId]
   );
 
   const activeSession = useMemo(
-    () => sessions.find((session) => session.id === activeSessionId) ?? sessions[0] ?? null,
+    () => sessions.find((session) => session.id === activeSessionId) ?? null,
     [sessions, activeSessionId]
   );
 
@@ -128,7 +184,7 @@ export function AppProvider({ children }: PropsWithChildren) {
       activeCampaign,
       activeSession,
       setActiveCampaignId: setCampaignId,
-      setActiveSessionId,
+      setActiveSessionId: setSessionId,
       refreshCampaigns,
       refreshSessions,
       ensureDefaults
@@ -144,7 +200,7 @@ export function AppProvider({ children }: PropsWithChildren) {
       refreshSessions,
       ensureDefaults,
       setCampaignId,
-      setActiveSessionId
+      setSessionId
     ]
   );
 

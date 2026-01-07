@@ -65,15 +65,12 @@ export default function Topbar({ onNewJournal, onExport, onSearch }: TopbarProps
             onChange={(event) => setActiveCampaignId(event.target.value || null)}
             disabled={!campaigns.length}
           >
-            {!campaigns.length ? (
-              <option value="">No campaigns</option>
-            ) : (
-              campaigns.map((campaign) => (
-                <option key={campaign.id} value={campaign.id}>
-                  {campaign.name}
-                </option>
-              ))
-            )}
+            <option value="">{campaigns.length ? "Select campaign" : "No campaigns"}</option>
+            {campaigns.map((campaign) => (
+              <option key={campaign.id} value={campaign.id}>
+                {campaign.name}
+              </option>
+            ))}
           </select>
         </label>
         <label className="form-field topbar-field">
@@ -84,15 +81,12 @@ export default function Topbar({ onNewJournal, onExport, onSearch }: TopbarProps
             onChange={(event) => setActiveSessionId(event.target.value || null)}
             disabled={!sessions.length}
           >
-            {!sessions.length ? (
-              <option value="">No sessions</option>
-            ) : (
-              sessions.map((session) => (
-                <option key={session.id} value={session.id}>
-                  {session.title}
-                </option>
-              ))
-            )}
+            <option value="">{sessions.length ? "Select session" : "No sessions"}</option>
+            {sessions.map((session) => (
+              <option key={session.id} value={session.id}>
+                {session.title}
+              </option>
+            ))}
           </select>
         </label>
       </div>
