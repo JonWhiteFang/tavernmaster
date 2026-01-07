@@ -105,8 +105,8 @@ function AppShell() {
   }, []);
 
   useEffect(() => {
-    const handleNavigate = (event: Event) => {
-      const detail = (event as CustomEvent<{ screen?: string }>).detail;
+    const handleNavigate = (event: globalThis.Event) => {
+      const detail = (event as globalThis.CustomEvent<{ screen?: string }>).detail;
       if (!detail?.screen) {
         return;
       }

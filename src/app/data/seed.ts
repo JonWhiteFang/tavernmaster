@@ -87,7 +87,9 @@ export type SeedResult = {
   characterCount: number;
 };
 
-export async function seedDatabase(options: { includeDemoData?: boolean } = {}): Promise<SeedResult> {
+export async function seedDatabase(
+  options: { includeDemoData?: boolean } = {}
+): Promise<SeedResult> {
   const db = await getDatabase();
   const includeDemoData = options.includeDemoData ?? false;
   const [

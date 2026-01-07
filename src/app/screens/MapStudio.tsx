@@ -136,9 +136,7 @@ export default function MapStudio() {
       <div className="map-studio">
         <section className="panel">
           <div className="panel-title">Map Studio</div>
-          <div className="panel-subtitle">
-            Select a campaign to upload maps and manage tokens.
-          </div>
+          <div className="panel-subtitle">Select a campaign to upload maps and manage tokens.</div>
           <div className="button-row" style={{ marginTop: "1.2rem" }}>
             <Button onClick={() => handleNavigate("dashboard")}>Open Campaigns & Sessions</Button>
             <Button variant="secondary" onClick={() => handleNavigate("party")}>
