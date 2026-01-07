@@ -76,7 +76,9 @@ function AppShell() {
     { key: "4", meta: true, handler: () => setActiveScreen("map") },
     { key: "5", meta: true, handler: () => setActiveScreen("journal") },
     { key: "6", meta: true, handler: () => setActiveScreen("director") },
-    { key: "7", meta: true, handler: () => setActiveScreen("logs") }
+    { key: "7", meta: true, handler: () => setActiveScreen("logs") },
+    { key: "8", meta: true, handler: () => setActiveScreen("party") },
+    { key: "9", meta: true, handler: () => setActiveScreen("settings") }
   ]);
 
   useEffect(() => {
