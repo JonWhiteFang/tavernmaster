@@ -64,6 +64,7 @@ export default function Topbar({ onNewJournal, onExport, onSearch }: TopbarProps
             value={activeCampaignId ?? ""}
             onChange={(event) => setActiveCampaignId(event.target.value || null)}
             disabled={!campaigns.length}
+            data-tutorial-id="topbar-campaign"
           >
             <option value="">{campaigns.length ? "Select campaign" : "No campaigns"}</option>
             {campaigns.map((campaign) => (
@@ -80,6 +81,7 @@ export default function Topbar({ onNewJournal, onExport, onSearch }: TopbarProps
             value={activeSessionId ?? ""}
             onChange={(event) => setActiveSessionId(event.target.value || null)}
             disabled={!sessions.length}
+            data-tutorial-id="topbar-session"
           >
             <option value="">{sessions.length ? "Select session" : "No sessions"}</option>
             {sessions.map((session) => (
@@ -99,13 +101,21 @@ export default function Topbar({ onNewJournal, onExport, onSearch }: TopbarProps
           </div>
         </div>
         <div className="topbar-actions">
-          <button className="secondary-button" onClick={onNewJournal}>
+          <button
+            className="secondary-button"
+            onClick={onNewJournal}
+            data-tutorial-id="topbar-new-journal"
+          >
             New Journal
           </button>
-          <button className="secondary-button" onClick={onExport}>
+          <button
+            className="secondary-button"
+            onClick={onExport}
+            data-tutorial-id="topbar-export"
+          >
             Export
           </button>
-          <button className="ghost-button" onClick={onSearch}>
+          <button className="ghost-button" onClick={onSearch} data-tutorial-id="topbar-search">
             Search
           </button>
         </div>

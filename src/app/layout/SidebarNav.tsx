@@ -30,6 +30,7 @@ export default function SidebarNav<ScreenKey extends string>({
               className={`nav-item ${activeScreen === item.id ? "is-active" : ""}`}
               onClick={() => onNavigate(item.id)}
               aria-current={activeScreen === item.id ? "page" : undefined}
+              data-tutorial-id={`nav-${item.id}`}
             >
               {item.label}
             </button>

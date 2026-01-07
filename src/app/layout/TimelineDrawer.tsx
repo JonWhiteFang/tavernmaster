@@ -40,6 +40,7 @@ export default function TimelineDrawer({ onOpenLogs }: TimelineDrawerProps) {
           className="ghost-button timeline-toggle"
           onClick={() => setIsOpen(!isOpen)}
           aria-expanded={isOpen}
+          data-tutorial-id="timeline-toggle"
         >
           {toggleLabel}
         </button>
@@ -49,7 +50,11 @@ export default function TimelineDrawer({ onOpenLogs }: TimelineDrawerProps) {
             {entries.length ? `${entries.length} recent entries` : "No entries yet"}
           </div>
         </div>
-        <button className="secondary-button" onClick={onOpenLogs}>
+        <button
+          className="secondary-button"
+          onClick={onOpenLogs}
+          data-tutorial-id="timeline-open-logs"
+        >
           Open Transcripts
         </button>
       </div>
