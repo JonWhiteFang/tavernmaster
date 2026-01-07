@@ -22,6 +22,11 @@ export default function LogsExports() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeKinds, setActiveKinds] = useState<AiLogEntry["kind"][]>([]);
+  const [exportStatus, setExportStatus] = useState<{
+    tone: "success" | "error";
+    message: string;
+  } | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
     if (!activeCampaignId) {
@@ -111,6 +116,49 @@ export default function LogsExports() {
     openPrintWindow(`${kindLabels[activeEntry.kind]} Log`, content);
   };
 
+  const handleExportSessionTranscript = async () => {
+    if (!activeCampaignId) {
+      setExportStatus({ tone: "error", message: "Select a campaign before exporting." });
+      return;
+    }
+    setIsExporting(true);
+    setExportStatus(null);
+    try {
+      const logs = await listAiLogs({
+        campaignId: activeCampaignId,
+        sessionId: activeSessionId ?? undefined,
+        limit: 200
+      });
+      const filteredLogs = activeKinds.length
+        ? logs.filter((entry) => activeKinds.includes(entry.kind))
+        : logs;
+      if (!filteredLogs.length) {
+        setExportStatus({ tone: "error", message: "No logs available for export." });
+        return;
+      }
+      const transcriptTitle = activeSessionId ? "Session Transcript" : "Campaign Transcript";
+      const body = filteredLogs
+        .slice()
+        .reverse()
+        .map(
+          (entry) =>
+            `## ${kindLabels[entry.kind]} — ${formatDateTime(entry.createdAt)}\n\n${entry.content}`
+        )
+        .join("\n\n");
+      const content = `# ${transcriptTitle}\n\nGenerated: ${formatDateTime(
+        new Date().toISOString()
+      )}\n\n${body}\n`;
+      const filename = toFilename(transcriptTitle, "transcript", "md");
+      downloadTextFile(filename, content, "text/markdown");
+      setExportStatus({ tone: "success", message: "Transcript exported." });
+    } catch (error) {
+      console.error("Failed to export transcript", error);
+      setExportStatus({ tone: "error", message: "Unable to export transcript." });
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <div className="logs">
       <section className="panel" style={{ marginBottom: "1.4rem" }}>
@@ -151,6 +199,20 @@ export default function LogsExports() {
               </button>
             ))}
           </div>
+        </div>
+        <div className="button-row right">
+          <Button
+            variant="secondary"
+            onClick={handleExportSessionTranscript}
+            disabled={!activeCampaignId || isExporting}
+          >
+            {isExporting
+              ? "Exporting..."
+              : activeSessionId
+                ? "Export Session Transcript"
+                : "Export Campaign Transcript"}
+          </Button>
+          {exportStatus ? <Chip tone={exportStatus.tone}>{exportStatus.message}</Chip> : null}
         </div>
       </section>
 
