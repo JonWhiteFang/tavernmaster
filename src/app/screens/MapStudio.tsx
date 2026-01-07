@@ -112,9 +112,7 @@ export default function MapStudio() {
   };
 
   const handleRenameToken = (id: string, name: string) => {
-    setTokens((current) =>
-      current.map((token) => (token.id === id ? { ...token, name } : token))
-    );
+    setTokens((current) => current.map((token) => (token.id === id ? { ...token, name } : token)));
   };
 
   const handleToggleRoleFilter = (role: Token["role"]) => {
@@ -124,9 +122,7 @@ export default function MapStudio() {
   };
 
   const handleRoleChange = (id: string, role: Token["role"]) => {
-    setTokens((current) =>
-      current.map((token) => (token.id === id ? { ...token, role } : token))
-    );
+    setTokens((current) => current.map((token) => (token.id === id ? { ...token, role } : token)));
   };
 
   return (
