@@ -22,6 +22,11 @@ button {
   font: inherit;
 }
 
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
 ul {
   margin: 0;
   padding-left: 1.1rem;
