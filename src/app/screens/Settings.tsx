@@ -16,6 +16,7 @@ import { countOpenConflicts, listOpenConflicts, type SyncConflictRow } from "../
 import { keepLocalForConflict, keepRemoteForConflict } from "../sync/resolve";
 import { useAppContext } from "../state/AppContext";
 import { useToast } from "../ui/Toast";
+import { useTutorial } from "../ui/Tutorial";
 
 const testMessages: ChatMessage[] = [
   { role: "system", content: "Reply with 'OK' if you can read this." },
@@ -29,6 +30,16 @@ type TestState = "idle" | "testing" | "success" | "error";
 export default function Settings() {
   const { refreshCampaigns, refreshSessions } = useAppContext();
   const { pushToast } = useToast();
+  const {
+    status: tutorialStatus,
+    stepIndex: tutorialStepIndex,
+    totalSteps: tutorialTotalSteps,
+    startTutorial,
+    resumeTutorial,
+    pauseTutorial,
+    restartTutorial,
+    resetTutorial
+  } = useTutorial();
   const [settings, setSettings] = useState<AppSettings | null>(null);
   const [draft, setDraft] = useState<AppSettings | null>(null);
   const [status, setStatus] = useState<StatusState>("idle");
@@ -104,6 +115,34 @@ export default function Settings() {
     }
     return JSON.stringify(settings) !== JSON.stringify(draft);
   }, [settings, draft]);
+
+  const tutorialAction = useMemo(() => {
+    if (tutorialStatus === "paused") {
+      return { label: "Resume Tutorial", handler: resumeTutorial };
+    }
+    if (tutorialStatus === "active") {
+      return { label: "Pause Tutorial", handler: pauseTutorial };
+    }
+    if (tutorialStatus === "completed" || tutorialStatus === "skipped") {
+      return { label: "Restart Tutorial", handler: restartTutorial };
+    }
+    return { label: "Start Tutorial", handler: startTutorial };
+  }, [pauseTutorial, resumeTutorial, restartTutorial, startTutorial, tutorialStatus]);
+
+  const tutorialStatusLabel = useMemo(() => {
+    switch (tutorialStatus) {
+      case "active":
+        return "In progress";
+      case "paused":
+        return "Paused";
+      case "completed":
+        return "Completed";
+      case "skipped":
+        return "Skipped";
+      default:
+        return "Not started";
+    }
+  }, [tutorialStatus]);
 
   if (!draft) {
     return (
@@ -379,6 +418,29 @@ export default function Settings() {
                   Save
                 </button>
               </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="panel settings-card">
+          <div className="panel-title">Tutorial</div>
+          <div className="panel-body">
+            <p className="panel-copy">
+              Follow the guided walkthrough to learn the solo play loop and core tools.
+            </p>
+            <div className="status-row" style={{ marginTop: "1rem" }}>
+              <span className="status-chip">Status: {tutorialStatusLabel}</span>
+              <span className="status-chip">
+                Progress: {tutorialTotalSteps ? tutorialStepIndex + 1 : 0}/{tutorialTotalSteps}
+              </span>
+            </div>
+            <div className="button-row" style={{ marginTop: "1rem" }}>
+              <button className="secondary-button" onClick={tutorialAction.handler}>
+                {tutorialAction.label}
+              </button>
+              <button className="ghost-button" onClick={resetTutorial}>
+                Reset Progress
+              </button>
             </div>
           </div>
         </section>
