@@ -5,7 +5,6 @@ import { listAiLogs } from "../data/ai_logs";
 import { downloadTextFile, openPrintWindow, toFilename } from "../ui/exports";
 import { useAppContext } from "../state/AppContext";
 import Button from "../ui/Button";
-import Chip from "../ui/Chip";
 import { useToast } from "../ui/Toast";
 
 export default function Journal() {
