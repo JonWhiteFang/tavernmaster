@@ -151,6 +151,18 @@
   gap: 1.6rem;
 }
 
+.play-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+
+.play-tab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.4rem;
+}
+
 .context-rail {
   display: flex;
   flex-direction: column;

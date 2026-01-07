@@ -6,7 +6,11 @@ import { createSession } from "../data/sessions";
 import { useAppContext } from "../state/AppContext";
 import Modal from "../ui/Modal";
 
-export default function Dashboard() {
+type DashboardProps = {
+  onResumePlay?: () => void;
+};
+
+export default function Dashboard({ onResumePlay }: DashboardProps) {
   const {
     campaigns,
     sessions,
@@ -264,8 +268,8 @@ export default function Dashboard() {
                   <div className="button-row" style={{ marginTop: "1rem" }}>
                     <button
                       className="primary-button"
-                      disabled
-                      title="Play Workspace arrives in Phase 3."
+                      onClick={onResumePlay}
+                      disabled={!onResumePlay}
                     >
                       Resume Play
                     </button>

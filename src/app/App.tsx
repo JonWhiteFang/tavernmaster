@@ -4,6 +4,7 @@ import { initializeSync } from "./sync/client";
 import Dashboard from "./screens/Dashboard";
 import AiDirector from "./screens/AiDirector";
 import EncounterFlow from "./screens/EncounterFlow";
+import PlayWorkspace from "./screens/PlayWorkspace";
 import Journal from "./screens/Journal";
 import MapStudio from "./screens/MapStudio";
 import LogsExports from "./screens/LogsExports";
@@ -17,6 +18,7 @@ import ContextRail from "./layout/ContextRail";
 import TimelineDrawer from "./layout/TimelineDrawer";
 
 type ScreenKey =
+  | "play"
   | "dashboard"
   | "encounter"
   | "party"
@@ -35,12 +37,13 @@ export default function App() {
 }
 
 function AppShell() {
-  const [activeScreen, setActiveScreen] = useState<ScreenKey>("dashboard");
+  const [activeScreen, setActiveScreen] = useState<ScreenKey>("play");
   const navSections = useMemo(
     () => [
       {
         title: "PLAY",
         items: [
+          { id: "play" as const, label: "Play Workspace" },
           { id: "dashboard" as const, label: "Campaigns & Sessions" },
           { id: "encounter" as const, label: "Encounter" },
           { id: "map" as const, label: "Map" },
@@ -64,12 +67,12 @@ function AppShell() {
   );
 
   useHotkeys([
-    { key: "1", meta: true, handler: () => setActiveScreen("dashboard") },
-    { key: "2", meta: true, handler: () => setActiveScreen("encounter") },
-    { key: "3", meta: true, handler: () => setActiveScreen("map") },
-    { key: "4", meta: true, handler: () => setActiveScreen("journal") },
-    { key: "5", meta: true, handler: () => setActiveScreen("director") },
-    { key: "6", meta: true, handler: () => setActiveScreen("party") },
+    { key: "1", meta: true, handler: () => setActiveScreen("play") },
+    { key: "2", meta: true, handler: () => setActiveScreen("dashboard") },
+    { key: "3", meta: true, handler: () => setActiveScreen("encounter") },
+    { key: "4", meta: true, handler: () => setActiveScreen("map") },
+    { key: "5", meta: true, handler: () => setActiveScreen("journal") },
+    { key: "6", meta: true, handler: () => setActiveScreen("director") },
     { key: "7", meta: true, handler: () => setActiveScreen("logs") }
   ]);
 
@@ -86,6 +89,8 @@ function AppShell() {
 
   const renderScreen = () => {
     switch (activeScreen) {
+      case "play":
+        return <PlayWorkspace />;
       case "settings":
         return <Settings />;
       case "director":
@@ -101,7 +106,7 @@ function AppShell() {
       case "party":
         return <PartySheets />;
       case "dashboard":
-        return <Dashboard />;
+        return <Dashboard onResumePlay={() => setActiveScreen("play")} />;
       default:
         return (
           <section className="panel">
