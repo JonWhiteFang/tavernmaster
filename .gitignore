@@ -19,3 +19,6 @@ src-tauri/gen/
 # IDE
 .vscode/
 .idea/
+
+#Other
+temp/
