@@ -16,6 +16,7 @@ import SidebarNav from "./layout/SidebarNav";
 import { useHotkeys } from "./hooks/useHotkeys";
 import ContextRail from "./layout/ContextRail";
 import TimelineDrawer from "./layout/TimelineDrawer";
+import { ToastProvider } from "./ui/Toast";
 
 type ScreenKey =
   | "play"
@@ -31,7 +32,9 @@ type ScreenKey =
 export default function App() {
   return (
     <AppProvider>
-      <AppShell />
+      <ToastProvider>
+        <AppShell />
+      </ToastProvider>
     </AppProvider>
   );
 }
