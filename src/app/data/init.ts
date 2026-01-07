@@ -7,5 +7,5 @@ export async function initializeData(): Promise<void> {
   await initDatabase();
   await ensureSettings();
   await importSrdIfNeeded();
-  await seedDatabase();
+  await seedDatabase({ includeDemoData: false });
 }

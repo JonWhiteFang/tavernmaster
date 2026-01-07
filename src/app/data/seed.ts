@@ -80,122 +80,137 @@ const demoCharacters: SeedCharacter[] = [
   }
 ];
 
-export async function seedDatabase(): Promise<void> {
+export type SeedResult = {
+  created: boolean;
+  campaignId: string | null;
+  sessionId: string | null;
+  characterCount: number;
+};
+
+export async function seedDatabase(options: { includeDemoData?: boolean } = {}): Promise<SeedResult> {
   const db = await getDatabase();
-  const [{ count: campaignCount }] = await db.select<{ count: number }[]>(
-    "SELECT COUNT(*) as count FROM campaigns"
-  );
+  const includeDemoData = options.includeDemoData ?? false;
+  const [
+    [{ count: campaignCount }],
+    [{ count: sessionCount }],
+    [{ count: journalCount }],
+    [{ count: characterCount }]
+  ] = await Promise.all([
+    db.select<{ count: number }[]>("SELECT COUNT(*) as count FROM campaigns"),
+    db.select<{ count: number }[]>("SELECT COUNT(*) as count FROM sessions"),
+    db.select<{ count: number }[]>("SELECT COUNT(*) as count FROM journal_entries"),
+    db.select<{ count: number }[]>("SELECT COUNT(*) as count FROM characters")
+  ]);
 
+  if (
+    !includeDemoData ||
+    campaignCount > 0 ||
+    sessionCount > 0 ||
+    journalCount > 0 ||
+    characterCount > 0
+  ) {
+    return { created: false, campaignId: null, sessionId: null, characterCount: 0 };
+  }
+
+  let created = false;
   const now = new Date().toISOString();
-  let campaignId: string | null = null;
-
-  if (campaignCount === 0) {
-    campaignId = "seed-campaign";
-    const campaignSummary = await encryptValue(
-      "A coastal relic hunt with storms, rival crews, and ancient wards."
-    );
-    await db.execute(
-      `INSERT INTO campaigns (id, name, summary, active_scene_id, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [campaignId, "Copperbound", campaignSummary, null, now, now]
-    );
-  } else {
-    const rows = await db.select<{ id: string }[]>("SELECT id FROM campaigns LIMIT 1");
-    campaignId = rows[0]?.id ?? null;
-  }
-
-  const [{ count: sessionCount }] = await db.select<{ count: number }[]>(
-    "SELECT COUNT(*) as count FROM sessions"
+  const campaignId = "seed-campaign";
+  const campaignSummary = await encryptValue(
+    "A coastal relic hunt with storms, rival crews, and ancient wards."
   );
-  if (sessionCount === 0 && campaignId) {
-    const sessionRecap = await encryptValue(
-      "The crew assembled at the Salted Eel, negotiated passage, and charted the Sunken Vault."
-    );
-    await db.execute(
-      `INSERT INTO sessions (id, campaign_id, title, started_at, ended_at, recap, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      ["seed-session-1", campaignId, "Session Zero", now, now, sessionRecap, now, now]
-    );
-  }
-
-  const [{ count: journalCount }] = await db.select<{ count: number }[]>(
-    "SELECT COUNT(*) as count FROM journal_entries"
+  await db.execute(
+    `INSERT INTO campaigns (id, name, summary, active_scene_id, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    [campaignId, "Copperbound", campaignSummary, null, now, now]
   );
-  if (journalCount === 0 && campaignId) {
-    const journalContent = await encryptValue(
-      "The crew assembles at the Salted Eel to negotiate passage into the Sunken Vault."
-    );
-    const journalTitle = await encryptValue("Session Zero");
-    await db.execute(
-      `INSERT INTO journal_entries (id, campaign_id, title, content, tags, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      ["seed-journal-1", campaignId, journalTitle, journalContent, "setup", now, now]
-    );
-  }
+  created = true;
 
-  const [{ count: characterCount }] = await db.select<{ count: number }[]>(
-    "SELECT COUNT(*) as count FROM characters"
+  const sessionRecap = await encryptValue(
+    "The crew assembled at the Salted Eel, negotiated passage, and charted the Sunken Vault."
   );
-  if (characterCount === 0) {
-    for (const character of demoCharacters) {
-      const characterId = crypto.randomUUID();
-      const controlMode = character.role === "player" ? "player" : "ai";
+  await db.execute(
+    `INSERT INTO sessions (id, campaign_id, title, started_at, ended_at, recap, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    ["seed-session-1", campaignId, "Session Zero", now, now, sessionRecap, now, now]
+  );
 
+  const journalContent = await encryptValue(
+    "The crew assembles at the Salted Eel to negotiate passage into the Sunken Vault."
+  );
+  const journalTitle = await encryptValue("Session Zero");
+  await db.execute(
+    `INSERT INTO journal_entries (id, campaign_id, title, content, tags, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    ["seed-journal-1", campaignId, journalTitle, journalContent, "setup", now, now]
+  );
+
+  let createdCharacterCount = 0;
+  for (const character of demoCharacters) {
+    const characterId = crypto.randomUUID();
+    const controlMode = character.role === "player" ? "player" : "ai";
+
+    await db.execute(
+      `INSERT INTO characters
+        (id, name, role, control_mode, level, class_name, ancestry, background, alignment,
+         proficiencies_json, ancestry_bonus_json, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        characterId,
+        character.name,
+        character.role,
+        controlMode,
+        character.level,
+        character.className,
+        character.ancestry,
+        character.background,
+        character.alignment,
+        "[]",
+        "[]",
+        now,
+        now
+      ]
+    );
+
+    await db.execute(
+      `INSERT INTO character_stats
+        (id, character_id, hp, hp_max, ac, initiative_bonus, speed, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        crypto.randomUUID(),
+        characterId,
+        character.stats.hp,
+        character.stats.hpMax,
+        character.stats.ac,
+        character.stats.initiativeBonus,
+        character.stats.speed,
+        now,
+        now
+      ]
+    );
+
+    for (const ability of abilityOrder) {
       await db.execute(
-        `INSERT INTO characters
-          (id, name, role, control_mode, level, class_name, ancestry, background, alignment,
-           proficiencies_json, ancestry_bonus_json, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          characterId,
-          character.name,
-          character.role,
-          controlMode,
-          character.level,
-          character.className,
-          character.ancestry,
-          character.background,
-          character.alignment,
-          "[]",
-          "[]",
-          now,
-          now
-        ]
-      );
-
-      await db.execute(
-        `INSERT INTO character_stats
-          (id, character_id, hp, hp_max, ac, initiative_bonus, speed, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO character_abilities
+          (id, character_id, ability, score, save_bonus, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [
           crypto.randomUUID(),
           characterId,
-          character.stats.hp,
-          character.stats.hpMax,
-          character.stats.ac,
-          character.stats.initiativeBonus,
-          character.stats.speed,
+          ability,
+          character.abilities[ability],
+          Math.floor((character.abilities[ability] - 10) / 2),
           now,
           now
         ]
       );
-
-      for (const ability of abilityOrder) {
-        await db.execute(
-          `INSERT INTO character_abilities
-            (id, character_id, ability, score, save_bonus, created_at, updated_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?)`,
-          [
-            crypto.randomUUID(),
-            characterId,
-            ability,
-            character.abilities[ability],
-            Math.floor((character.abilities[ability] - 10) / 2),
-            now,
-            now
-          ]
-        );
-      }
     }
+    createdCharacterCount += 1;
   }
+
+  return {
+    created,
+    campaignId,
+    sessionId: "seed-session-1",
+    characterCount: createdCharacterCount
+  };
 }
