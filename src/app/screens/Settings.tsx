@@ -3,6 +3,7 @@ import { requestChatCompletion } from "../ai/client";
 import type { ChatMessage } from "../ai/types";
 import { getAppSettings, upsertAppSettings } from "../data/settings";
 import type { AppSettings } from "../data/settings";
+import { seedDatabase } from "../data/seed";
 import {
   getSyncStatus,
   isSupabaseConfigured,
@@ -13,6 +14,8 @@ import {
 } from "../sync/client";
 import { countOpenConflicts, listOpenConflicts, type SyncConflictRow } from "../sync/conflicts";
 import { keepLocalForConflict, keepRemoteForConflict } from "../sync/resolve";
+import { useAppContext } from "../state/AppContext";
+import { useToast } from "../ui/Toast";
 
 const testMessages: ChatMessage[] = [
   { role: "system", content: "Reply with 'OK' if you can read this." },
@@ -24,6 +27,8 @@ type StatusState = "idle" | "saving" | "saved" | "error";
 type TestState = "idle" | "testing" | "success" | "error";
 
 export default function Settings() {
+  const { refreshCampaigns, refreshSessions } = useAppContext();
+  const { pushToast } = useToast();
   const [settings, setSettings] = useState<AppSettings | null>(null);
   const [draft, setDraft] = useState<AppSettings | null>(null);
   const [status, setStatus] = useState<StatusState>("idle");
@@ -40,6 +45,7 @@ export default function Settings() {
   const [selectedConflictKey, setSelectedConflictKey] = useState<string | null>(null);
   const [conflictStatus, setConflictStatus] = useState<"idle" | "working" | "error">("idle");
   const [conflictMessage, setConflictMessage] = useState<string | null>(null);
+  const [seedStatus, setSeedStatus] = useState<"idle" | "working">("idle");
 
   useEffect(() => {
     let isMounted = true;
@@ -207,6 +213,33 @@ export default function Settings() {
     } catch (error) {
       setSyncActionStatus("error");
       setSyncActionMessage(error instanceof Error ? error.message : "Sync failed.");
+    }
+  };
+
+  const handleSeedDemo = async () => {
+    setSeedStatus("working");
+    try {
+      const result = await seedDatabase({ includeDemoData: true });
+      if (!result.created) {
+        pushToast({
+          tone: "info",
+          message: "Sample data already exists. No changes made."
+        });
+        return;
+      }
+      await refreshCampaigns();
+      if (result.campaignId) {
+        await refreshSessions(result.campaignId);
+      }
+      pushToast({
+        tone: "success",
+        message: `Sample data created (${result.characterCount} characters).`
+      });
+    } catch (error) {
+      console.error("Failed to create sample data", error);
+      pushToast({ tone: "error", message: "Unable to create sample data." });
+    } finally {
+      setSeedStatus("idle");
     }
   };
 
@@ -508,6 +541,22 @@ export default function Settings() {
                 ) : null}
               </div>
             ) : null}
+
+            <div style={{ marginTop: "1.6rem" }}>
+              <div className="panel-subtitle">Sample Data</div>
+              <p className="panel-copy" style={{ marginTop: "0.4rem" }}>
+                Create a demo campaign and party if you want a quick sandbox to explore.
+              </p>
+              <div className="button-row" style={{ marginTop: "0.8rem" }}>
+                <button
+                  className="secondary-button"
+                  onClick={handleSeedDemo}
+                  disabled={seedStatus === "working"}
+                >
+                  {seedStatus === "working" ? "Creating..." : "Create Sample Data"}
+                </button>
+              </div>
+            </div>
           </div>
         </section>
       </div>
