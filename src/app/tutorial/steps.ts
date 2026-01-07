@@ -1,9 +1,17 @@
+type TutorialAdvanceEvent = {
+  type: "event";
+  name: string;
+};
+
+export type TutorialAdvance = TutorialAdvanceEvent;
+
 export type TutorialStep = {
   id: string;
   title: string;
   body: string;
   targetId?: string;
   placement?: "top" | "bottom" | "left" | "right" | "center";
+  advanceOn?: TutorialAdvance;
 };
 
 export const tutorialVersion = "v1";

@@ -303,13 +303,20 @@ function TutorialOverlay({
         <div className="tutorial-title">{step.title}</div>
         <div className="tutorial-body">{step.body}</div>
         {!hasTarget && step.targetId ? (
-          <div className="tutorial-note">Tip: navigate to the highlighted area to continue.</div>
+          <div className="tutorial-note">
+            Tip: navigate to the highlighted area or skip this step to continue.
+          </div>
         ) : null}
         <div className="tutorial-actions">
           <div className="tutorial-nav">
             <Button variant="ghost" onClick={onPrev} disabled={stepIndex === 0}>
               Back
             </Button>
+            {!hasTarget && step.targetId ? (
+              <Button variant="ghost" onClick={onNext}>
+                Skip Step
+              </Button>
+            ) : null}
           </div>
           <div className="tutorial-nav">
             <Button variant="ghost" onClick={onPause}>
