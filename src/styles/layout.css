@@ -1459,11 +1459,16 @@
 
 .map-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
   gap: 1.4rem;
 }
 
+.map-panel {
+  grid-row: span 2;
+}
+
 .map-preview {
+  position: relative;
   min-height: 260px;
   border-radius: 16px;
   border: 1px solid rgba(58, 51, 43, 0.18);
@@ -1471,6 +1476,11 @@
   display: grid;
   place-items: center;
   padding: 1rem;
+}
+
+.map-preview.is-dragging {
+  border-color: rgba(216, 178, 92, 0.8);
+  box-shadow: 0 12px 24px rgba(216, 178, 92, 0.2);
 }
 
 .map-placeholder {
@@ -1481,6 +1491,29 @@
   width: 100%;
   border-radius: 12px;
   object-fit: cover;
+}
+
+.map-drop-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  gap: 0.4rem;
+  background: rgba(20, 17, 16, 0.75);
+  color: var(--parchment);
+  text-align: center;
+  border-radius: 16px;
+  padding: 1rem;
+}
+
+@media (max-width: 1100px) {
+  .map-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .map-panel {
+    grid-row: auto;
+  }
 }
 
 .token-summary {

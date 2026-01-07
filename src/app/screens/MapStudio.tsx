@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import type { DragEvent } from "react";
 
 type Token = {
   id: string;
@@ -9,6 +10,7 @@ type Token = {
 export default function MapStudio() {
   const [mapFile, setMapFile] = useState<File | null>(null);
   const [mapUrl, setMapUrl] = useState<string | null>(null);
+  const [isDragActive, setIsDragActive] = useState(false);
   const [tokens, setTokens] = useState<Token[]>([
     { id: "t1", name: "Riven", role: "party" },
     { id: "t2", name: "Sable", role: "party" },
@@ -46,6 +48,36 @@ export default function MapStudio() {
     window.dispatchEvent(new globalThis.CustomEvent("tm.map.tokens", { detail: payload }));
   }, [tokenCounts, tokens.length]);
 
+  const handleMapFile = (file: File | null) => {
+    if (!file) {
+      setMapFile(null);
+      return;
+    }
+    if (!file.type.startsWith("image/")) {
+      return;
+    }
+    setMapFile(file);
+  };
+
+  const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragActive(true);
+  };
+
+  const handleDragLeave = (event: DragEvent<HTMLDivElement>) => {
+    const nextTarget = event.relatedTarget as Node | null;
+    if (!nextTarget || !event.currentTarget.contains(nextTarget)) {
+      setIsDragActive(false);
+    }
+  };
+
+  const handleDrop = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragActive(false);
+    const file = event.dataTransfer.files?.[0] ?? null;
+    handleMapFile(file);
+  };
+
   const handleAddToken = () => {
     if (!newTokenName.trim()) {
       return;
@@ -71,10 +103,16 @@ export default function MapStudio() {
       </section>
 
       <div className="map-grid">
-        <section className="panel">
+        <section className="panel map-panel">
           <div className="panel-title">Scene Canvas</div>
           <div className="panel-body">
-            <div className="map-preview">
+            <div
+              className={`map-preview ${isDragActive ? "is-dragging" : ""}`}
+              onDragOver={handleDragOver}
+              onDragEnter={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
               {mapUrl ? (
                 <img src={mapUrl} alt="Map preview" className="map-image" />
               ) : (
@@ -85,6 +123,12 @@ export default function MapStudio() {
                   </div>
                 </div>
               )}
+              {isDragActive ? (
+                <div className="map-drop-overlay">
+                  <div className="panel-subtitle">Drop map to upload</div>
+                  <div className="panel-copy">PNG or JPG images supported.</div>
+                </div>
+              ) : null}
             </div>
             <div className="button-row" style={{ marginTop: "1rem" }}>
               <label className="secondary-button" style={{ cursor: "pointer" }}>
@@ -93,7 +137,7 @@ export default function MapStudio() {
                   type="file"
                   accept="image/*"
                   style={{ display: "none" }}
-                  onChange={(event) => setMapFile(event.target.files?.[0] ?? null)}
+                  onChange={(event) => handleMapFile(event.target.files?.[0] ?? null)}
                 />
               </label>
               <button className="ghost-button" onClick={() => setMapFile(null)}>
