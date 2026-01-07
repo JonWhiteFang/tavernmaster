@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { initializeData } from "./data/init";
-import { getSyncStatus, initializeSync, subscribeSyncStatus } from "./sync/client";
+import { initializeSync } from "./sync/client";
 import Dashboard from "./screens/Dashboard";
 import AiDirector from "./screens/AiDirector";
 import EncounterFlow from "./screens/EncounterFlow";
@@ -9,6 +9,12 @@ import MapStudio from "./screens/MapStudio";
 import LogsExports from "./screens/LogsExports";
 import PartySheets from "./screens/PartySheets";
 import Settings from "./screens/Settings";
+import { AppProvider } from "./state/AppContext";
+import Topbar from "./layout/Topbar";
+import SidebarNav from "./layout/SidebarNav";
+import { useHotkeys } from "./hooks/useHotkeys";
+import ContextRail from "./layout/ContextRail";
+import TimelineDrawer from "./layout/TimelineDrawer";
 
 type ScreenKey =
   | "dashboard"
@@ -21,28 +27,53 @@ type ScreenKey =
   | "settings";
 
 export default function App() {
-  const [activeScreen, setActiveScreen] = useState<ScreenKey>("dashboard");
-  const [{ status: syncStatus }, setSyncStatus] = useState(getSyncStatus());
+  return (
+    <AppProvider>
+      <AppShell />
+    </AppProvider>
+  );
+}
 
-  const navItems = useMemo(
+function AppShell() {
+  const [activeScreen, setActiveScreen] = useState<ScreenKey>("dashboard");
+  const navSections = useMemo(
     () => [
-      { id: "dashboard" as const, label: "Session Dashboard" },
-      { id: "encounter" as const, label: "Encounter Flow" },
-      { id: "party" as const, label: "Party Sheets" },
-      { id: "map" as const, label: "Map Studio" },
-      { id: "journal" as const, label: "Journal" },
-      { id: "director" as const, label: "AI Director" },
-      { id: "logs" as const, label: "Logs & Exports" },
-      { id: "settings" as const, label: "Settings" }
+      {
+        title: "PLAY",
+        items: [
+          { id: "dashboard" as const, label: "Campaigns & Sessions" },
+          { id: "encounter" as const, label: "Encounter" },
+          { id: "map" as const, label: "Map" },
+          { id: "journal" as const, label: "Journal" },
+          { id: "director" as const, label: "AI Director" }
+        ]
+      },
+      {
+        title: "REFERENCE",
+        items: [{ id: "party" as const, label: "Party" }]
+      },
+      {
+        title: "SYSTEM",
+        items: [
+          { id: "logs" as const, label: "Transcripts & Exports" },
+          { id: "settings" as const, label: "Settings" }
+        ]
+      }
     ],
     []
   );
 
-  useEffect(() => {
-    const unsubscribe = subscribeSyncStatus((status, message) => {
-      setSyncStatus({ status, message });
-    });
+  useHotkeys([
+    { key: "1", meta: true, handler: () => setActiveScreen("dashboard") },
+    { key: "2", meta: true, handler: () => setActiveScreen("encounter") },
+    { key: "3", meta: true, handler: () => setActiveScreen("map") },
+    { key: "4", meta: true, handler: () => setActiveScreen("journal") },
+    { key: "5", meta: true, handler: () => setActiveScreen("director") },
+    { key: "6", meta: true, handler: () => setActiveScreen("party") },
+    { key: "7", meta: true, handler: () => setActiveScreen("logs") }
+  ]);
 
+  useEffect(() => {
     void (async () => {
       try {
         await initializeData();
@@ -51,10 +82,6 @@ export default function App() {
         console.error("Failed to initialize app data", error);
       }
     })();
-
-    return () => {
-      unsubscribe();
-    };
   }, []);
 
   const renderScreen = () => {
@@ -85,83 +112,25 @@ export default function App() {
     }
   };
 
+  const showContextRail = activeScreen !== "settings";
+
   return (
     <div className="app">
-      <header className="topbar">
-        <div className="brand">
-          <div className="brand-mark">TM</div>
-          <div>
-            <div className="brand-title">Tavern Master</div>
-            <div className="brand-subtitle">Solo 5e orchestration suite</div>
-          </div>
-        </div>
-        <div className="status-row">
-          <div className="status-pill">LLM: Local</div>
-          <div className="status-pill">Sync: {syncStatus === "idle" ? "Ready" : syncStatus}</div>
-          <div className="status-pill">Campaign: Copperbound</div>
-        </div>
-      </header>
-      <div className="app-body">
-        <aside className="sidebar">
-          <div className="nav-section">Overview</div>
-          {navItems.slice(0, 6).map((item) => (
-            <button
-              key={item.id}
-              className={`nav-item ${activeScreen === item.id ? "is-active" : ""}`}
-              onClick={() => setActiveScreen(item.id)}
-            >
-              {item.label}
-            </button>
-          ))}
-          <div className="nav-divider" />
-          {navItems.slice(6).map((item) => (
-            <button
-              key={item.id}
-              className={`nav-item ${activeScreen === item.id ? "is-active" : ""}`}
-              onClick={() => setActiveScreen(item.id)}
-            >
-              {item.label}
-            </button>
-          ))}
-        </aside>
+      <Topbar
+        onNewJournal={() => setActiveScreen("journal")}
+        onExport={() => setActiveScreen("logs")}
+        onSearch={() => setActiveScreen("logs")}
+      />
+      <div className={`app-body ${showContextRail ? "" : "no-rail"}`}>
+        <SidebarNav
+          sections={navSections}
+          activeScreen={activeScreen}
+          onNavigate={setActiveScreen}
+        />
         <main className="main">{renderScreen()}</main>
-        {activeScreen === "dashboard" ? (
-          <aside className="inspector">
-            <div className="inspector-header">Scene Controls</div>
-            <div className="inspector-card">
-              <div className="inspector-title">Action Approval</div>
-              <p className="inspector-copy">
-                Review AI-proposed party actions before they are committed to the turn.
-              </p>
-              <button className="primary-button">Review 3 Pending Actions</button>
-            </div>
-            <div className="inspector-card">
-              <div className="inspector-title">Session Tone</div>
-              <p className="inspector-copy">Cinematic, tactical, low-comedy.</p>
-              <div className="tag-row">
-                <span className="tag">5e SRD</span>
-                <span className="tag">Hard Encounters</span>
-              </div>
-            </div>
-            <div className="inspector-card">
-              <div className="inspector-title">Dice Console</div>
-              <div className="dice-row">
-                <button className="dice">d20</button>
-                <button className="dice">d12</button>
-                <button className="dice">d8</button>
-                <button className="dice">d6</button>
-                <button className="dice">d4</button>
-              </div>
-            </div>
-          </aside>
-        ) : null}
+        {showContextRail ? <ContextRail activeScreen={activeScreen} /> : null}
       </div>
-      <footer className="logbar">
-        <div className="log-title">Narrative Feed</div>
-        <div className="log-entry">
-          The wind howls through the broken archway as your party approaches the silver gate.
-        </div>
-      </footer>
+      <TimelineDrawer onOpenLogs={() => setActiveScreen("logs")} />
     </div>
   );
 }

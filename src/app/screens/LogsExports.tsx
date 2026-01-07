@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { listAiLogs } from "../data/ai_logs";
 import type { AiLogEntry } from "../data/ai_logs";
 import { downloadTextFile, openPrintWindow, toFilename } from "../ui/exports";
+import { useAppContext } from "../state/AppContext";
 
 const kindLabels: Record<AiLogEntry["kind"], string> = {
   dm: "DM",
@@ -12,18 +13,34 @@ const kindLabels: Record<AiLogEntry["kind"], string> = {
 };
 
 export default function LogsExports() {
+  const { activeCampaignId, activeSessionId } = useAppContext();
   const [entries, setEntries] = useState<AiLogEntry[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    void listAiLogs({ limit: 40 }).then((data) => {
+    if (!activeCampaignId) {
+      setEntries([]);
+      setSelectedId(null);
+      return;
+    }
+    void listAiLogs({
+      campaignId: activeCampaignId,
+      sessionId: activeSessionId ?? undefined,
+      limit: 40
+    }).then((data) => {
       setEntries(data);
-      if (data.length && !selectedId) {
-        setSelectedId(data[0].id);
-      }
+      setSelectedId((current) => {
+        if (!data.length) {
+          return null;
+        }
+        if (!current || !data.some((entry) => entry.id === current)) {
+          return data[0].id;
+        }
+        return current;
+      });
     });
-  }, []);
+  }, [activeCampaignId, activeSessionId]);
 
   const filteredEntries = entries.filter((entry) => {
     if (!searchTerm.trim()) {

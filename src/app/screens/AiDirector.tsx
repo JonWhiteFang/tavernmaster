@@ -8,6 +8,7 @@ import { listCharacters } from "../data/characters";
 import { parseJsonWithRepair } from "../ai/parser";
 import type { RulesParticipant, RulesState } from "../rules/types";
 import type { Character } from "../data/types";
+import { useAppContext } from "../state/AppContext";
 
 const defaultSummary =
   "Act II: the party advances through the Sunken Vault to recover the Reliquary Core.";
@@ -37,6 +38,7 @@ type StreamState = "idle" | "streaming" | "error";
 type ProposalStateStatus = "idle" | "loading" | "error" | "ready";
 
 export default function AiDirector() {
+  const { activeCampaignId, activeSessionId } = useAppContext();
   const [rulesState, setRulesState] = useState<RulesState | null>(null);
   const [partyRoster, setPartyRoster] = useState(defaultRoster);
 
@@ -79,6 +81,8 @@ export default function AiDirector() {
   }, [proposals]);
 
   const dmContext: DmContext = {
+    campaignId: activeCampaignId ?? undefined,
+    sessionId: activeSessionId ?? undefined,
     summary,
     scene,
     partyRoster,
@@ -87,6 +91,8 @@ export default function AiDirector() {
   };
 
   const partyContext: PartyContext = {
+    campaignId: activeCampaignId ?? undefined,
+    sessionId: activeSessionId ?? undefined,
     summary,
     encounterSummary,
     partyRoster,
@@ -110,7 +116,12 @@ export default function AiDirector() {
       }
       setDmStreamState("idle");
       setDmOutput(content);
-      await insertAiLog({ kind: "dm", content });
+      await insertAiLog({
+        campaignId: activeCampaignId ?? undefined,
+        sessionId: activeSessionId ?? undefined,
+        kind: "dm",
+        content
+      });
       const settings = await getAppSettings();
       const parsed = await parseJsonWithRepair<{
         narrative?: string;

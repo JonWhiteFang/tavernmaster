@@ -2,20 +2,33 @@ import { useEffect, useState } from "react";
 import type { JournalEntry } from "../data/types";
 import { listJournalEntries } from "../data/journal";
 import { downloadTextFile, openPrintWindow, toFilename } from "../ui/exports";
+import { useAppContext } from "../state/AppContext";
 
 export default function Journal() {
+  const { activeCampaignId } = useAppContext();
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    void listJournalEntries("seed-campaign").then((data) => {
+    if (!activeCampaignId) {
+      setEntries([]);
+      setSelectedId(null);
+      return;
+    }
+    void listJournalEntries(activeCampaignId).then((data) => {
       setEntries(data);
-      if (!selectedId && data.length) {
-        setSelectedId(data[0].id);
-      }
+      setSelectedId((current) => {
+        if (!data.length) {
+          return null;
+        }
+        if (!current || !data.some((entry) => entry.id === current)) {
+          return data[0].id;
+        }
+        return current;
+      });
     });
-  }, []);
+  }, [activeCampaignId]);
 
   const filteredEntries = entries.filter((entry) => {
     if (!searchTerm.trim()) {
