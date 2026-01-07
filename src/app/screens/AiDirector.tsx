@@ -328,7 +328,9 @@ export default function AiDirector() {
               <Button variant="ghost" onClick={handleClearOutput}>
                 Clear Output
               </Button>
-              {journalStatus ? <Chip tone={journalStatus.tone}>{journalStatus.message}</Chip> : null}
+              {journalStatus ? (
+                <Chip tone={journalStatus.tone}>{journalStatus.message}</Chip>
+              ) : null}
             </div>
             <div className="output-panel">
               <div className="panel-subtitle">Live Output</div>
@@ -370,12 +372,14 @@ export default function AiDirector() {
               <Button onClick={generate} disabled={proposalState === "loading"}>
                 {proposalState === "loading" ? "Generating..." : "Generate Proposals"}
               </Button>
-              <Button variant="secondary" onClick={approveAllSafe} disabled={proposals.length === 0}>
+              <Button
+                variant="secondary"
+                onClick={approveAllSafe}
+                disabled={proposals.length === 0}
+              >
                 Approve All Safe
               </Button>
-              {proposalError ? (
-                <Chip tone="error">{proposalError}</Chip>
-              ) : null}
+              {proposalError ? <Chip tone="error">{proposalError}</Chip> : null}
             </div>
             <div className="proposal-list">
               {proposals.length === 0 ? (
@@ -463,9 +467,7 @@ export default function AiDirector() {
                         {proposal.alternatives.length ? (
                           <ul className="proposal-listing">
                             {proposal.alternatives.map((alternative, altIndex) => (
-                              <li key={`${proposal.characterId}-alt-${altIndex}`}>
-                                {alternative}
-                              </li>
+                              <li key={`${proposal.characterId}-alt-${altIndex}`}>{alternative}</li>
                             ))}
                           </ul>
                         ) : (
@@ -477,7 +479,10 @@ export default function AiDirector() {
                         {proposal.errors.length ? (
                           <div className="detail-badges">
                             {proposal.errors.map((error, errorIndex) => (
-                              <Chip tone="error" key={`${proposal.characterId}-error-${errorIndex}`}>
+                              <Chip
+                                tone="error"
+                                key={`${proposal.characterId}-error-${errorIndex}`}
+                              >
                                 {error}
                               </Chip>
                             ))}
