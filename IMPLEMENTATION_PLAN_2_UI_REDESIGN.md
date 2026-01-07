@@ -133,21 +133,21 @@ Blocks: Phase 5+
 
 ### Tasks
 
-- [ ] Replace raw JSON-first layout with readable proposal cards.
-- [ ] Add rules refs chips, risks, alternatives, validation errors.
-- [ ] Move raw JSON behind `<details>`.
-- [ ] Add "Approve All Safe" and "Copy Narration to Journal".
+- [x] Replace raw JSON-first layout with readable proposal cards.
+- [x] Add rules refs chips, risks, alternatives, validation errors.
+- [x] Move raw JSON behind `<details>`.
+- [x] Add "Approve All Safe" and "Copy Narration to Journal".
 
 ### Acceptance criteria
 
-- [ ] AI Director default view is human-readable and scannable.
-- [ ] Raw JSON is accessible but not the primary display.
+- [x] AI Director default view is human-readable and scannable.
+- [x] Raw JSON is accessible but not the primary display.
 
 ### Testing
 
-- [ ] `npm run lint`
-- [ ] `npm run test`
-- [ ] `npm run format:check`
+- [x] `npm run lint`
+- [x] `npm run test`
+- [x] `npm run format:check`
 
 ## Phase 5 - Journal create/edit + import narration (Section 7.7)
 
