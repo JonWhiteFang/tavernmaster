@@ -991,6 +991,24 @@
   letter-spacing: 0.08em;
 }
 
+.proposal-listing {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: var(--ink-soft);
+}
+
+.proposal-details {
+  margin-top: 0.8rem;
+}
+
+.proposal-details summary {
+  cursor: pointer;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-muted);
+}
+
 .party {
   display: flex;
   flex-direction: column;

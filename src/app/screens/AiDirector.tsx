@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import type { DmContext, PartyContext } from "../ai/orchestrator";
 import { listCharacters } from "../data/characters";
-import type { RulesState } from "../rules/types";
+import type { Action, RulesState } from "../rules/types";
 import { useAppContext } from "../state/AppContext";
 import { buildRoster, buildRulesState } from "../ai/partyRoster";
 import { useDmNarration } from "../hooks/useDmNarration";
 import { usePartyProposals } from "../hooks/usePartyProposals";
+import Button from "../ui/Button";
+import Chip from "../ui/Chip";
+import ListCard from "../ui/ListCard";
 
 const defaultSummary =
   "Act II: the party advances through the Sunken Vault to recover the Reliquary Core.";
@@ -22,6 +25,129 @@ Sable Aster (Cleric 3, Elf)
 Thorne Vale (Fighter 3, Dwarf)
 Lyra Quill (Wizard 3, High Elf)
 Bram Ironstep (Ranger 3, Halfling)`;
+
+type ActionDetail = {
+  label: string;
+  value: string;
+};
+
+const formatModifier = (value: number) => (value >= 0 ? `+${value}` : `${value}`);
+
+const formatActionSummary = (action: Action) => {
+  switch (action.type) {
+    case "attack":
+      return `Attack ${action.targetId} with ${action.damage} ${action.damageType}.`;
+    case "cast": {
+      const targets = action.targetIds.length ? ` targeting ${action.targetIds.join(", ")}` : "";
+      return `Cast ${action.spellId}${targets}.`;
+    }
+    case "dash":
+      return "Dash to reposition.";
+    case "dodge":
+      return "Dodge to focus on defense.";
+    case "disengage":
+      return "Disengage and create space.";
+    case "hide":
+      return "Hide and break line of sight.";
+    case "help":
+      return `Help ${action.targetId} with positioning.`;
+    case "ready":
+      return "Ready a contingent action.";
+    case "use-object":
+      return action.description || "Use an object.";
+    default:
+      return action.type;
+  }
+};
+
+const buildActionDetails = (action: Action) => {
+  const details: ActionDetail[] = [];
+  const add = (label: string, value?: string | number | null) => {
+    if (value === undefined || value === null || value === "") {
+      return;
+    }
+    details.push({ label, value: String(value) });
+  };
+
+  switch (action.type) {
+    case "attack":
+      add("Attacker", action.attackerId);
+      add("Target", action.targetId);
+      add("Attack Bonus", formatModifier(action.attackBonus));
+      add("Damage", `${action.damage} ${action.damageType}`);
+      if (action.advantage) {
+        add("Advantage", action.advantage);
+      }
+      if (action.isMelee !== undefined) {
+        add("Range", action.isMelee ? "Melee" : "Ranged");
+      }
+      break;
+    case "cast":
+      add("Caster", action.casterId);
+      add("Spell", action.spellId);
+      add("Slot", `Level ${action.slotLevel}`);
+      if (action.targetIds.length) {
+        add("Targets", action.targetIds.join(", "));
+      }
+      if (action.damage) {
+        add("Damage", `${action.damage.dice} ${action.damage.type}`);
+      }
+      if (action.attack?.bonus !== undefined) {
+        add("Attack Bonus", formatModifier(action.attack.bonus));
+      }
+      if (action.attack?.advantage) {
+        add("Advantage", action.attack.advantage);
+      }
+      if (action.attack?.isMelee !== undefined) {
+        add("Range", action.attack.isMelee ? "Melee" : "Ranged");
+      }
+      if (action.save) {
+        add("Save", action.save.ability.toUpperCase());
+        if (action.save.dc !== undefined) {
+          add("Save DC", action.save.dc);
+        }
+        if (action.save.halfOnSave !== undefined) {
+          add("Half on Save", action.save.halfOnSave ? "Yes" : "No");
+        }
+      }
+      if (action.condition) {
+        add("Condition", action.condition.name);
+        if (action.condition.durationRounds !== undefined) {
+          add(
+            "Duration",
+            action.condition.durationRounds === null
+              ? "Until cleared"
+              : `${action.condition.durationRounds} rounds`
+          );
+        }
+      }
+      if (action.concentration !== undefined) {
+        add("Concentration", action.concentration ? "Yes" : "No");
+      }
+      break;
+    case "dash":
+    case "dodge":
+    case "disengage":
+    case "hide":
+      add("Actor", action.actorId);
+      break;
+    case "help":
+      add("Helper", action.helperId);
+      add("Target", action.targetId);
+      break;
+    case "ready":
+      add("Actor", action.actorId);
+      add("Trigger", action.trigger);
+      add("Readied Action", action.readiedAction);
+      break;
+    case "use-object":
+      add("Actor", action.actorId);
+      add("Description", action.description);
+      break;
+  }
+
+  return details;
+};
 
 export default function AiDirector() {
   const { activeCampaignId, activeSessionId } = useAppContext();
@@ -75,8 +201,16 @@ export default function AiDirector() {
 
   const { streamState, output, parsedHighlights, streamNarration, clearOutput } =
     useDmNarration(dmContext);
-  const { proposalState, proposalError, proposals, approvalCounts, generate, approve, reject } =
-    usePartyProposals(partyContext, rulesState);
+  const {
+    proposalState,
+    proposalError,
+    proposals,
+    approvalCounts,
+    generate,
+    approve,
+    reject,
+    approveAllSafe
+  } = usePartyProposals(partyContext, rulesState);
 
   return (
     <div className="director">
@@ -138,12 +272,12 @@ export default function AiDirector() {
               </label>
             </div>
             <div className="button-row">
-              <button className="primary-button" onClick={streamNarration}>
+              <Button onClick={streamNarration} disabled={streamState === "streaming"}>
                 {streamState === "streaming" ? "Streaming..." : "Stream Narration"}
-              </button>
-              <button className="ghost-button" onClick={clearOutput}>
+              </Button>
+              <Button variant="ghost" onClick={clearOutput}>
                 Clear Output
-              </button>
+              </Button>
             </div>
             <div className="output-panel">
               <div className="panel-subtitle">Live Output</div>
@@ -182,42 +316,134 @@ export default function AiDirector() {
               </label>
             </div>
             <div className="button-row">
-              <button className="primary-button" onClick={generate}>
+              <Button onClick={generate} disabled={proposalState === "loading"}>
                 {proposalState === "loading" ? "Generating..." : "Generate Proposals"}
-              </button>
+              </Button>
+              <Button variant="secondary" onClick={approveAllSafe} disabled={proposals.length === 0}>
+                Approve All Safe
+              </Button>
               {proposalError ? (
-                <span className="status-chip status-error">{proposalError}</span>
+                <Chip tone="error">{proposalError}</Chip>
               ) : null}
             </div>
             <div className="proposal-list">
               {proposals.length === 0 ? (
                 <div className="panel-copy">No proposals yet. Generate to review actions.</div>
               ) : (
-                proposals.map((proposal, index) => (
-                  <div className="proposal-card" key={`${proposal.characterId}-${index}`}>
-                    <div className="proposal-header">
-                      <div>
-                        <div className="proposal-title">{proposal.summary}</div>
-                        <div className="proposal-subtitle">{proposal.characterId}</div>
+                proposals.map((proposal, index) => {
+                  const actionDetails = buildActionDetails(proposal.action);
+                  return (
+                    <ListCard
+                      key={`${proposal.characterId}-${index}`}
+                      title={proposal.summary}
+                      subtitle={proposal.characterId}
+                      status={
+                        <Chip
+                          tone={
+                            proposal.status === "approved"
+                              ? "success"
+                              : proposal.status === "rejected"
+                                ? "error"
+                                : "default"
+                          }
+                        >
+                          {proposal.status}
+                        </Chip>
+                      }
+                      footer={
+                        <>
+                          <Button
+                            variant="secondary"
+                            onClick={() => approve(index)}
+                            disabled={proposal.status === "approved"}
+                          >
+                            Approve
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            onClick={() => reject(index)}
+                            disabled={proposal.status === "rejected"}
+                          >
+                            Reject
+                          </Button>
+                        </>
+                      }
+                    >
+                      <div className="detail-group">
+                        <div className="detail-group-title">Action</div>
+                        <div className="detail-value">{formatActionSummary(proposal.action)}</div>
+                        {actionDetails.length ? (
+                          <div className="detail-grid">
+                            {actionDetails.map((detail) => (
+                              <div className="detail-section" key={detail.label}>
+                                <div className="detail-title">{detail.label}</div>
+                                <div className="detail-value">{detail.value}</div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : null}
                       </div>
-                      <span className={`status-chip status-${proposal.status}`}>
-                        {proposal.status}
-                      </span>
-                    </div>
-                    <pre className="output-text">{JSON.stringify(proposal.action, null, 2)}</pre>
-                    {proposal.errors.length ? (
-                      <div className="status-chip status-error">{proposal.errors.join(" ")}</div>
-                    ) : null}
-                    <div className="button-row">
-                      <button className="secondary-button" onClick={() => approve(index)}>
-                        Approve
-                      </button>
-                      <button className="ghost-button" onClick={() => reject(index)}>
-                        Reject
-                      </button>
-                    </div>
-                  </div>
-                ))
+                      <div className="detail-group">
+                        <div className="detail-group-title">Rules refs</div>
+                        {proposal.rulesRefs.length ? (
+                          <div className="detail-badges">
+                            {proposal.rulesRefs.map((ref) => (
+                              <Chip key={`${proposal.characterId}-${ref}`}>{ref}</Chip>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="detail-value">None noted.</div>
+                        )}
+                      </div>
+                      <div className="detail-group">
+                        <div className="detail-group-title">Risks</div>
+                        {proposal.risks.length ? (
+                          <ul className="proposal-listing">
+                            {proposal.risks.map((risk, riskIndex) => (
+                              <li key={`${proposal.characterId}-risk-${riskIndex}`}>{risk}</li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <div className="detail-value">None noted.</div>
+                        )}
+                      </div>
+                      <div className="detail-group">
+                        <div className="detail-group-title">Alternatives</div>
+                        {proposal.alternatives.length ? (
+                          <ul className="proposal-listing">
+                            {proposal.alternatives.map((alternative, altIndex) => (
+                              <li key={`${proposal.characterId}-alt-${altIndex}`}>
+                                {alternative}
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <div className="detail-value">None noted.</div>
+                        )}
+                      </div>
+                      <div className="detail-group">
+                        <div className="detail-group-title">Validation</div>
+                        {proposal.errors.length ? (
+                          <div className="detail-badges">
+                            {proposal.errors.map((error, errorIndex) => (
+                              <Chip tone="error" key={`${proposal.characterId}-error-${errorIndex}`}>
+                                {error}
+                              </Chip>
+                            ))}
+                          </div>
+                        ) : (
+                          <Chip tone="success">Validated</Chip>
+                        )}
+                      </div>
+                      <details className="proposal-details">
+                        <summary>Raw action payload</summary>
+                        <pre className="output-text">
+                          {JSON.stringify(proposal.action, null, 2)}
+                        </pre>
+                      </details>
+                    </ListCard>
+                  );
+                })
               )}
             </div>
           </div>
