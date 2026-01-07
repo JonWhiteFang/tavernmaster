@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { DmContext, PartyContext } from "../ai/orchestrator";
 import { listCharacters } from "../data/characters";
+import { createJournalEntry } from "../data/journal";
 import type { Action, RulesState } from "../rules/types";
 import { useAppContext } from "../state/AppContext";
 import { buildRoster, buildRulesState } from "../ai/partyRoster";
@@ -153,6 +154,11 @@ export default function AiDirector() {
   const { activeCampaignId, activeSessionId } = useAppContext();
   const [rulesState, setRulesState] = useState<RulesState | null>(null);
   const [partyRoster, setPartyRoster] = useState(defaultRoster);
+  const [journalStatus, setJournalStatus] = useState<{
+    tone: "success" | "error";
+    message: string;
+  } | null>(null);
+  const [isSavingJournal, setIsSavingJournal] = useState(false);
 
   const [summary, setSummary] = useState(defaultSummary);
   const [scene, setScene] = useState(defaultScene);
@@ -211,6 +217,43 @@ export default function AiDirector() {
     reject,
     approveAllSafe
   } = usePartyProposals(partyContext, rulesState);
+
+  const handleStreamNarration = () => {
+    setJournalStatus(null);
+    void streamNarration();
+  };
+
+  const handleClearOutput = () => {
+    setJournalStatus(null);
+    clearOutput();
+  };
+
+  const handleCopyNarration = async () => {
+    if (!activeCampaignId) {
+      setJournalStatus({ tone: "error", message: "Select a campaign before saving narration." });
+      return;
+    }
+    const content = (parsedHighlights ?? output).trim();
+    if (!content) {
+      setJournalStatus({ tone: "error", message: "Stream narration before copying to Journal." });
+      return;
+    }
+    setIsSavingJournal(true);
+    setJournalStatus(null);
+    try {
+      await createJournalEntry({
+        campaignId: activeCampaignId,
+        title: `Narration ${new Date().toLocaleDateString()}`,
+        content
+      });
+      setJournalStatus({ tone: "success", message: "Narration copied to Journal." });
+    } catch (error) {
+      console.error("Failed to copy narration to journal", error);
+      setJournalStatus({ tone: "error", message: "Unable to save narration." });
+    } finally {
+      setIsSavingJournal(false);
+    }
+  };
 
   return (
     <div className="director">
@@ -272,12 +315,20 @@ export default function AiDirector() {
               </label>
             </div>
             <div className="button-row">
-              <Button onClick={streamNarration} disabled={streamState === "streaming"}>
+              <Button onClick={handleStreamNarration} disabled={streamState === "streaming"}>
                 {streamState === "streaming" ? "Streaming..." : "Stream Narration"}
               </Button>
-              <Button variant="ghost" onClick={clearOutput}>
+              <Button
+                variant="secondary"
+                onClick={handleCopyNarration}
+                disabled={isSavingJournal || streamState === "streaming"}
+              >
+                {isSavingJournal ? "Saving..." : "Copy to Journal"}
+              </Button>
+              <Button variant="ghost" onClick={handleClearOutput}>
                 Clear Output
               </Button>
+              {journalStatus ? <Chip tone={journalStatus.tone}>{journalStatus.message}</Chip> : null}
             </div>
             <div className="output-panel">
               <div className="panel-subtitle">Live Output</div>
