@@ -201,24 +201,24 @@ Blocks: Phase 8
 
 ### Tasks
 
-- [ ] Rework Encounter action bar: Start Fresh, Roll Initiative, Start Encounter, Advance Turn.
-- [ ] Improve turn list with number, name, HP, AC, conditions count, active highlight.
-- [ ] Surface crash recovery chip and clear snapshot action.
-- [ ] Rebalance Map Studio layout to enlarge canvas.
-- [ ] Add drag/drop upload on map canvas.
-- [ ] Add token roster inline rename, role toggle, search/filter.
+- [x] Rework Encounter action bar: Start Fresh, Roll Initiative, Start Encounter, Advance Turn.
+- [x] Improve turn list with number, name, HP, AC, conditions count, active highlight.
+- [x] Surface crash recovery chip and clear snapshot action.
+- [x] Rebalance Map Studio layout to enlarge canvas.
+- [x] Add drag/drop upload on map canvas.
+- [x] Add token roster inline rename, role toggle, search/filter.
 
 ### Acceptance criteria
 
-- [ ] Encounter Flow is faster to read and operate.
-- [ ] Crash recovery is visible and actionable.
-- [ ] Map Studio usability improved and drag/drop works.
+- [x] Encounter Flow is faster to read and operate.
+- [x] Crash recovery is visible and actionable.
+- [x] Map Studio usability improved and drag/drop works.
 
 ### Testing
 
-- [ ] `npm run lint`
-- [ ] `npm run test`
-- [ ] `npm run format:check`
+- [x] `npm run lint`
+- [x] `npm run test`
+- [x] `npm run format:check`
 
 ## Phase 8 - Visual + interaction polish (Section 11)
 
