@@ -1,4 +1,12 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from "react";
 import type { PropsWithChildren } from "react";
 import { subscribeSyncStatus } from "../sync/client";
 
@@ -104,13 +112,7 @@ export function useToast(): ToastContextValue {
   return context;
 }
 
-function ToastStack({
-  toasts,
-  onDismiss
-}: {
-  toasts: Toast[];
-  onDismiss: (id: string) => void;
-}) {
+function ToastStack({ toasts, onDismiss }: { toasts: Toast[]; onDismiss: (id: string) => void }) {
   return (
     <div className="toast-stack" aria-live="polite">
       {toasts.map((toast) => (
