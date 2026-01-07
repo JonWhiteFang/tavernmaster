@@ -37,6 +37,15 @@ export default function MapStudio() {
     );
   }, [tokens]);
 
+  useEffect(() => {
+    const payload = {
+      ...tokenCounts,
+      total: tokens.length
+    };
+    window.localStorage.setItem("tm.map.tokenCounts", JSON.stringify(payload));
+    window.dispatchEvent(new globalThis.CustomEvent("tm.map.tokens", { detail: payload }));
+  }, [tokenCounts, tokens.length]);
+
   const handleAddToken = () => {
     if (!newTokenName.trim()) {
       return;

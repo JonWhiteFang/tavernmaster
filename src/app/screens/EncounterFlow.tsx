@@ -63,6 +63,11 @@ export default function EncounterFlow() {
     });
   }, [rulesState, log, rngSeed]);
 
+  useEffect(() => {
+    const detail = rulesState ? buildEncounterSummary(rulesState) : null;
+    window.dispatchEvent(new globalThis.CustomEvent("tm.encounter.summary", { detail }));
+  }, [rulesState]);
+
   const turnOrder = useMemo(() => {
     if (!rulesState) {
       return [];
@@ -303,4 +308,19 @@ function buildRulesState(characters: Character[]): RulesState {
 
 function getProficiencyBonus(level: number): number {
   return Math.floor((level - 1) / 4) + 2;
+}
+
+function buildEncounterSummary(state: RulesState) {
+  const activeId = state.turnOrder[state.activeTurnIndex];
+  const activeName = activeId ? (state.participants[activeId]?.name ?? null) : null;
+  const conditionsCount = Object.values(state.participants).reduce(
+    (total, participant) => total + participant.conditions.length,
+    0
+  );
+  return {
+    round: state.round,
+    activeName,
+    conditionsCount,
+    combatantCount: state.turnOrder.length
+  };
 }

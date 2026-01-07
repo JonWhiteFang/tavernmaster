@@ -414,6 +414,10 @@ export default function PartySheets() {
                         {activeCharacter.background}
                       </div>
                     </div>
+                  </div>
+
+                  <div className="detail-group">
+                    <div className="detail-group-title">Vitals</div>
                     <div className="detail-badges">
                       <span className="status-chip">AC {activeCharacter.armorClass}</span>
                       <span className="status-chip">
@@ -426,77 +430,89 @@ export default function PartySheets() {
                     </div>
                   </div>
 
-                  <div className="ability-grid">
-                    {abilityOrder.map((ability) => (
-                      <div key={ability} className="ability-card">
-                        <div className="ability-label">{ability.toUpperCase()}</div>
-                        <div className="ability-score">{activeCharacter.abilities[ability]}</div>
-                        <div className="ability-mod">
-                          {formatModifier(activeCharacter.abilities[ability])}
+                  <div className="detail-group">
+                    <div className="detail-group-title">Ability Scores</div>
+                    <div className="ability-grid">
+                      {abilityOrder.map((ability) => (
+                        <div key={ability} className="ability-card">
+                          <div className="ability-label">{ability.toUpperCase()}</div>
+                          <div className="ability-score">{activeCharacter.abilities[ability]}</div>
+                          <div className="ability-mod">
+                            {formatModifier(activeCharacter.abilities[ability])}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="detail-group">
+                    <div className="detail-group-title">Profile</div>
+                    <div className="detail-grid">
+                      <div className="detail-section">
+                        <div className="detail-title">Alignment</div>
+                        <div className="detail-value">{activeCharacter.alignment}</div>
+                      </div>
+                      <div className="detail-section">
+                        <div className="detail-title">Role</div>
+                        <div className="detail-value">{activeCharacter.role}</div>
+                      </div>
+                      <div className="detail-section">
+                        <div className="detail-title">Initiative</div>
+                        <div className="detail-value">+{activeCharacter.initiativeBonus}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="detail-group">
+                    <div className="detail-group-title">Equipment</div>
+                    <div className="detail-grid">
+                      <div className="detail-section">
+                        <div className="detail-title">Inventory</div>
+                        <div className="detail-value">
+                          {activeCharacter.inventory.length
+                            ? activeCharacter.inventory
+                                .map((item) =>
+                                  item.attuned
+                                    ? `${item.name} x${item.quantity} (attuned)`
+                                    : `${item.name} x${item.quantity}`
+                                )
+                                .join(", ")
+                            : "No items recorded."}
                         </div>
                       </div>
-                    ))}
-                  </div>
-
-                  <div className="detail-grid">
-                    <div className="detail-section">
-                      <div className="detail-title">Alignment</div>
-                      <div className="detail-value">{activeCharacter.alignment}</div>
-                    </div>
-                    <div className="detail-section">
-                      <div className="detail-title">Role</div>
-                      <div className="detail-value">{activeCharacter.role}</div>
-                    </div>
-                    <div className="detail-section">
-                      <div className="detail-title">Initiative</div>
-                      <div className="detail-value">+{activeCharacter.initiativeBonus}</div>
-                    </div>
-                  </div>
-
-                  <div className="detail-grid">
-                    <div className="detail-section">
-                      <div className="detail-title">Inventory</div>
-                      <div className="detail-value">
-                        {activeCharacter.inventory.length
-                          ? activeCharacter.inventory
-                              .map((item) =>
-                                item.attuned
-                                  ? `${item.name} x${item.quantity} (attuned)`
-                                  : `${item.name} x${item.quantity}`
-                              )
-                              .join(", ")
-                          : "No items recorded."}
-                      </div>
-                    </div>
-                    <div className="detail-section">
-                      <div className="detail-title">Spells</div>
-                      <div className="detail-value">
-                        {activeCharacter.spells.length
-                          ? activeCharacter.spells
-                              .map((spell) => formatSpellSummary(spell))
-                              .join(", ")
-                          : "No spells recorded."}
+                      <div className="detail-section">
+                        <div className="detail-title">Spells</div>
+                        <div className="detail-value">
+                          {activeCharacter.spells.length
+                            ? activeCharacter.spells
+                                .map((spell) => formatSpellSummary(spell))
+                                .join(", ")
+                            : "No spells recorded."}
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="detail-grid">
-                    <div className="detail-section">
-                      <div className="detail-title">Proficiencies</div>
-                      <div className="detail-value">
-                        {activeCharacter.proficiencies.length
-                          ? activeCharacter.proficiencies.join(", ")
-                          : "No proficiencies recorded."}
+                  <div className="detail-group">
+                    <div className="detail-group-title">Traits</div>
+                    <div className="detail-grid">
+                      <div className="detail-section">
+                        <div className="detail-title">Proficiencies</div>
+                        <div className="detail-value">
+                          {activeCharacter.proficiencies.length
+                            ? activeCharacter.proficiencies.join(", ")
+                            : "No proficiencies recorded."}
+                        </div>
                       </div>
-                    </div>
-                    <div className="detail-section">
-                      <div className="detail-title">Ancestry Bonuses</div>
-                      <div className="detail-value">
-                        {activeCharacter.ancestryBonusSelections.length
-                          ? activeCharacter.ancestryBonusSelections
-                              .map((ability) => ability.toUpperCase())
-                              .join(", ")
-                          : "None"}
+                      <div className="detail-section">
+                        <div className="detail-title">Ancestry Bonuses</div>
+                        <div className="detail-value">
+                          {activeCharacter.ancestryBonusSelections.length
+                            ? activeCharacter.ancestryBonusSelections
+                                .map((ability) => ability.toUpperCase())
+                                .join(", ")
+                            : "None"}
+                        </div>
                       </div>
                     </div>
                   </div>
