@@ -861,6 +861,52 @@
   min-width: 220px;
 }
 
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  align-items: center;
+  margin-top: 0.8rem;
+}
+
+.filter-label {
+  font-family: var(--font-ui);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--ink-muted);
+}
+
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.filter-chip {
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border: 1px solid rgba(58, 31, 43, 0.25);
+  background: rgba(246, 238, 224, 0.2);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.filter-chip.is-active {
+  border-color: rgba(216, 178, 92, 0.7);
+  background: rgba(216, 178, 92, 0.25);
+  box-shadow: 0 8px 16px rgba(216, 178, 92, 0.2);
+}
+
+.filter-chip:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .button-row.right {
   justify-content: flex-end;
 }

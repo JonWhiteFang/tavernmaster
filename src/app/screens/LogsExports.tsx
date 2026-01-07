@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { listAiLogs } from "../data/ai_logs";
 import type { AiLogEntry } from "../data/ai_logs";
 import { downloadTextFile, openPrintWindow, toFilename } from "../ui/exports";
 import { useAppContext } from "../state/AppContext";
+import Button from "../ui/Button";
+import Chip from "../ui/Chip";
 
 const kindLabels: Record<AiLogEntry["kind"], string> = {
   dm: "DM",
@@ -12,11 +14,14 @@ const kindLabels: Record<AiLogEntry["kind"], string> = {
   user: "User"
 };
 
+const kindOptions: AiLogEntry["kind"][] = ["dm", "party", "summary", "system", "user"];
+
 export default function LogsExports() {
   const { activeCampaignId, activeSessionId } = useAppContext();
   const [entries, setEntries] = useState<AiLogEntry[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [activeKinds, setActiveKinds] = useState<AiLogEntry["kind"][]>([]);
 
   useEffect(() => {
     if (!activeCampaignId) {
@@ -42,7 +47,22 @@ export default function LogsExports() {
     });
   }, [activeCampaignId, activeSessionId]);
 
+  const kindCounts = useMemo(
+    () =>
+      entries.reduce(
+        (acc, entry) => {
+          acc[entry.kind] += 1;
+          return acc;
+        },
+        { dm: 0, party: 0, summary: 0, system: 0, user: 0 }
+      ),
+    [entries]
+  );
+
   const filteredEntries = entries.filter((entry) => {
+    if (activeKinds.length && !activeKinds.includes(entry.kind)) {
+      return false;
+    }
     if (!searchTerm.trim()) {
       return true;
     }
@@ -50,6 +70,12 @@ export default function LogsExports() {
     const label = kindLabels[entry.kind].toLowerCase();
     return label.includes(query) || entry.content.toLowerCase().includes(query);
   });
+
+  const handleToggleKind = (kind: AiLogEntry["kind"]) => {
+    setActiveKinds((current) =>
+      current.includes(kind) ? current.filter((item) => item !== kind) : [...current, kind]
+    );
+  };
 
   useEffect(() => {
     if (!filteredEntries.length) {
@@ -102,7 +128,29 @@ export default function LogsExports() {
               placeholder="Search transcripts"
             />
           </label>
-          <span className="status-chip">Matches {filteredEntries.length}</span>
+          <Chip>Matches {filteredEntries.length}</Chip>
+        </div>
+        <div className="filter-row">
+          <div className="filter-label">Kinds</div>
+          <div className="filter-chips">
+            <button
+              className={`filter-chip ${activeKinds.length === 0 ? "is-active" : ""}`}
+              onClick={() => setActiveKinds([])}
+              type="button"
+            >
+              All ({entries.length})
+            </button>
+            {kindOptions.map((kind) => (
+              <button
+                key={kind}
+                className={`filter-chip ${activeKinds.includes(kind) ? "is-active" : ""}`}
+                onClick={() => handleToggleKind(kind)}
+                type="button"
+              >
+                {kindLabels[kind]} ({kindCounts[kind]})
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -142,12 +190,12 @@ export default function LogsExports() {
               <div className="panel-copy">Select a log entry to review its contents.</div>
             )}
             <div className="button-row" style={{ marginTop: "1.2rem" }}>
-              <button className="secondary-button" onClick={handleExportMarkdown}>
+              <Button variant="secondary" onClick={handleExportMarkdown}>
                 Export Markdown
-              </button>
-              <button className="secondary-button" onClick={handleExportPdf}>
+              </Button>
+              <Button variant="secondary" onClick={handleExportPdf}>
                 Export PDF
-              </button>
+              </Button>
             </div>
           </div>
         </section>
