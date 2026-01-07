@@ -156,21 +156,21 @@ Blocks: Phase 6+
 
 ### Tasks
 
-- [ ] Add New Entry flow with Save/Cancel.
-- [ ] Add Edit Entry flow with Save/Cancel.
-- [ ] Add "Import latest DM narration" action.
-- [ ] Ensure Journal respects active campaign/session context.
+- [x] Add New Entry flow with Save/Cancel.
+- [x] Add Edit Entry flow with Save/Cancel.
+- [x] Add "Import latest DM narration" action.
+- [x] Ensure Journal respects active campaign/session context.
 
 ### Acceptance criteria
 
-- [ ] Journal supports create/edit flows without losing context.
-- [ ] Import narration creates a new entry correctly.
+- [x] Journal supports create/edit flows without losing context.
+- [x] Import narration creates a new entry correctly.
 
 ### Testing
 
-- [ ] `npm run lint`
-- [ ] `npm run test`
-- [ ] `npm run format:check`
+- [x] `npm run lint`
+- [x] `npm run test`
+- [x] `npm run format:check`
 
 ## Phase 6 - Logs & Exports improvements (Section 7.8)
 
