@@ -1,11 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import type { DragEvent } from "react";
+import Button from "../ui/Button";
+import Chip from "../ui/Chip";
 
 type Token = {
   id: string;
   name: string;
   role: "party" | "enemy" | "neutral";
 };
+
+const roleOptions: Token["role"][] = ["party", "enemy", "neutral"];
 
 export default function MapStudio() {
   const [mapFile, setMapFile] = useState<File | null>(null);
@@ -18,6 +22,8 @@ export default function MapStudio() {
   ]);
   const [newTokenName, setNewTokenName] = useState("");
   const [newTokenRole, setNewTokenRole] = useState<Token["role"]>("party");
+  const [tokenSearch, setTokenSearch] = useState("");
+  const [activeRoles, setActiveRoles] = useState<Token["role"][]>([]);
 
   useEffect(() => {
     if (!mapFile) {
@@ -38,6 +44,18 @@ export default function MapStudio() {
       { party: 0, enemy: 0, neutral: 0 }
     );
   }, [tokens]);
+
+  const filteredTokens = useMemo(() => {
+    return tokens.filter((token) => {
+      if (activeRoles.length && !activeRoles.includes(token.role)) {
+        return false;
+      }
+      if (!tokenSearch.trim()) {
+        return true;
+      }
+      return token.name.toLowerCase().includes(tokenSearch.trim().toLowerCase());
+    });
+  }, [activeRoles, tokenSearch, tokens]);
 
   useEffect(() => {
     const payload = {
@@ -91,6 +109,24 @@ export default function MapStudio() {
 
   const handleRemoveToken = (id: string) => {
     setTokens((current) => current.filter((token) => token.id !== id));
+  };
+
+  const handleRenameToken = (id: string, name: string) => {
+    setTokens((current) =>
+      current.map((token) => (token.id === id ? { ...token, name } : token))
+    );
+  };
+
+  const handleToggleRoleFilter = (role: Token["role"]) => {
+    setActiveRoles((current) =>
+      current.includes(role) ? current.filter((item) => item !== role) : [...current, role]
+    );
+  };
+
+  const handleRoleChange = (id: string, role: Token["role"]) => {
+    setTokens((current) =>
+      current.map((token) => (token.id === id ? { ...token, role } : token))
+    );
   };
 
   return (
@@ -151,9 +187,43 @@ export default function MapStudio() {
           <div className="panel-title">Token Roster</div>
           <div className="panel-body">
             <div className="token-summary">
-              <span className="status-chip">Party {tokenCounts.party}</span>
-              <span className="status-chip">Enemy {tokenCounts.enemy}</span>
-              <span className="status-chip">Neutral {tokenCounts.neutral}</span>
+              <Chip>Party {tokenCounts.party}</Chip>
+              <Chip>Enemy {tokenCounts.enemy}</Chip>
+              <Chip>Neutral {tokenCounts.neutral}</Chip>
+            </div>
+            <div className="search-row" style={{ marginTop: "1rem" }}>
+              <label className="form-field search-field">
+                <span className="form-label">Search</span>
+                <input
+                  className="form-input"
+                  value={tokenSearch}
+                  onChange={(event) => setTokenSearch(event.target.value)}
+                  placeholder="Search tokens"
+                />
+              </label>
+              <Chip>Matches {filteredTokens.length}</Chip>
+            </div>
+            <div className="filter-row">
+              <div className="filter-label">Roles</div>
+              <div className="filter-chips">
+                <button
+                  className={`filter-chip ${activeRoles.length === 0 ? "is-active" : ""}`}
+                  onClick={() => setActiveRoles([])}
+                  type="button"
+                >
+                  All ({tokens.length})
+                </button>
+                {roleOptions.map((role) => (
+                  <button
+                    key={role}
+                    className={`filter-chip ${activeRoles.includes(role) ? "is-active" : ""}`}
+                    onClick={() => handleToggleRoleFilter(role)}
+                    type="button"
+                  >
+                    {role} ({tokenCounts[role]})
+                  </button>
+                ))}
+              </div>
             </div>
             <div className="form-grid" style={{ marginTop: "1rem" }}>
               <label className="form-field">
@@ -178,23 +248,42 @@ export default function MapStudio() {
               </label>
             </div>
             <div className="button-row">
-              <button className="primary-button" onClick={handleAddToken}>
-                Add Token
-              </button>
+              <Button onClick={handleAddToken}>Add Token</Button>
             </div>
 
             <div className="token-list">
-              {tokens.map((token) => (
-                <div key={token.id} className={`token-row token-${token.role}`}>
-                  <div>
-                    <div className="token-name">{token.name}</div>
-                    <div className="token-role">{token.role}</div>
+              {filteredTokens.length === 0 ? (
+                <div className="panel-copy">No tokens match your filters.</div>
+              ) : (
+                filteredTokens.map((token) => (
+                  <div key={token.id} className={`token-row token-${token.role}`}>
+                    <div className="token-main">
+                      <input
+                        className="form-input token-name-input"
+                        value={token.name}
+                        onChange={(event) => handleRenameToken(token.id, event.target.value)}
+                      />
+                      <div className="token-role-toggle">
+                        {roleOptions.map((role) => (
+                          <button
+                            key={`${token.id}-${role}`}
+                            className={`token-role-button ${
+                              token.role === role ? "is-active" : ""
+                            }`}
+                            onClick={() => handleRoleChange(token.id, role)}
+                            type="button"
+                          >
+                            {role}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <Button variant="ghost" onClick={() => handleRemoveToken(token.id)}>
+                      Remove
+                    </Button>
                   </div>
-                  <button className="ghost-button" onClick={() => handleRemoveToken(token.id)}>
-                    Remove
-                  </button>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         </section>
