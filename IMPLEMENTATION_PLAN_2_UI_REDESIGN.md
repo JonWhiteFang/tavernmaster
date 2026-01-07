@@ -227,22 +227,22 @@ Blocks: Phase 9
 
 ### Tasks
 
-- [ ] Add visible focus outlines for keyboard navigation.
-- [ ] Improve long-text readability (width and line-height).
-- [ ] Add lightweight toast/snackbar feedback for saves/exports/sync.
-- [ ] Update `src/styles/layout.css` (and optional `components.css` if needed).
+- [x] Add visible focus outlines for keyboard navigation.
+- [x] Improve long-text readability (width and line-height).
+- [x] Add lightweight toast/snackbar feedback for saves/exports/sync.
+- [x] Update `src/styles/layout.css` (and optional `components.css` if needed).
 
 ### Acceptance criteria
 
-- [ ] Focus states are visible and consistent.
-- [ ] Long text is easier to read without layout regressions.
-- [ ] Feedback toasts appear for save/export/sync actions.
+- [x] Focus states are visible and consistent.
+- [x] Long text is easier to read without layout regressions.
+- [x] Feedback toasts appear for save/export/sync actions.
 
 ### Testing
 
-- [ ] `npm run lint`
-- [ ] `npm run test`
-- [ ] `npm run format:check`
+- [x] `npm run lint`
+- [x] `npm run test`
+- [x] `npm run format:check`
 
 ## Phase 9 - Global UX acceptance checklist (Section 13)
 
