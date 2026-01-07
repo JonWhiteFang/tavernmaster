@@ -13,6 +13,7 @@ import { resolveAction } from "../rules/actions";
 import type { RulesState, RulesParticipant } from "../rules/types";
 import Button from "../ui/Button";
 import Chip from "../ui/Chip";
+import { useAppContext } from "../state/AppContext";
 
 const demoAction = {
   type: "attack",
@@ -25,6 +26,7 @@ const demoAction = {
 } as const;
 
 export default function EncounterFlow() {
+  const { activeCampaignId } = useAppContext();
   const [rulesState, setRulesState] = useState<RulesState | null>(null);
   const [log, setLog] = useState<string[]>([]);
   const [rngSeed, setRngSeed] = useState(42);
@@ -174,6 +176,47 @@ export default function EncounterFlow() {
       console.error("Failed to clear encounter recovery snapshot.", error);
     }
   };
+
+  const handleNavigate = (screen: string) => {
+    window.dispatchEvent(new globalThis.CustomEvent("tm.navigate", { detail: { screen } }));
+  };
+
+  if (!activeCampaignId) {
+    return (
+      <div className="encounter">
+        <section className="panel">
+          <div className="panel-title">Encounter Flow</div>
+          <div className="panel-subtitle">
+            Select a campaign to start encounter tracking.
+          </div>
+          <div className="button-row" style={{ marginTop: "1.2rem" }}>
+            <Button onClick={() => handleNavigate("dashboard")}>Open Campaigns & Sessions</Button>
+            <Button variant="secondary" onClick={() => handleNavigate("party")}>
+              Open Party Sheets
+            </Button>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  if (!rulesState) {
+    return (
+      <div className="encounter">
+        <section className="panel">
+          <div className="panel-title">Encounter Flow</div>
+          <div className="panel-subtitle">
+            Create party members to start initiative tracking and combat turns.
+          </div>
+          <div className="button-row" style={{ marginTop: "1.2rem" }}>
+            <Button variant="secondary" onClick={() => handleNavigate("party")}>
+              Open Party Sheets
+            </Button>
+          </div>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="encounter">

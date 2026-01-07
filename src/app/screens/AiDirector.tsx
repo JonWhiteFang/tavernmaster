@@ -250,6 +250,29 @@ export default function AiDirector() {
     }
   };
 
+  const handleNavigate = (screen: string) => {
+    window.dispatchEvent(new globalThis.CustomEvent("tm.navigate", { detail: { screen } }));
+  };
+
+  if (!activeCampaignId) {
+    return (
+      <div className="director">
+        <section className="panel">
+          <div className="panel-title">AI Director</div>
+          <div className="panel-subtitle">
+            Select a campaign to stream narration and approve party actions.
+          </div>
+          <div className="button-row" style={{ marginTop: "1.2rem" }}>
+            <Button onClick={() => handleNavigate("dashboard")}>Open Campaigns & Sessions</Button>
+            <Button variant="secondary" onClick={() => handleNavigate("party")}>
+              Open Party Sheets
+            </Button>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
   return (
     <div className="director">
       <section className="panel" style={{ marginBottom: "1.5rem" }}>

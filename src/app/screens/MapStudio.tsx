@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { DragEvent } from "react";
 import Button from "../ui/Button";
 import Chip from "../ui/Chip";
+import { useAppContext } from "../state/AppContext";
 
 type Token = {
   id: string;
@@ -12,6 +13,7 @@ type Token = {
 const roleOptions: Token["role"][] = ["party", "enemy", "neutral"];
 
 export default function MapStudio() {
+  const { activeCampaignId } = useAppContext();
   const [mapFile, setMapFile] = useState<File | null>(null);
   const [mapUrl, setMapUrl] = useState<string | null>(null);
   const [isDragActive, setIsDragActive] = useState(false);
@@ -124,6 +126,29 @@ export default function MapStudio() {
   const handleRoleChange = (id: string, role: Token["role"]) => {
     setTokens((current) => current.map((token) => (token.id === id ? { ...token, role } : token)));
   };
+
+  const handleNavigate = (screen: string) => {
+    window.dispatchEvent(new globalThis.CustomEvent("tm.navigate", { detail: { screen } }));
+  };
+
+  if (!activeCampaignId) {
+    return (
+      <div className="map-studio">
+        <section className="panel">
+          <div className="panel-title">Map Studio</div>
+          <div className="panel-subtitle">
+            Select a campaign to upload maps and manage tokens.
+          </div>
+          <div className="button-row" style={{ marginTop: "1.2rem" }}>
+            <Button onClick={() => handleNavigate("dashboard")}>Open Campaigns & Sessions</Button>
+            <Button variant="secondary" onClick={() => handleNavigate("party")}>
+              Open Party Sheets
+            </Button>
+          </div>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="map-studio">

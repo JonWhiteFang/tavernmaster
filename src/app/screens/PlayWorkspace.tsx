@@ -145,6 +145,32 @@ export default function PlayWorkspace() {
     pushToast({ tone: "success", message: "Narration imported." });
   };
 
+  const handleNavigate = (screen: string) => {
+    window.dispatchEvent(new globalThis.CustomEvent("tm.navigate", { detail: { screen } }));
+  };
+
+  if (!activeCampaignId) {
+    return (
+      <div className="play-workspace">
+        <section className="panel">
+          <div className="panel-title">Play Workspace</div>
+          <div className="panel-subtitle">
+            Create or select a campaign to begin the solo play loop.
+          </div>
+          <div className="panel-copy" style={{ marginTop: "0.8rem" }}>
+            Start a new campaign, then build your party roster before streaming narration.
+          </div>
+          <div className="button-row" style={{ marginTop: "1.2rem" }}>
+            <Button onClick={() => handleNavigate("dashboard")}>Create Campaign</Button>
+            <Button variant="secondary" onClick={() => handleNavigate("party")}>
+              Open Party Sheets
+            </Button>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
   const narrationContent = (
     <div className="play-tab-grid">
       <Panel title="Narration Context" subtitle="Frame the scene and intent for the DM stream.">

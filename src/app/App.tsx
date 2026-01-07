@@ -29,6 +29,18 @@ type ScreenKey =
   | "logs"
   | "settings";
 
+const screens: ScreenKey[] = [
+  "play",
+  "dashboard",
+  "encounter",
+  "party",
+  "map",
+  "journal",
+  "director",
+  "logs",
+  "settings"
+];
+
 export default function App() {
   return (
     <AppProvider>
@@ -90,6 +102,20 @@ function AppShell() {
         console.error("Failed to initialize app data", error);
       }
     })();
+  }, []);
+
+  useEffect(() => {
+    const handleNavigate = (event: Event) => {
+      const detail = (event as CustomEvent<{ screen?: string }>).detail;
+      if (!detail?.screen) {
+        return;
+      }
+      if (screens.includes(detail.screen as ScreenKey)) {
+        setActiveScreen(detail.screen as ScreenKey);
+      }
+    };
+    window.addEventListener("tm.navigate", handleNavigate);
+    return () => window.removeEventListener("tm.navigate", handleNavigate);
   }, []);
 
   const renderScreen = () => {

@@ -195,6 +195,26 @@ export default function Journal() {
     pushToast({ tone: "success", message: "Print preview opened." });
   };
 
+  const handleNavigate = (screen: string) => {
+    window.dispatchEvent(new globalThis.CustomEvent("tm.navigate", { detail: { screen } }));
+  };
+
+  if (!activeCampaignId) {
+    return (
+      <div className="journal">
+        <section className="panel">
+          <div className="panel-title">Journal</div>
+          <div className="panel-subtitle">
+            Select or create a campaign to view and capture narrative entries.
+          </div>
+          <div className="button-row" style={{ marginTop: "1.2rem" }}>
+            <Button onClick={() => handleNavigate("dashboard")}>Open Campaigns & Sessions</Button>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
   return (
     <div className="journal">
       <section className="panel" style={{ marginBottom: "1.4rem" }}>
