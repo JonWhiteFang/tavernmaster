@@ -5,6 +5,7 @@ import { listCharacters } from "../data/characters";
 import { createSession } from "../data/sessions";
 import { useAppContext } from "../state/AppContext";
 import Modal from "../ui/Modal";
+import { useToast } from "../ui/Toast";
 
 type DashboardProps = {
   onResumePlay?: () => void;
@@ -21,6 +22,7 @@ export default function Dashboard({ onResumePlay }: DashboardProps) {
     refreshCampaigns,
     refreshSessions
   } = useAppContext();
+  const { pushToast } = useToast();
   const [partyCount, setPartyCount] = useState(0);
   const [lastLogAt, setLastLogAt] = useState<string | null>(null);
   const [isCreatingCampaign, setIsCreatingCampaign] = useState(false);
@@ -99,6 +101,7 @@ export default function Dashboard({ onResumePlay }: DashboardProps) {
       await refreshCampaigns();
       setActiveCampaignId(campaign.id);
       setIsCampaignModalOpen(false);
+      pushToast({ tone: "success", message: "Campaign created." });
     } catch (error) {
       console.error("Failed to create campaign", error);
       setCampaignError("Unable to create campaign. Try again.");
@@ -122,6 +125,7 @@ export default function Dashboard({ onResumePlay }: DashboardProps) {
       await refreshSessions(activeCampaignId);
       setActiveSessionId(session.id);
       setIsSessionModalOpen(false);
+      pushToast({ tone: "success", message: "Session created." });
     } catch (error) {
       console.error("Failed to create session", error);
       setSessionError("Unable to create session. Try again.");

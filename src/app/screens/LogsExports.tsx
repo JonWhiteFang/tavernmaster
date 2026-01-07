@@ -5,6 +5,7 @@ import { downloadTextFile, openPrintWindow, toFilename } from "../ui/exports";
 import { useAppContext } from "../state/AppContext";
 import Button from "../ui/Button";
 import Chip from "../ui/Chip";
+import { useToast } from "../ui/Toast";
 
 const kindLabels: Record<AiLogEntry["kind"], string> = {
   dm: "DM",
@@ -18,14 +19,11 @@ const kindOptions: AiLogEntry["kind"][] = ["dm", "party", "summary", "system", "
 
 export default function LogsExports() {
   const { activeCampaignId, activeSessionId } = useAppContext();
+  const { pushToast } = useToast();
   const [entries, setEntries] = useState<AiLogEntry[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeKinds, setActiveKinds] = useState<AiLogEntry["kind"][]>([]);
-  const [exportStatus, setExportStatus] = useState<{
-    tone: "success" | "error";
-    message: string;
-  } | null>(null);
   const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
@@ -97,6 +95,7 @@ export default function LogsExports() {
 
   const handleExportMarkdown = () => {
     if (!activeEntry) {
+      pushToast({ tone: "error", message: "Select a log entry to export." });
       return;
     }
     const content = `# ${kindLabels[activeEntry.kind]} Log\n\nCaptured: ${formatDateTime(
@@ -104,25 +103,27 @@ export default function LogsExports() {
     )}\n\n${activeEntry.content}\n`;
     const filename = toFilename(`${kindLabels[activeEntry.kind]}-log`, "transcript", "md");
     downloadTextFile(filename, content, "text/markdown");
+    pushToast({ tone: "success", message: "Markdown exported." });
   };
 
   const handleExportPdf = () => {
     if (!activeEntry) {
+      pushToast({ tone: "error", message: "Select a log entry to export." });
       return;
     }
     const content = `${kindLabels[activeEntry.kind]} Log\n\nCaptured: ${formatDateTime(
       activeEntry.createdAt
     )}\n\n${activeEntry.content}\n`;
     openPrintWindow(`${kindLabels[activeEntry.kind]} Log`, content);
+    pushToast({ tone: "success", message: "Print preview opened." });
   };
 
   const handleExportSessionTranscript = async () => {
     if (!activeCampaignId) {
-      setExportStatus({ tone: "error", message: "Select a campaign before exporting." });
+      pushToast({ tone: "error", message: "Select a campaign before exporting." });
       return;
     }
     setIsExporting(true);
-    setExportStatus(null);
     try {
       const logs = await listAiLogs({
         campaignId: activeCampaignId,
@@ -133,7 +134,7 @@ export default function LogsExports() {
         ? logs.filter((entry) => activeKinds.includes(entry.kind))
         : logs;
       if (!filteredLogs.length) {
-        setExportStatus({ tone: "error", message: "No logs available for export." });
+        pushToast({ tone: "error", message: "No logs available for export." });
         return;
       }
       const transcriptTitle = activeSessionId ? "Session Transcript" : "Campaign Transcript";
@@ -150,10 +151,10 @@ export default function LogsExports() {
       )}\n\n${body}\n`;
       const filename = toFilename(transcriptTitle, "transcript", "md");
       downloadTextFile(filename, content, "text/markdown");
-      setExportStatus({ tone: "success", message: "Transcript exported." });
+      pushToast({ tone: "success", message: "Transcript exported." });
     } catch (error) {
       console.error("Failed to export transcript", error);
-      setExportStatus({ tone: "error", message: "Unable to export transcript." });
+      pushToast({ tone: "error", message: "Unable to export transcript." });
     } finally {
       setIsExporting(false);
     }
@@ -212,7 +213,6 @@ export default function LogsExports() {
                 ? "Export Session Transcript"
                 : "Export Campaign Transcript"}
           </Button>
-          {exportStatus ? <Chip tone={exportStatus.tone}>{exportStatus.message}</Chip> : null}
         </div>
       </section>
 

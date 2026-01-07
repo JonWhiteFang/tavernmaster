@@ -6,19 +6,17 @@ import { downloadTextFile, openPrintWindow, toFilename } from "../ui/exports";
 import { useAppContext } from "../state/AppContext";
 import Button from "../ui/Button";
 import Chip from "../ui/Chip";
+import { useToast } from "../ui/Toast";
 
 export default function Journal() {
   const { activeCampaignId, activeSessionId } = useAppContext();
+  const { pushToast } = useToast();
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [editorMode, setEditorMode] = useState<"new" | "edit" | null>(null);
   const [draftTitle, setDraftTitle] = useState("");
   const [draftContent, setDraftContent] = useState("");
-  const [editorStatus, setEditorStatus] = useState<{
-    tone: "success" | "error";
-    message: string;
-  } | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
 
@@ -29,7 +27,6 @@ export default function Journal() {
       setEditorMode(null);
       setDraftTitle("");
       setDraftContent("");
-      setEditorStatus(null);
       setIsSaving(false);
       setIsImporting(false);
       return;
@@ -76,7 +73,6 @@ export default function Journal() {
     setEditorMode("new");
     setDraftTitle("");
     setDraftContent("");
-    setEditorStatus(null);
   };
 
   const startEditEntry = () => {
@@ -86,28 +82,25 @@ export default function Journal() {
     setEditorMode("edit");
     setDraftTitle(activeEntry.title);
     setDraftContent(activeEntry.content);
-    setEditorStatus(null);
   };
 
   const handleCancelEdit = () => {
     setEditorMode(null);
     setDraftTitle("");
     setDraftContent("");
-    setEditorStatus(null);
   };
 
   const handleSaveEntry = async () => {
     if (!activeCampaignId) {
-      setEditorStatus({ tone: "error", message: "Select a campaign before saving." });
+      pushToast({ tone: "error", message: "Select a campaign before saving." });
       return;
     }
     if (!draftTitle.trim() || !draftContent.trim()) {
-      setEditorStatus({ tone: "error", message: "Add a title and content before saving." });
+      pushToast({ tone: "error", message: "Add a title and content before saving." });
       return;
     }
 
     setIsSaving(true);
-    setEditorStatus(null);
     const title = draftTitle.trim();
     const content = draftContent.trim();
 
@@ -118,7 +111,7 @@ export default function Journal() {
         setSelectedId(entry.id);
         setSearchTerm("");
         setEditorMode(null);
-        setEditorStatus({ tone: "success", message: "Entry created." });
+        pushToast({ tone: "success", message: "Entry created." });
         return;
       }
 
@@ -133,11 +126,11 @@ export default function Journal() {
         setEntries((current) => current.map((item) => (item.id === entry.id ? entry : item)));
         setSelectedId(entry.id);
         setEditorMode(null);
-        setEditorStatus({ tone: "success", message: "Entry updated." });
+        pushToast({ tone: "success", message: "Entry updated." });
       }
     } catch (error) {
       console.error("Failed to save journal entry", error);
-      setEditorStatus({ tone: "error", message: "Unable to save journal entry." });
+      pushToast({ tone: "error", message: "Unable to save journal entry." });
     } finally {
       setIsSaving(false);
     }
@@ -145,11 +138,10 @@ export default function Journal() {
 
   const handleImportNarration = async () => {
     if (!activeCampaignId) {
-      setEditorStatus({ tone: "error", message: "Select a campaign before importing narration." });
+      pushToast({ tone: "error", message: "Select a campaign before importing narration." });
       return;
     }
     setIsImporting(true);
-    setEditorStatus(null);
     try {
       const entries = await listAiLogs({
         campaignId: activeCampaignId,
@@ -158,7 +150,7 @@ export default function Journal() {
       });
       const dmEntry = entries.find((entry) => entry.kind === "dm");
       if (!dmEntry) {
-        setEditorStatus({ tone: "error", message: "No DM narration found to import." });
+        pushToast({ tone: "error", message: "No DM narration found to import." });
         return;
       }
       const entry = await createJournalEntry({
@@ -170,10 +162,10 @@ export default function Journal() {
       setSelectedId(entry.id);
       setSearchTerm("");
       setEditorMode(null);
-      setEditorStatus({ tone: "success", message: "Narration imported." });
+      pushToast({ tone: "success", message: "Narration imported." });
     } catch (error) {
       console.error("Failed to import narration", error);
-      setEditorStatus({ tone: "error", message: "Unable to import narration." });
+      pushToast({ tone: "error", message: "Unable to import narration." });
     } finally {
       setIsImporting(false);
     }
@@ -181,6 +173,7 @@ export default function Journal() {
 
   const handleExportMarkdown = () => {
     if (!activeEntry) {
+      pushToast({ tone: "error", message: "Select a journal entry to export." });
       return;
     }
     const content = `# ${activeEntry.title}\n\nCreated: ${formatDateTime(
@@ -188,16 +181,19 @@ export default function Journal() {
     )}\n\n${activeEntry.content}\n`;
     const filename = toFilename(activeEntry.title, "journal-entry", "md");
     downloadTextFile(filename, content, "text/markdown");
+    pushToast({ tone: "success", message: "Markdown exported." });
   };
 
   const handleExportPdf = () => {
     if (!activeEntry) {
+      pushToast({ tone: "error", message: "Select a journal entry to export." });
       return;
     }
     const content = `${activeEntry.title}\n\nCreated: ${formatDateTime(
       activeEntry.createdAt
     )}\n\n${activeEntry.content}\n`;
     openPrintWindow(`Journal: ${activeEntry.title}`, content);
+    pushToast({ tone: "success", message: "Print preview opened." });
   };
 
   return (
@@ -280,7 +276,6 @@ export default function Journal() {
                   </Button>
                 </>
               )}
-              {editorStatus ? <Chip tone={editorStatus.tone}>{editorStatus.message}</Chip> : null}
             </div>
             {editorMode ? (
               <>

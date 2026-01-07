@@ -13,6 +13,7 @@ import Tabs from "../ui/Tabs";
 import Button from "../ui/Button";
 import Chip from "../ui/Chip";
 import ListCard from "../ui/ListCard";
+import { useToast } from "../ui/Toast";
 
 const defaultSummary =
   "Act II: the party advances through the Sunken Vault to recover the Reliquary Core.";
@@ -31,6 +32,7 @@ type TabKey = "narration" | "actions" | "notes";
 
 export default function PlayWorkspace() {
   const { activeCampaignId, activeSessionId } = useAppContext();
+  const { pushToast } = useToast();
   const [rulesState, setRulesState] = useState<RulesState | null>(null);
   const [partyRoster, setPartyRoster] = useState(defaultRoster);
   const [summary, setSummary] = useState(defaultSummary);
@@ -41,10 +43,6 @@ export default function PlayWorkspace() {
   const [activeTab, setActiveTab] = useState<TabKey>("narration");
   const [noteTitle, setNoteTitle] = useState("");
   const [noteContent, setNoteContent] = useState("");
-  const [noteStatus, setNoteStatus] = useState<{
-    tone: "success" | "error";
-    message: string;
-  } | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -100,15 +98,14 @@ export default function PlayWorkspace() {
 
   const handleSaveNote = async () => {
     if (!activeCampaignId) {
-      setNoteStatus({ tone: "error", message: "Select a campaign before saving notes." });
+      pushToast({ tone: "error", message: "Select a campaign before saving notes." });
       return;
     }
     if (!noteTitle.trim() || !noteContent.trim()) {
-      setNoteStatus({ tone: "error", message: "Add a title and content before saving." });
+      pushToast({ tone: "error", message: "Add a title and content before saving." });
       return;
     }
     setIsSaving(true);
-    setNoteStatus(null);
     try {
       await createJournalEntry({
         campaignId: activeCampaignId,
@@ -117,10 +114,10 @@ export default function PlayWorkspace() {
       });
       setNoteTitle("");
       setNoteContent("");
-      setNoteStatus({ tone: "success", message: "Journal entry saved." });
+      pushToast({ tone: "success", message: "Journal entry saved." });
     } catch (error) {
       console.error("Failed to save journal entry", error);
-      setNoteStatus({ tone: "error", message: "Unable to save journal entry." });
+      pushToast({ tone: "error", message: "Unable to save journal entry." });
     } finally {
       setIsSaving(false);
     }
@@ -128,7 +125,7 @@ export default function PlayWorkspace() {
 
   const handleImportNarration = async () => {
     if (!activeCampaignId) {
-      setNoteStatus({ tone: "error", message: "Select a campaign before importing narration." });
+      pushToast({ tone: "error", message: "Select a campaign before importing narration." });
       return;
     }
     const entries = await listAiLogs({
@@ -138,14 +135,14 @@ export default function PlayWorkspace() {
     });
     const dmEntry = entries.find((entry) => entry.kind === "dm");
     if (!dmEntry) {
-      setNoteStatus({ tone: "error", message: "No narration logs available yet." });
+      pushToast({ tone: "error", message: "No narration logs available yet." });
       return;
     }
     setNoteContent(dmEntry.content);
     if (!noteTitle.trim()) {
       setNoteTitle(`Narration ${new Date(dmEntry.createdAt).toLocaleDateString()}`);
     }
-    setNoteStatus({ tone: "success", message: "Narration imported." });
+    pushToast({ tone: "success", message: "Narration imported." });
   };
 
   const narrationContent = (
@@ -334,12 +331,10 @@ export default function PlayWorkspace() {
             onClick={() => {
               setNoteTitle("");
               setNoteContent("");
-              setNoteStatus(null);
             }}
           >
             Clear
           </Button>
-          {noteStatus ? <Chip tone={noteStatus.tone}>{noteStatus.message}</Chip> : null}
         </div>
       </Panel>
     </div>

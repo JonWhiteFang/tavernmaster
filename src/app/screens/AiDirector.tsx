@@ -10,6 +10,7 @@ import { usePartyProposals } from "../hooks/usePartyProposals";
 import Button from "../ui/Button";
 import Chip from "../ui/Chip";
 import ListCard from "../ui/ListCard";
+import { useToast } from "../ui/Toast";
 
 const defaultSummary =
   "Act II: the party advances through the Sunken Vault to recover the Reliquary Core.";
@@ -152,12 +153,9 @@ const buildActionDetails = (action: Action) => {
 
 export default function AiDirector() {
   const { activeCampaignId, activeSessionId } = useAppContext();
+  const { pushToast } = useToast();
   const [rulesState, setRulesState] = useState<RulesState | null>(null);
   const [partyRoster, setPartyRoster] = useState(defaultRoster);
-  const [journalStatus, setJournalStatus] = useState<{
-    tone: "success" | "error";
-    message: string;
-  } | null>(null);
   const [isSavingJournal, setIsSavingJournal] = useState(false);
 
   const [summary, setSummary] = useState(defaultSummary);
@@ -219,37 +217,34 @@ export default function AiDirector() {
   } = usePartyProposals(partyContext, rulesState);
 
   const handleStreamNarration = () => {
-    setJournalStatus(null);
     void streamNarration();
   };
 
   const handleClearOutput = () => {
-    setJournalStatus(null);
     clearOutput();
   };
 
   const handleCopyNarration = async () => {
     if (!activeCampaignId) {
-      setJournalStatus({ tone: "error", message: "Select a campaign before saving narration." });
+      pushToast({ tone: "error", message: "Select a campaign before saving narration." });
       return;
     }
     const content = (parsedHighlights ?? output).trim();
     if (!content) {
-      setJournalStatus({ tone: "error", message: "Stream narration before copying to Journal." });
+      pushToast({ tone: "error", message: "Stream narration before copying to Journal." });
       return;
     }
     setIsSavingJournal(true);
-    setJournalStatus(null);
     try {
       await createJournalEntry({
         campaignId: activeCampaignId,
         title: `Narration ${new Date().toLocaleDateString()}`,
         content
       });
-      setJournalStatus({ tone: "success", message: "Narration copied to Journal." });
+      pushToast({ tone: "success", message: "Narration copied to Journal." });
     } catch (error) {
       console.error("Failed to copy narration to journal", error);
-      setJournalStatus({ tone: "error", message: "Unable to save narration." });
+      pushToast({ tone: "error", message: "Unable to save narration." });
     } finally {
       setIsSavingJournal(false);
     }
@@ -328,9 +323,6 @@ export default function AiDirector() {
               <Button variant="ghost" onClick={handleClearOutput}>
                 Clear Output
               </Button>
-              {journalStatus ? (
-                <Chip tone={journalStatus.tone}>{journalStatus.message}</Chip>
-              ) : null}
             </div>
             <div className="output-panel">
               <div className="panel-subtitle">Live Output</div>
