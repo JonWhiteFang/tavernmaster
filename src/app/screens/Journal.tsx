@@ -130,9 +130,7 @@ export default function Journal() {
           content,
           createdAt: activeEntry.createdAt
         });
-        setEntries((current) =>
-          current.map((item) => (item.id === entry.id ? entry : item))
-        );
+        setEntries((current) => current.map((item) => (item.id === entry.id ? entry : item)));
         setSelectedId(entry.id);
         setEditorMode(null);
         setEditorStatus({ tone: "success", message: "Entry updated." });
