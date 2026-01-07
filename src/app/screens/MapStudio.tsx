@@ -77,19 +77,19 @@ export default function MapStudio() {
     setMapFile(file);
   };
 
-  const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
+  const handleDragOver = (event: DragEvent<globalThis.HTMLDivElement>) => {
     event.preventDefault();
     setIsDragActive(true);
   };
 
-  const handleDragLeave = (event: DragEvent<HTMLDivElement>) => {
-    const nextTarget = event.relatedTarget as Node | null;
+  const handleDragLeave = (event: DragEvent<globalThis.HTMLDivElement>) => {
+    const nextTarget = event.relatedTarget as globalThis.Node | null;
     if (!nextTarget || !event.currentTarget.contains(nextTarget)) {
       setIsDragActive(false);
     }
   };
 
-  const handleDrop = (event: DragEvent<HTMLDivElement>) => {
+  const handleDrop = (event: DragEvent<globalThis.HTMLDivElement>) => {
     event.preventDefault();
     setIsDragActive(false);
     const file = event.dataTransfer.files?.[0] ?? null;
