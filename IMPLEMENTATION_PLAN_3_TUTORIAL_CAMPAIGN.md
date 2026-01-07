@@ -74,25 +74,25 @@ Blocks: Phase 3+
 
 ### Tasks
 
-- [ ] Define tutorial step schema (id, title, body, target selector, placement, completion event).
-- [ ] Add `TutorialProvider` with persisted progress (`localStorage`/`usePersistentState`).
-- [ ] Build overlay + spotlight components (step card, next/back/skip, progress indicator).
-- [ ] Add a safe fallback when a step target is missing (centered card + "Skip step").
-- [ ] Add `data-tutorial-id` attributes to key UI elements for reliable anchors.
-- [ ] Add a "Start Tutorial" / "Resume Tutorial" action in Settings.
-- [ ] Add tutorial completion/skip tracking and versioning (reset if tutorial content changes).
-- [ ] Ensure tutorial supports keyboard controls (Esc to exit, Enter for Next).
+- [x] Define tutorial step schema (id, title, body, target selector, placement, completion event).
+- [x] Add `TutorialProvider` with persisted progress (`localStorage`/`usePersistentState`).
+- [x] Build overlay + spotlight components (step card, next/back/skip, progress indicator).
+- [x] Add a safe fallback when a step target is missing (centered card + "Skip step").
+- [x] Add `data-tutorial-id` attributes to key UI elements for reliable anchors.
+- [x] Add a "Start Tutorial" / "Resume Tutorial" action in Settings.
+- [x] Add tutorial completion/skip tracking and versioning (reset if tutorial content changes).
+- [x] Ensure tutorial supports keyboard controls (Esc to exit, Enter for Next).
 
 ### Acceptance criteria
 
-- [ ] Tutorial can start, pause, skip, and resume with progress persisted.
-- [ ] Highlighted elements align with UI targets on all major screens.
+- [x] Tutorial can start, pause, skip, and resume with progress persisted.
+- [x] Highlighted elements align with UI targets on all major screens.
 
 ### Testing
 
-- [ ] `npm run lint`
-- [ ] `npm run test`
-- [ ] `npm run format:check`
+- [x] `npm run lint`
+- [x] `npm run test`
+- [x] `npm run format:check`
 
 ## Phase 3 - Tutorial content for core features
 
