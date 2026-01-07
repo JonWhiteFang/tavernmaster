@@ -108,11 +108,7 @@ export default function Topbar({ onNewJournal, onExport, onSearch }: TopbarProps
           >
             New Journal
           </button>
-          <button
-            className="secondary-button"
-            onClick={onExport}
-            data-tutorial-id="topbar-export"
-          >
+          <button className="secondary-button" onClick={onExport} data-tutorial-id="topbar-export">
             Export
           </button>
           <button className="ghost-button" onClick={onSearch} data-tutorial-id="topbar-search">
