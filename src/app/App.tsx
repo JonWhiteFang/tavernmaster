@@ -17,6 +17,7 @@ import { useHotkeys } from "./hooks/useHotkeys";
 import ContextRail from "./layout/ContextRail";
 import TimelineDrawer from "./layout/TimelineDrawer";
 import { ToastProvider } from "./ui/Toast";
+import { TutorialProvider } from "./ui/Tutorial";
 
 type ScreenKey =
   | "play"
@@ -45,7 +46,9 @@ export default function App() {
   return (
     <AppProvider>
       <ToastProvider>
-        <AppShell />
+        <TutorialProvider>
+          <AppShell />
+        </TutorialProvider>
       </ToastProvider>
     </AppProvider>
   );
