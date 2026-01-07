@@ -179,20 +179,20 @@ Blocks: Phase 7+
 
 ### Tasks
 
-- [ ] Add kind filters (DM, Party, Summary, System, User).
-- [ ] Add "Export Current Session Transcript" to combine N logs into one output.
-- [ ] Ensure context filters apply (campaign + optional session).
+- [x] Add kind filters (DM, Party, Summary, System, User).
+- [x] Add "Export Current Session Transcript" to combine N logs into one output.
+- [x] Ensure context filters apply (campaign + optional session).
 
 ### Acceptance criteria
 
-- [ ] Logs filter correctly by kind and context.
-- [ ] Transcript export generates a single combined output for the session.
+- [x] Logs filter correctly by kind and context.
+- [x] Transcript export generates a single combined output for the session.
 
 ### Testing
 
-- [ ] `npm run lint`
-- [ ] `npm run test`
-- [ ] `npm run format:check`
+- [x] `npm run lint`
+- [x] `npm run test`
+- [x] `npm run format:check`
 
 ## Phase 7 - Encounter + Map ergonomics (Sections 7.4, 7.5)
 
