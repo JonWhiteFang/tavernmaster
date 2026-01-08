@@ -1,4 +1,12 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from "react";
 import type { PropsWithChildren } from "react";
 import type { Campaign, Session } from "../data/types";
 import { listCampaigns } from "../data/campaigns";
@@ -16,14 +24,50 @@ type AppContextValue = {
   setActiveSessionId: (id: string | null) => void;
   refreshCampaigns: () => Promise<void>;
   refreshSessions: (campaignId?: string | null) => Promise<void>;
-  ensureDefaults: (nextCampaigns?: Campaign[], nextSessions?: Session[]) => void;
+  ensureDefaults: (
+    nextCampaigns?: Campaign[],
+    nextSessions?: Session[],
+    sessionsForCampaignId?: string | null
+  ) => void;
 };
 
 const AppContext = createContext<AppContextValue | undefined>(undefined);
 
+function areCampaignsEqual(current: Campaign[], next: Campaign[]) {
+  if (current === next) {
+    return true;
+  }
+  if (current.length !== next.length) {
+    return false;
+  }
+  return current.every((campaign, index) => {
+    const compare = next[index];
+    return campaign.id === compare.id && campaign.updatedAt === compare.updatedAt;
+  });
+}
+
+function areSessionsEqual(current: Session[], next: Session[]) {
+  if (current === next) {
+    return true;
+  }
+  if (current.length !== next.length) {
+    return false;
+  }
+  return current.every((session, index) => {
+    const compare = next[index];
+    return (
+      session.id === compare.id &&
+      session.campaignId === compare.campaignId &&
+      session.updatedAt === compare.updatedAt
+    );
+  });
+}
+
 export function AppProvider({ children }: PropsWithChildren) {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
+  const [campaignsLoaded, setCampaignsLoaded] = useState(false);
+  const [sessionsCampaignId, setSessionsCampaignId] = useState<string | null>(null);
   const [activeCampaignId, setActiveCampaignId] = usePersistentState<string | null>(
     "tm.activeCampaignId",
     null
@@ -72,9 +116,15 @@ export function AppProvider({ children }: PropsWithChildren) {
   );
 
   const ensureDefaults = useCallback(
-    (nextCampaigns?: Campaign[], nextSessions?: Session[]) => {
+    (
+      nextCampaigns?: Campaign[],
+      nextSessions?: Session[],
+      sessionsForCampaignId?: string | null
+    ) => {
       const campaignsToUse = nextCampaigns ?? campaigns;
       const sessionsToUse = nextSessions ?? sessions;
+      const resolvedCampaignsLoaded = nextCampaigns !== undefined || campaignsLoaded;
+      const resolvedSessionsCampaignId = sessionsForCampaignId ?? sessionsCampaignId;
 
       if (!hasSelectedCampaign) {
         if (activeCampaignId !== null) {
@@ -86,6 +136,10 @@ export function AppProvider({ children }: PropsWithChildren) {
         if (hasSelectedSession) {
           setHasSelectedSession(false);
         }
+        return;
+      }
+
+      if (!resolvedCampaignsLoaded) {
         return;
       }
 
@@ -107,6 +161,10 @@ export function AppProvider({ children }: PropsWithChildren) {
         return;
       }
 
+      if (resolvedSessionsCampaignId !== activeCampaignId) {
+        return;
+      }
+
       const sessionExists = activeSessionId
         ? sessionsToUse.some((session) => session.id === activeSessionId)
         : false;
@@ -120,6 +178,8 @@ export function AppProvider({ children }: PropsWithChildren) {
       activeSessionId,
       campaigns,
       sessions,
+      campaignsLoaded,
+      sessionsCampaignId,
       hasSelectedCampaign,
       hasSelectedSession,
       setActiveCampaignId,
@@ -131,39 +191,50 @@ export function AppProvider({ children }: PropsWithChildren) {
 
   const refreshCampaigns = useCallback(async () => {
     const data = await listCampaigns();
-    setCampaigns(data);
-    ensureDefaults(data, sessions);
-  }, [ensureDefaults, sessions]);
+    setCampaigns((current) => (areCampaignsEqual(current, data) ? current : data));
+    setCampaignsLoaded(true);
+    ensureDefaults(data);
+  }, [ensureDefaults]);
 
   const refreshSessions = useCallback(
     async (campaignId?: string | null) => {
-      const resolvedCampaignId = campaignId ?? activeCampaignId;
+      const resolvedCampaignId = campaignId === undefined ? activeCampaignId : campaignId;
       if (!resolvedCampaignId) {
-        setSessions([]);
-        setActiveSessionId(null);
-        setHasSelectedSession(false);
+        setSessions((current) => (current.length === 0 ? current : []));
+        setSessionsCampaignId((current) => (current === null ? current : null));
+        setActiveSessionId((current) => (current === null ? current : null));
+        setHasSelectedSession((current) => (current ? false : current));
         return;
       }
       const data = await listSessions(resolvedCampaignId);
-      setSessions(data);
-      ensureDefaults(campaigns, data);
+      setSessions((current) => (areSessionsEqual(current, data) ? current : data));
+      setSessionsCampaignId(resolvedCampaignId);
+      const campaignsForDefaults = campaignsLoaded ? campaigns : undefined;
+      ensureDefaults(campaignsForDefaults, data, resolvedCampaignId);
     },
-    [activeCampaignId, campaigns, ensureDefaults, setActiveSessionId, setHasSelectedSession]
+    [
+      activeCampaignId,
+      campaigns,
+      campaignsLoaded,
+      ensureDefaults,
+      setActiveSessionId,
+      setHasSelectedSession
+    ]
   );
 
   useEffect(() => {
     void refreshCampaigns();
   }, [refreshCampaigns]);
 
+  const refreshSessionsRef = useRef(refreshSessions);
+
   useEffect(() => {
-    if (!activeCampaignId) {
-      setSessions([]);
-      setActiveSessionId(null);
-      setHasSelectedSession(false);
-      return;
-    }
-    void refreshSessions(activeCampaignId);
-  }, [activeCampaignId, refreshSessions, setActiveSessionId, setHasSelectedSession]);
+    refreshSessionsRef.current = refreshSessions;
+  }, [refreshSessions]);
+
+  useEffect(() => {
+    void refreshSessionsRef.current(activeCampaignId);
+  }, [activeCampaignId]);
 
   const activeCampaign = useMemo(
     () => campaigns.find((campaign) => campaign.id === activeCampaignId) ?? null,

@@ -4,8 +4,10 @@ import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
 
-const initializeData = vi.fn();
-const initializeSync = vi.fn();
+const { initializeData, initializeSync } = vi.hoisted(() => ({
+  initializeData: vi.fn(),
+  initializeSync: vi.fn()
+}));
 const hotkeyBindings: Array<{ key: string; handler: () => void }> = [];
 
 vi.mock("./data/init", () => ({
@@ -139,11 +141,11 @@ describe("App", () => {
   it("responds to navigation events", () => {
     render(<App />);
 
-    window.dispatchEvent(
-      new window.CustomEvent("tm.navigate", { detail: { screen: "journal" } })
-    );
+    window.dispatchEvent(new window.CustomEvent("tm.navigate", { detail: { screen: "journal" } }));
 
-    expect(screen.getByText("Journal Screen")).toBeInTheDocument();
+    return waitFor(() => {
+      expect(screen.getByText("Journal Screen")).toBeInTheDocument();
+    });
   });
 
   it("handles hotkey navigation", async () => {
@@ -154,7 +156,9 @@ describe("App", () => {
     expect(binding).toBeDefined();
     binding?.handler();
 
-    expect(screen.getByText("Dashboard Screen")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText("Dashboard Screen")).toBeInTheDocument();
+    });
 
     await user.click(screen.getByRole("button", { name: "Dashboard Screen" }));
     expect(screen.getByText("Play Workspace Screen")).toBeInTheDocument();

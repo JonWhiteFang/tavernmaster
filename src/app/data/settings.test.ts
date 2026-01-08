@@ -92,15 +92,15 @@ describe("settings", () => {
 
   it("creates defaults when settings are missing", async () => {
     const select = vi.fn().mockResolvedValue([]);
+    const execute = vi.fn();
     vi.mocked(getSecret).mockResolvedValueOnce(null);
-    vi.mocked(getDatabase).mockResolvedValue({ select } as never);
-    const upsertSpy = vi.spyOn(settingsModule, "upsertAppSettings").mockResolvedValue(undefined);
+    vi.mocked(getDatabase).mockResolvedValue({ select, execute } as never);
 
     const result = await settingsModule.getAppSettings();
 
     expect(result.llm.baseUrl).toBeTruthy();
-    expect(upsertSpy).toHaveBeenCalled();
-    upsertSpy.mockRestore();
+    expect(execute).toHaveBeenCalled();
+    expect(enqueueUpsertAndSchedule).toHaveBeenCalled();
   });
 
   it("falls back to defaults on errors", async () => {
