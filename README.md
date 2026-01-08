@@ -41,6 +41,12 @@ npm run test
 npm run format:check
 ```
 
+## Coverage
+
+```bash
+npm run test:coverage
+```
+
 ## Local LLM Setup
 
 - Ollama (default): `http://localhost:11434`
