@@ -10,7 +10,7 @@ vi.mock("./secure", () => ({
 describe("keychainStorage", () => {
   beforeEach(() => {
     vi.resetModules();
-    localStorage.clear();
+    window.localStorage.clear();
     vi.clearAllMocks();
   });
 
@@ -28,18 +28,18 @@ describe("keychainStorage", () => {
     expect(deleteSecret).toHaveBeenCalledWith("supabase:session");
   });
 
-  it("falls back to localStorage when keychain fails", async () => {
-    localStorage.setItem("session", "fallback");
+  it("falls back to window.localStorage when keychain fails", async () => {
+    window.localStorage.setItem("session", "fallback");
     vi.mocked(getSecret).mockRejectedValueOnce(new Error("fail"));
     const { keychainStorage } = await import("./keychainStorage");
 
     await expect(keychainStorage.getItem("session")).resolves.toBe("fallback");
-    expect(localStorage.getItem("session")).toBe("fallback");
+    expect(window.localStorage.getItem("session")).toBe("fallback");
 
     await keychainStorage.setItem("session", "local");
-    expect(localStorage.getItem("session")).toBe("local");
+    expect(window.localStorage.getItem("session")).toBe("local");
 
     await keychainStorage.removeItem("session");
-    expect(localStorage.getItem("session")).toBeNull();
+    expect(window.localStorage.getItem("session")).toBeNull();
   });
 });

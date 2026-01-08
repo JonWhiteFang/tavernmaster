@@ -35,16 +35,16 @@ function ContextView() {
 
 describe("AppContext", () => {
   beforeEach(() => {
-    localStorage.clear();
+    window.localStorage.clear();
     vi.mocked(listCampaigns).mockResolvedValue([]);
     vi.mocked(listSessions).mockResolvedValue([]);
   });
 
   it("loads stored selections when campaigns and sessions exist", async () => {
-    localStorage.setItem("tm.activeCampaignId", JSON.stringify("camp-1"));
-    localStorage.setItem("tm.activeSessionId", JSON.stringify("sess-1"));
-    localStorage.setItem("tm.hasSelectedCampaign", JSON.stringify(true));
-    localStorage.setItem("tm.hasSelectedSession", JSON.stringify(true));
+    window.localStorage.setItem("tm.activeCampaignId", JSON.stringify("camp-1"));
+    window.localStorage.setItem("tm.activeSessionId", JSON.stringify("sess-1"));
+    window.localStorage.setItem("tm.hasSelectedCampaign", JSON.stringify(true));
+    window.localStorage.setItem("tm.hasSelectedSession", JSON.stringify(true));
 
     vi.mocked(listCampaigns).mockResolvedValue([
       { id: "camp-1", name: "Stormwatch", summary: "", createdAt: "now", updatedAt: "now" }
@@ -77,8 +77,8 @@ describe("AppContext", () => {
   });
 
   it("clears invalid stored campaign selections", async () => {
-    localStorage.setItem("tm.activeCampaignId", JSON.stringify("missing"));
-    localStorage.setItem("tm.hasSelectedCampaign", JSON.stringify(true));
+    window.localStorage.setItem("tm.activeCampaignId", JSON.stringify("missing"));
+    window.localStorage.setItem("tm.hasSelectedCampaign", JSON.stringify(true));
 
     render(
       <AppProvider>
@@ -94,10 +94,10 @@ describe("AppContext", () => {
 
   it("resets sessions when switching campaigns", async () => {
     const user = userEvent.setup();
-    localStorage.setItem("tm.activeCampaignId", JSON.stringify("camp-1"));
-    localStorage.setItem("tm.activeSessionId", JSON.stringify("sess-1"));
-    localStorage.setItem("tm.hasSelectedCampaign", JSON.stringify(true));
-    localStorage.setItem("tm.hasSelectedSession", JSON.stringify(true));
+    window.localStorage.setItem("tm.activeCampaignId", JSON.stringify("camp-1"));
+    window.localStorage.setItem("tm.activeSessionId", JSON.stringify("sess-1"));
+    window.localStorage.setItem("tm.hasSelectedCampaign", JSON.stringify(true));
+    window.localStorage.setItem("tm.hasSelectedSession", JSON.stringify(true));
 
     vi.mocked(listCampaigns).mockResolvedValue([
       { id: "camp-1", name: "Stormwatch", summary: "", createdAt: "now", updatedAt: "now" },
@@ -133,8 +133,8 @@ describe("AppContext", () => {
 
   it("clears sessions when refreshSessions is called without a campaign", async () => {
     const user = userEvent.setup();
-    localStorage.setItem("tm.activeCampaignId", JSON.stringify("camp-1"));
-    localStorage.setItem("tm.hasSelectedCampaign", JSON.stringify(true));
+    window.localStorage.setItem("tm.activeCampaignId", JSON.stringify("camp-1"));
+    window.localStorage.setItem("tm.hasSelectedCampaign", JSON.stringify(true));
 
     vi.mocked(listCampaigns).mockResolvedValue([
       { id: "camp-1", name: "Stormwatch", summary: "", createdAt: "now", updatedAt: "now" }

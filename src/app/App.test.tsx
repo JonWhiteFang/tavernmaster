@@ -139,7 +139,9 @@ describe("App", () => {
   it("responds to navigation events", () => {
     render(<App />);
 
-    window.dispatchEvent(new CustomEvent("tm.navigate", { detail: { screen: "journal" } }));
+    window.dispatchEvent(
+      new window.CustomEvent("tm.navigate", { detail: { screen: "journal" } })
+    );
 
     expect(screen.getByText("Journal Screen")).toBeInTheDocument();
   });
