@@ -112,7 +112,7 @@ Blocks: Phase 4+
 - [x] Context Rail + Timeline Drawer steps: open timeline, view recent logs.
 - [x] Settings steps: sync status, tutorial reset, optional sample data creation.
 - [x] Add event hooks to advance steps on success (campaign/session/character creation).
-- [ ] Add event hooks to advance steps on export actions.
+- [x] Add event hooks to advance steps on export actions.
 
 ### Acceptance criteria
 
