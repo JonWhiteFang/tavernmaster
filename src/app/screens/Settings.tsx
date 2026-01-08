@@ -422,7 +422,7 @@ export default function Settings() {
           </div>
         </section>
 
-        <section className="panel settings-card">
+        <section className="panel settings-card" data-tutorial-id="settings-tutorial-panel">
           <div className="panel-title">Tutorial</div>
           <div className="panel-body">
             <p className="panel-copy">
@@ -455,7 +455,12 @@ export default function Settings() {
             <div className="form-grid">
               <label className="form-field">
                 <span className="form-label">Sync Status</span>
-                <input className="form-input" value={syncMessage ?? syncStatus} disabled />
+                <input
+                  className="form-input"
+                  value={syncMessage ?? syncStatus}
+                  disabled
+                  data-tutorial-id="settings-sync-status"
+                />
               </label>
               <label className="form-field">
                 <span className="form-label">Supabase Config</span>
@@ -614,6 +619,7 @@ export default function Settings() {
                   className="secondary-button"
                   onClick={handleSeedDemo}
                   disabled={seedStatus === "working"}
+                  data-tutorial-id="settings-sample-data"
                 >
                   {seedStatus === "working" ? "Creating..." : "Create Sample Data"}
                 </button>

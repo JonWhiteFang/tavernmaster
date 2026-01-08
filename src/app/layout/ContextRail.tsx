@@ -287,7 +287,7 @@ export default function ContextRail({ activeScreen }: ContextRailProps) {
         </div>
       </section>
 
-      <section className="panel context-card">
+      <section className="panel context-card" data-tutorial-id="context-rail-recent-logs">
         <div className="panel-title">Recent Narration</div>
         <div className="panel-body">
           {recentLogs.length === 0 ? (

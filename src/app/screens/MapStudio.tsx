@@ -186,7 +186,11 @@ export default function MapStudio() {
               ) : null}
             </div>
             <div className="button-row" style={{ marginTop: "1rem" }}>
-              <label className="secondary-button" style={{ cursor: "pointer" }}>
+              <label
+                className="secondary-button"
+                style={{ cursor: "pointer" }}
+                data-tutorial-id="map-upload"
+              >
                 Upload Map
                 <input
                   type="file"
@@ -218,6 +222,7 @@ export default function MapStudio() {
                   value={tokenSearch}
                   onChange={(event) => setTokenSearch(event.target.value)}
                   placeholder="Search tokens"
+                  data-tutorial-id="map-search"
                 />
               </label>
               <Chip>Matches {filteredTokens.length}</Chip>
@@ -267,7 +272,9 @@ export default function MapStudio() {
               </label>
             </div>
             <div className="button-row">
-              <Button onClick={handleAddToken}>Add Token</Button>
+            <Button onClick={handleAddToken} data-tutorial-id="map-add-token">
+              Add Token
+            </Button>
             </div>
 
             <div className="token-list">
@@ -282,7 +289,7 @@ export default function MapStudio() {
                         value={token.name}
                         onChange={(event) => handleRenameToken(token.id, event.target.value)}
                       />
-                      <div className="token-role-toggle">
+                      <div className="token-role-toggle" data-tutorial-id="map-role-toggle">
                         {roleOptions.map((role) => (
                           <button
                             key={`${token.id}-${role}`}

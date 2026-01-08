@@ -238,13 +238,23 @@ export default function EncounterFlow() {
                   Clear Snapshot
                 </Button>
               ) : null}
-              <Button variant="secondary" onClick={handleRollInitiative}>
+              <Button
+                variant="secondary"
+                onClick={handleRollInitiative}
+                data-tutorial-id="encounter-roll-initiative"
+              >
                 Roll Initiative
               </Button>
-              <Button variant="secondary" onClick={handleStartEncounter}>
+              <Button
+                variant="secondary"
+                onClick={handleStartEncounter}
+                data-tutorial-id="encounter-start-encounter"
+              >
                 Start Encounter
               </Button>
-              <Button onClick={handleAdvanceTurn}>Advance Turn</Button>
+              <Button onClick={handleAdvanceTurn} data-tutorial-id="encounter-advance-turn">
+                Advance Turn
+              </Button>
             </div>
             <div className="status-row" style={{ marginTop: "1rem" }}>
               <Chip>Round {rulesState?.round ?? 1}</Chip>
