@@ -27,6 +27,13 @@ npm run tauri:dev
 npm run tauri:build
 ```
 
+## First Run & Tutorial
+
+- Tavern Master starts with no default campaign or party data.
+- Use `Campaigns & Sessions` to create your campaign and session, then build your party in `Party Sheets`.
+- The tutorial auto-starts once for new users; pause, skip, or restart it in `Settings → Tutorial`.
+- Optional demo data is available in `Settings → Sample Data`.
+
 ## Party Sheets & Character Creation
 
 Party creation happens in `Party Sheets`. Each party member is created individually and can be set to either player- or AI-controlled.

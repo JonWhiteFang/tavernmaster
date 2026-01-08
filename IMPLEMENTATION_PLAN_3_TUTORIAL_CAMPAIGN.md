@@ -133,11 +133,11 @@ Blocks: Release
 
 ### Tasks
 
-- [ ] Audit empty-state copy for clarity and consistency.
-- [ ] Ensure tutorial overlay is accessible (aria labels, focus order).
-- [ ] Verify tutorial does not block critical actions; allow Skip at all times.
+- [x] Audit empty-state copy for clarity and consistency.
+- [x] Ensure tutorial overlay is accessible (aria labels, focus order).
+- [x] Verify tutorial does not block critical actions; allow Skip at all times.
 - [ ] Validate the tutorial across screen sizes (desktop + small viewport).
-- [ ] Update `docs/USER_GUIDE.md` with tutorial and first-run behavior.
+- [x] Update `docs/USER_GUIDE.md` with tutorial and first-run behavior.
 
 ### Acceptance criteria
 
