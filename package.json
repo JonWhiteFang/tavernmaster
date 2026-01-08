@@ -25,6 +25,9 @@
   "devDependencies": {
     "@eslint/js": "^9.9.0",
     "@tauri-apps/cli": "^2.0.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.1",
+    "@testing-library/user-event": "^14.6.1",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^8.51.0",
@@ -34,19 +37,35 @@
     "eslint": "^9.0.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
+    "jsdom": "^25.0.1",
     "prettier": "^3.3.3",
     "typescript": "^5.6.2",
     "vite": "^6.4.1",
     "vitest": "^3.2.4"
   },
   "vitest": {
+    "test": {
+      "environment": "jsdom",
+      "setupFiles": [
+        "src/app/test/setup.ts"
+      ]
+    },
     "coverage": {
       "provider": "v8",
       "reporter": [
         "text",
         "html"
       ],
-      "reportsDirectory": "coverage"
+      "reportsDirectory": "coverage",
+      "include": [
+        "src/**/*.{ts,tsx}"
+      ],
+      "exclude": [
+        "src/**/*.test.{ts,tsx}",
+        "src/app/test/**",
+        "src-tauri/**",
+        "dist/**"
+      ]
     }
   }
 }
