@@ -1,4 +1,12 @@
-import { createContext, useCallback, useEffect, useMemo, useState, useContext } from "react";
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useContext,
+  useLayoutEffect
+} from "react";
 import type { PropsWithChildren } from "react";
 import { usePersistentState } from "../hooks/usePersistentState";
 import Button from "./Button";
@@ -51,16 +59,6 @@ export function TutorialProvider({ children }: PropsWithChildren) {
       setState({ ...state, status: "active", stepIndex: 0 });
     }
   }, [state, setState]);
-
-  useEffect(() => {
-    if (state.status === "active") {
-      const previous = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-      return () => {
-        document.body.style.overflow = previous;
-      };
-    }
-  }, [state.status]);
 
   const totalSteps = tutorialSteps.length;
   const stepIndex = Math.min(Math.max(state.stepIndex, 0), Math.max(totalSteps - 1, 0));
@@ -235,14 +233,18 @@ function TutorialOverlay({
 }) {
   const [targetRect, setTargetRect] = useState<TargetRect | null>(null);
 
-  const updateTarget = useCallback(() => {
+  const getTargetElement = useCallback(() => {
     if (!step.targetId) {
-      setTargetRect(null);
-      return;
+      return null;
     }
     const selector = `[data-tutorial-id="${step.targetId}"]`;
     const element = document.querySelector(selector);
-    if (!(element instanceof globalThis.HTMLElement)) {
+    return element instanceof globalThis.HTMLElement ? element : null;
+  }, [step.targetId]);
+
+  const updateTarget = useCallback(() => {
+    const element = getTargetElement();
+    if (!element) {
       setTargetRect(null);
       return;
     }
@@ -253,7 +255,27 @@ function TutorialOverlay({
       width: rect.width,
       height: rect.height
     });
-  }, [step.targetId]);
+  }, [getTargetElement]);
+
+  useLayoutEffect(() => {
+    const element = getTargetElement();
+    if (!element) {
+      setTargetRect(null);
+      return;
+    }
+    const rect = element.getBoundingClientRect();
+    if (!isRectInView(rect)) {
+      element.scrollIntoView({ behavior: "auto", block: "center", inline: "nearest" });
+      globalThis.requestAnimationFrame(updateTarget);
+      return;
+    }
+    setTargetRect({
+      top: rect.top,
+      left: rect.left,
+      width: rect.width,
+      height: rect.height
+    });
+  }, [getTargetElement, updateTarget]);
 
   useEffect(() => {
     updateTarget();
@@ -344,4 +366,10 @@ function TutorialOverlay({
       </div>
     </div>
   );
+}
+
+function isRectInView(rect: globalThis.DOMRect) {
+  const viewHeight = window.innerHeight || document.documentElement.clientHeight;
+  const viewWidth = window.innerWidth || document.documentElement.clientWidth;
+  return rect.top >= 0 && rect.left >= 0 && rect.bottom <= viewHeight && rect.right <= viewWidth;
 }

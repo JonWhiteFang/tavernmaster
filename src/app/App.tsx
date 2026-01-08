@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { initializeData } from "./data/init";
 import { initializeSync } from "./sync/client";
 import Dashboard from "./screens/Dashboard";
@@ -42,12 +42,14 @@ const screens: ScreenKey[] = [
   "settings"
 ];
 
+const MemoizedAppShell = memo(AppShell);
+
 export default function App() {
   return (
     <AppProvider>
       <ToastProvider>
         <TutorialProvider>
-          <AppShell />
+          <MemoizedAppShell />
         </TutorialProvider>
       </ToastProvider>
     </AppProvider>
