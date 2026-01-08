@@ -117,8 +117,8 @@ Blocks: Phase 4+
 
 ### Acceptance criteria
 
-- [ ] New users can complete a full guided flow across the app.
-- [ ] Tutorial advances automatically on key actions without breaking normal usage.
+- [x] New users can complete a full guided flow across the app.
+- [x] Tutorial advances automatically on key actions without breaking normal usage.
 
 ### Testing
 
