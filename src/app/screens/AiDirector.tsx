@@ -333,13 +333,18 @@ export default function AiDirector() {
               </label>
             </div>
             <div className="button-row">
-              <Button onClick={handleStreamNarration} disabled={streamState === "streaming"}>
+              <Button
+                onClick={handleStreamNarration}
+                disabled={streamState === "streaming"}
+                data-tutorial-id="director-stream-narration"
+              >
                 {streamState === "streaming" ? "Streaming..." : "Stream Narration"}
               </Button>
               <Button
                 variant="secondary"
                 onClick={handleCopyNarration}
                 disabled={isSavingJournal || streamState === "streaming"}
+                data-tutorial-id="director-copy-journal"
               >
                 {isSavingJournal ? "Saving..." : "Copy to Journal"}
               </Button>
@@ -384,13 +389,18 @@ export default function AiDirector() {
               </label>
             </div>
             <div className="button-row">
-              <Button onClick={generate} disabled={proposalState === "loading"}>
+              <Button
+                onClick={generate}
+                disabled={proposalState === "loading"}
+                data-tutorial-id="director-generate-proposals"
+              >
                 {proposalState === "loading" ? "Generating..." : "Generate Proposals"}
               </Button>
               <Button
                 variant="secondary"
                 onClick={approveAllSafe}
                 disabled={proposals.length === 0}
+                data-tutorial-id="director-approve-all"
               >
                 Approve All Safe
               </Button>

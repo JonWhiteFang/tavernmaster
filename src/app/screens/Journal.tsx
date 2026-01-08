@@ -231,6 +231,7 @@ export default function Journal() {
               onChange={(event) => setSearchTerm(event.target.value)}
               placeholder="Search title or notes"
               disabled={editorMode !== null}
+              data-tutorial-id="journal-search"
             />
           </label>
           <span className="status-chip">Matches {filteredEntries.length}</span>
@@ -276,13 +277,18 @@ export default function Journal() {
                 </>
               ) : (
                 <>
-                  <Button onClick={startNewEntry} disabled={isImporting}>
+                  <Button
+                    onClick={startNewEntry}
+                    disabled={isImporting}
+                    data-tutorial-id="journal-new-entry"
+                  >
                     New Entry
                   </Button>
                   <Button
                     variant="secondary"
                     onClick={startEditEntry}
                     disabled={!activeEntry || isImporting}
+                    data-tutorial-id="journal-edit-entry"
                   >
                     Edit Entry
                   </Button>
@@ -290,6 +296,7 @@ export default function Journal() {
                     variant="secondary"
                     onClick={handleImportNarration}
                     disabled={isImporting || !activeCampaignId || editorMode !== null}
+                    data-tutorial-id="journal-import-narration"
                   >
                     {isImporting ? "Importing..." : "Import Latest Narration"}
                   </Button>
@@ -329,10 +336,18 @@ export default function Journal() {
                 <div className="journal-detail-meta">{formatDateTime(activeEntry.createdAt)}</div>
                 <div className="journal-content">{activeEntry.content}</div>
                 <div className="button-row" style={{ marginTop: "1.2rem" }}>
-                  <Button variant="secondary" onClick={handleExportMarkdown}>
+                  <Button
+                    variant="secondary"
+                    onClick={handleExportMarkdown}
+                    data-tutorial-id="journal-export-markdown"
+                  >
                     Export Markdown
                   </Button>
-                  <Button variant="secondary" onClick={handleExportPdf}>
+                  <Button
+                    variant="secondary"
+                    onClick={handleExportPdf}
+                    data-tutorial-id="journal-export-pdf"
+                  >
                     Export PDF
                   </Button>
                 </div>

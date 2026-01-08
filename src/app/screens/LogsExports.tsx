@@ -195,11 +195,12 @@ export default function LogsExports() {
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
               placeholder="Search transcripts"
+              data-tutorial-id="logs-search"
             />
           </label>
           <Chip>Matches {filteredEntries.length}</Chip>
         </div>
-        <div className="filter-row">
+        <div className="filter-row" data-tutorial-id="logs-filter-kinds">
           <div className="filter-label">Kinds</div>
           <div className="filter-chips">
             <button
@@ -226,6 +227,7 @@ export default function LogsExports() {
             variant="secondary"
             onClick={handleExportSessionTranscript}
             disabled={!activeCampaignId || isExporting}
+            data-tutorial-id="logs-export-transcript"
           >
             {isExporting
               ? "Exporting..."
@@ -272,10 +274,18 @@ export default function LogsExports() {
               <div className="panel-copy">Select a log entry to review its contents.</div>
             )}
             <div className="button-row" style={{ marginTop: "1.2rem" }}>
-              <Button variant="secondary" onClick={handleExportMarkdown}>
+              <Button
+                variant="secondary"
+                onClick={handleExportMarkdown}
+                data-tutorial-id="logs-export-markdown"
+              >
                 Export Markdown
               </Button>
-              <Button variant="secondary" onClick={handleExportPdf}>
+              <Button
+                variant="secondary"
+                onClick={handleExportPdf}
+                data-tutorial-id="logs-export-pdf"
+              >
                 Export PDF
               </Button>
             </div>
