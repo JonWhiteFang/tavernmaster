@@ -11,10 +11,12 @@ type TabsProps = {
   items: TabItem[];
   activeId: string;
   onChange: (id: string) => void;
+  tutorialPrefix?: string;
 };
 
-export default function Tabs({ items, activeId, onChange }: TabsProps) {
+export default function Tabs({ items, activeId, onChange, tutorialPrefix }: TabsProps) {
   const activeItem = items.find((item) => item.id === activeId) ?? items[0];
+  const prefix = tutorialPrefix ?? "tab";
 
   return (
     <div className="tabs">
@@ -26,6 +28,7 @@ export default function Tabs({ items, activeId, onChange }: TabsProps) {
             role="tab"
             aria-selected={item.id === activeId}
             onClick={() => onChange(item.id)}
+            data-tutorial-id={`${prefix}-${item.id}`}
           >
             <span>{item.label}</span>
             {item.badge !== undefined ? <span className="tab-badge">{item.badge}</span> : null}

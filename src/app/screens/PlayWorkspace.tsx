@@ -216,7 +216,11 @@ export default function PlayWorkspace() {
 
       <Panel title="Narration Stream" subtitle="Stream DM narration and review highlights.">
         <div className="button-row">
-          <Button onClick={streamNarration} disabled={streamState === "streaming"}>
+          <Button
+            onClick={streamNarration}
+            disabled={streamState === "streaming"}
+            data-tutorial-id="play-stream-narration"
+          >
             {streamState === "streaming" ? "Streaming..." : "Stream Narration"}
           </Button>
           <Button variant="ghost" onClick={clearOutput}>
@@ -265,7 +269,11 @@ export default function PlayWorkspace() {
 
       <Panel title="Approval Queue" subtitle="Review and approve proposed actions.">
         <div className="button-row">
-          <Button onClick={generate} disabled={proposalState === "loading"}>
+          <Button
+            onClick={generate}
+            disabled={proposalState === "loading"}
+            data-tutorial-id="play-generate-proposals"
+          >
             {proposalState === "loading" ? "Generating..." : "Generate Proposals"}
           </Button>
           <Button variant="secondary" onClick={approveAllSafe} disabled={proposals.length === 0}>
@@ -346,10 +354,14 @@ export default function PlayWorkspace() {
           </label>
         </div>
         <div className="button-row">
-          <Button onClick={handleSaveNote} disabled={isSaving}>
+          <Button onClick={handleSaveNote} disabled={isSaving} data-tutorial-id="play-save-journal">
             {isSaving ? "Saving..." : "Save to Journal"}
           </Button>
-          <Button variant="secondary" onClick={handleImportNarration}>
+          <Button
+            variant="secondary"
+            onClick={handleImportNarration}
+            data-tutorial-id="play-import-narration"
+          >
             Import Latest Narration
           </Button>
           <Button
@@ -390,7 +402,12 @@ export default function PlayWorkspace() {
         </div>
       </section>
 
-      <Tabs items={tabs} activeId={activeTab} onChange={(id) => setActiveTab(id as TabKey)} />
+      <Tabs
+        items={tabs}
+        activeId={activeTab}
+        onChange={(id) => setActiveTab(id as TabKey)}
+        tutorialPrefix="play-tab"
+      />
     </div>
   );
 }
