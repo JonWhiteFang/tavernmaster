@@ -272,9 +272,9 @@ export default function MapStudio() {
               </label>
             </div>
             <div className="button-row">
-            <Button onClick={handleAddToken} data-tutorial-id="map-add-token">
-              Add Token
-            </Button>
+              <Button onClick={handleAddToken} data-tutorial-id="map-add-token">
+                Add Token
+              </Button>
             </div>
 
             <div className="token-list">
