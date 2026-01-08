@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 type ButtonVariant = "primary" | "secondary" | "ghost";
@@ -7,16 +8,17 @@ type ButtonProps = ButtonHTMLAttributes<globalThis.HTMLButtonElement> & {
   children: ReactNode;
 };
 
-export default function Button({
-  variant = "primary",
-  className,
-  children,
-  ...props
-}: ButtonProps) {
-  const classes = [`${variant}-button`, className].filter(Boolean).join(" ");
-  return (
-    <button className={classes} {...props}>
-      {children}
-    </button>
-  );
-}
+const Button = forwardRef<globalThis.HTMLButtonElement, ButtonProps>(
+  ({ variant = "primary", className, children, ...props }, ref) => {
+    const classes = [`${variant}-button`, className].filter(Boolean).join(" ");
+    return (
+      <button className={classes} ref={ref} {...props}>
+        {children}
+      </button>
+    );
+  }
+);
+
+Button.displayName = "Button";
+
+export default Button;

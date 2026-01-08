@@ -5,7 +5,8 @@ import {
   useMemo,
   useState,
   useContext,
-  useLayoutEffect
+  useLayoutEffect,
+  useRef
 } from "react";
 import type { PropsWithChildren } from "react";
 import { usePersistentState } from "../hooks/usePersistentState";
@@ -232,6 +233,9 @@ function TutorialOverlay({
   onPause: () => void;
 }) {
   const [targetRect, setTargetRect] = useState<TargetRect | null>(null);
+  const nextButtonRef = useRef<globalThis.HTMLButtonElement | null>(null);
+  const titleId = useMemo(() => `tutorial-title-${step.id}`, [step.id]);
+  const bodyId = useMemo(() => `tutorial-body-${step.id}`, [step.id]);
 
   const getTargetElement = useCallback(() => {
     if (!step.targetId) {
@@ -276,6 +280,10 @@ function TutorialOverlay({
       height: rect.height
     });
   }, [getTargetElement, updateTarget]);
+
+  useEffect(() => {
+    nextButtonRef.current?.focus();
+  }, [step.id]);
 
   useEffect(() => {
     updateTarget();
@@ -331,12 +339,23 @@ function TutorialOverlay({
           }}
         />
       ) : null}
-      <div className="tutorial-card" style={cardStyle} role="dialog" aria-live="polite">
+      <div
+        className="tutorial-card"
+        style={cardStyle}
+        role="dialog"
+        aria-live="polite"
+        aria-labelledby={titleId}
+        aria-describedby={bodyId}
+      >
         <div className="tutorial-progress">
           Step {stepIndex + 1} of {totalSteps}
         </div>
-        <div className="tutorial-title">{step.title}</div>
-        <div className="tutorial-body">{step.body}</div>
+        <div className="tutorial-title" id={titleId}>
+          {step.title}
+        </div>
+        <div className="tutorial-body" id={bodyId}>
+          {step.body}
+        </div>
         {!hasTarget && step.targetId ? (
           <div className="tutorial-note">
             Tip: navigate to the highlighted area or skip this step to continue.
@@ -360,7 +379,9 @@ function TutorialOverlay({
             <Button variant="ghost" onClick={onSkip}>
               Skip
             </Button>
-            <Button onClick={onNext}>{stepIndex + 1 >= totalSteps ? "Finish" : "Next"}</Button>
+            <Button onClick={onNext} ref={nextButtonRef}>
+              {stepIndex + 1 >= totalSteps ? "Finish" : "Next"}
+            </Button>
           </div>
         </div>
       </div>
