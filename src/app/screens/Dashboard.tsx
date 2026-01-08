@@ -102,6 +102,7 @@ export default function Dashboard({ onResumePlay }: DashboardProps) {
       setActiveCampaignId(campaign.id);
       setIsCampaignModalOpen(false);
       pushToast({ tone: "success", message: "Campaign created." });
+      window.dispatchEvent(new globalThis.CustomEvent("tm.tutorial.campaign-created"));
     } catch (error) {
       console.error("Failed to create campaign", error);
       setCampaignError("Unable to create campaign. Try again.");
@@ -126,6 +127,7 @@ export default function Dashboard({ onResumePlay }: DashboardProps) {
       setActiveSessionId(session.id);
       setIsSessionModalOpen(false);
       pushToast({ tone: "success", message: "Session created." });
+      window.dispatchEvent(new globalThis.CustomEvent("tm.tutorial.session-created"));
     } catch (error) {
       console.error("Failed to create session", error);
       setSessionError("Unable to create session. Try again.");
@@ -146,6 +148,7 @@ export default function Dashboard({ onResumePlay }: DashboardProps) {
             className="primary-button"
             onClick={openCampaignModal}
             disabled={isCreatingCampaign}
+            data-tutorial-id="dashboard-new-campaign"
           >
             New Campaign
           </button>
@@ -153,6 +156,7 @@ export default function Dashboard({ onResumePlay }: DashboardProps) {
             className="secondary-button"
             onClick={openSessionModal}
             disabled={isCreatingSession || !activeCampaignId}
+            data-tutorial-id="dashboard-new-session"
           >
             New Session
           </button>
@@ -274,6 +278,7 @@ export default function Dashboard({ onResumePlay }: DashboardProps) {
                       className="primary-button"
                       onClick={onResumePlay}
                       disabled={!onResumePlay}
+                      data-tutorial-id="dashboard-resume-play"
                     >
                       Resume Play
                     </button>

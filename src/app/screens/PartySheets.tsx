@@ -223,6 +223,7 @@ export default function PartySheets() {
     if (!canSave || isSaving) {
       return;
     }
+    const isNewCharacter = mode === "create";
     setIsSaving(true);
     setFormError(null);
 
@@ -235,6 +236,9 @@ export default function PartySheets() {
         saved = await createCharacter(payload);
       }
       await loadCharacters(saved.id);
+      if (isNewCharacter) {
+        window.dispatchEvent(new globalThis.CustomEvent("tm.tutorial.character-created"));
+      }
       setMode("view");
     } catch (error) {
       console.error(error);
@@ -343,7 +347,7 @@ export default function PartySheets() {
       </section>
 
       <div className="party-grid">
-        <section className="panel party-list">
+        <section className="panel party-list" data-tutorial-id="party-roster">
           <div className="panel-header">
             <div>
               <div className="panel-title">Roster</div>
@@ -353,6 +357,7 @@ export default function PartySheets() {
               className="secondary-button"
               onClick={handleStartCreate}
               disabled={mode !== "view"}
+              data-tutorial-id="party-create-character"
             >
               Create Character
             </button>
@@ -546,6 +551,7 @@ export default function PartySheets() {
                             controlMode: event.target.value as CharacterControl
                           }))
                         }
+                        data-tutorial-id="party-control-mode"
                       >
                         <option value="player">Player</option>
                         <option value="ai">AI</option>
