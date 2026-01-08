@@ -40,9 +40,7 @@ describe("encounter recovery", () => {
       log: [],
       rulesState
     };
-    const select = vi
-      .fn()
-      .mockResolvedValue([{ value_json: JSON.stringify(snapshot) }]);
+    const select = vi.fn().mockResolvedValue([{ value_json: JSON.stringify(snapshot) }]);
     vi.mocked(getDatabase).mockResolvedValue({ select } as never);
 
     await expect(loadEncounterRecovery()).resolves.toEqual(snapshot);

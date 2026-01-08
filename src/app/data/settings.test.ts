@@ -55,10 +55,7 @@ describe("settings", () => {
     const result = await settingsModule.getAppSettings();
 
     expect(result.llm.baseUrl).toBe("http://db.local");
-    expect(setSecret).toHaveBeenCalledWith(
-      "llm_settings",
-      JSON.stringify(result.llm)
-    );
+    expect(setSecret).toHaveBeenCalledWith("llm_settings", JSON.stringify(result.llm));
   });
 
   it("upserts settings and enqueues sync", async () => {
@@ -97,9 +94,7 @@ describe("settings", () => {
     const select = vi.fn().mockResolvedValue([]);
     vi.mocked(getSecret).mockResolvedValueOnce(null);
     vi.mocked(getDatabase).mockResolvedValue({ select } as never);
-    const upsertSpy = vi
-      .spyOn(settingsModule, "upsertAppSettings")
-      .mockResolvedValue(undefined);
+    const upsertSpy = vi.spyOn(settingsModule, "upsertAppSettings").mockResolvedValue(undefined);
 
     const result = await settingsModule.getAppSettings();
 

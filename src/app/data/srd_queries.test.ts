@@ -46,9 +46,11 @@ describe("srd queries", () => {
   });
 
   it("parses stored SRD records", async () => {
-    const select = vi.fn().mockResolvedValue([
-      { id: "item-1", name: "Lantern", data_json: JSON.stringify({ type: "gear" }) }
-    ]);
+    const select = vi
+      .fn()
+      .mockResolvedValue([
+        { id: "item-1", name: "Lantern", data_json: JSON.stringify({ type: "gear" }) }
+      ]);
     vi.mocked(getDatabase).mockResolvedValue({ select } as never);
 
     const result = await getSrdById("items", "item-1");
