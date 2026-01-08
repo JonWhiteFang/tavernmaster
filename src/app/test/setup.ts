@@ -1,4 +1,5 @@
 import "@testing-library/jest-dom/vitest";
+import { cleanup } from "@testing-library/react";
 import { afterEach, vi } from "vitest";
 
 vi.mock("@tauri-apps/api/core", () => ({
@@ -81,5 +82,6 @@ if (!globalThis.crypto) {
 }
 
 afterEach(() => {
+  cleanup();
   vi.clearAllMocks();
 });
