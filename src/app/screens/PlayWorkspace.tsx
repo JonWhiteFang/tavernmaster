@@ -155,7 +155,7 @@ export default function PlayWorkspace() {
         <section className="panel">
           <div className="panel-title">Play Workspace</div>
           <div className="panel-subtitle">
-            Create or select a campaign to begin the solo play loop.
+            Create or select a campaign in Campaigns & Sessions to begin the solo play loop.
           </div>
           <div className="panel-copy" style={{ marginTop: "0.8rem" }}>
             Start a new campaign, then build your party roster before streaming narration.

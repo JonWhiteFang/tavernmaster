@@ -171,7 +171,7 @@ export default function LogsExports() {
         <section className="panel">
           <div className="panel-title">Logs & Exports</div>
           <div className="panel-subtitle">
-            Select or create a campaign to review and export transcripts.
+            Create or select a campaign in Campaigns & Sessions to review and export transcripts.
           </div>
           <div className="button-row" style={{ marginTop: "1.2rem" }}>
             <Button onClick={() => handleNavigate("dashboard")}>Open Campaigns & Sessions</Button>

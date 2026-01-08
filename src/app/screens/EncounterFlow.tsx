@@ -186,7 +186,9 @@ export default function EncounterFlow() {
       <div className="encounter">
         <section className="panel">
           <div className="panel-title">Encounter Flow</div>
-          <div className="panel-subtitle">Select a campaign to start encounter tracking.</div>
+          <div className="panel-subtitle">
+            Create or select a campaign in Campaigns & Sessions to start encounter tracking.
+          </div>
           <div className="button-row" style={{ marginTop: "1.2rem" }}>
             <Button onClick={() => handleNavigate("dashboard")}>Open Campaigns & Sessions</Button>
             <Button variant="secondary" onClick={() => handleNavigate("party")}>

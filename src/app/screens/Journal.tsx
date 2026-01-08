@@ -207,7 +207,8 @@ export default function Journal() {
         <section className="panel">
           <div className="panel-title">Journal</div>
           <div className="panel-subtitle">
-            Select or create a campaign to view and capture narrative entries.
+            Create or select a campaign in Campaigns & Sessions to view and capture narrative
+            entries.
           </div>
           <div className="button-row" style={{ marginTop: "1.2rem" }}>
             <Button onClick={() => handleNavigate("dashboard")}>Open Campaigns & Sessions</Button>
