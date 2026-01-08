@@ -123,6 +123,9 @@ describe("AiDirector", () => {
     await user.click(screen.getByRole("button", { name: "Copy to Journal" }));
 
     await waitFor(() => expect(createJournalEntry).toHaveBeenCalled());
-    expect(pushToast).toHaveBeenCalledWith({ tone: "success", message: "Narration copied to Journal." });
+    expect(pushToast).toHaveBeenCalledWith({
+      tone: "success",
+      message: "Narration copied to Journal."
+    });
   });
 });
