@@ -101,17 +101,18 @@ Blocks: Phase 4+
 
 ### Tasks
 
-- [ ] Dashboard steps: create campaign, create session, resume play.
-- [ ] Party Sheets steps: create character, set control mode, confirm roster.
-- [ ] Play Workspace steps: narration, actions, notes, import narration.
-- [ ] AI Director steps: stream narration, approve proposals, copy to Journal.
-- [ ] Journal steps: create entry, edit entry, export.
-- [ ] Logs & Exports steps: filter kinds, export transcript.
-- [ ] Encounter Flow steps: roll initiative, start encounter, advance turn.
-- [ ] Map Studio steps: upload map, add token, toggle role, search/filter.
-- [ ] Context Rail + Timeline Drawer steps: open timeline, view recent logs.
-- [ ] Settings steps: sync status, tutorial reset, optional sample data creation.
-- [ ] Add event hooks to advance steps on success (campaign/session/character creation, export actions).
+- [x] Dashboard steps: create campaign, create session, resume play.
+- [x] Party Sheets steps: create character, set control mode, confirm roster.
+- [x] Play Workspace steps: narration, actions, notes, import narration.
+- [x] AI Director steps: stream narration, approve proposals, copy to Journal.
+- [x] Journal steps: create entry, edit entry, export.
+- [x] Logs & Exports steps: filter kinds, export transcript.
+- [x] Encounter Flow steps: roll initiative, start encounter, advance turn.
+- [x] Map Studio steps: upload map, add token, toggle role, search/filter.
+- [x] Context Rail + Timeline Drawer steps: open timeline, view recent logs.
+- [x] Settings steps: sync status, tutorial reset, optional sample data creation.
+- [x] Add event hooks to advance steps on success (campaign/session/character creation).
+- [ ] Add event hooks to advance steps on export actions.
 
 ### Acceptance criteria
 
@@ -120,9 +121,9 @@ Blocks: Phase 4+
 
 ### Testing
 
-- [ ] `npm run lint`
-- [ ] `npm run test`
-- [ ] `npm run format:check`
+- [x] `npm run lint`
+- [x] `npm run test`
+- [x] `npm run format:check`
 
 ## Phase 4 - UX polish and QA
 
