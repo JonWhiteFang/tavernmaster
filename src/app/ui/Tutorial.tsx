@@ -139,6 +139,19 @@ export function TutorialProvider({ children }: PropsWithChildren) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [nextStep, pauseTutorial, state.status]);
 
+  useEffect(() => {
+    if (state.status !== "active" || !currentStep?.advanceOn) {
+      return;
+    }
+    if (currentStep.advanceOn.type === "event") {
+      const handleAdvance = () => {
+        nextStep();
+      };
+      window.addEventListener(currentStep.advanceOn.name, handleAdvance);
+      return () => window.removeEventListener(currentStep.advanceOn.name, handleAdvance);
+    }
+  }, [currentStep, nextStep, state.status]);
+
   const value = useMemo<TutorialContextValue>(
     () => ({
       status: state.status,
