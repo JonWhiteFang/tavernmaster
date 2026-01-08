@@ -113,6 +113,7 @@ Blocks: Phase 4+
 - [x] Settings steps: sync status, tutorial reset, optional sample data creation.
 - [x] Add event hooks to advance steps on success (campaign/session/character creation).
 - [x] Add event hooks to advance steps on export actions.
+- [x] Auto-scroll tutorial targets and keep steps responsive while advancing.
 
 ### Acceptance criteria
 
