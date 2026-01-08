@@ -136,7 +136,7 @@ Blocks: Release
 - [x] Audit empty-state copy for clarity and consistency.
 - [x] Ensure tutorial overlay is accessible (aria labels, focus order).
 - [x] Verify tutorial does not block critical actions; allow Skip at all times.
-- [ ] Validate the tutorial across screen sizes (desktop + small viewport).
+- [x] Validate the tutorial across screen sizes (desktop + small viewport).
 - [x] Update `docs/USER_GUIDE.md` with tutorial and first-run behavior.
 
 ### Acceptance criteria
