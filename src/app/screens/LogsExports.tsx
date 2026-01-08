@@ -152,6 +152,7 @@ export default function LogsExports() {
       const filename = toFilename(transcriptTitle, "transcript", "md");
       downloadTextFile(filename, content, "text/markdown");
       pushToast({ tone: "success", message: "Transcript exported." });
+      window.dispatchEvent(new globalThis.CustomEvent("tm.tutorial.logs-exported"));
     } catch (error) {
       console.error("Failed to export transcript", error);
       pushToast({ tone: "error", message: "Unable to export transcript." });

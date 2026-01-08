@@ -213,7 +213,8 @@ export const tutorialSteps: TutorialStep[] = [
     title: "Export Notes",
     body: "Export a journal entry as Markdown or PDF.",
     targetId: "journal-export-markdown",
-    placement: "bottom"
+    placement: "bottom",
+    advanceOn: { type: "event", name: "tm.tutorial.journal-exported" }
   },
   {
     id: "logs-nav",
@@ -234,7 +235,8 @@ export const tutorialSteps: TutorialStep[] = [
     title: "Export Transcripts",
     body: "Download a campaign or session transcript.",
     targetId: "logs-export-transcript",
-    placement: "bottom"
+    placement: "bottom",
+    advanceOn: { type: "event", name: "tm.tutorial.logs-exported" }
   },
   {
     id: "encounter-nav",

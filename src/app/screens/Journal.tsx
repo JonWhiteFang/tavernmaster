@@ -181,6 +181,7 @@ export default function Journal() {
     const filename = toFilename(activeEntry.title, "journal-entry", "md");
     downloadTextFile(filename, content, "text/markdown");
     pushToast({ tone: "success", message: "Markdown exported." });
+    window.dispatchEvent(new globalThis.CustomEvent("tm.tutorial.journal-exported"));
   };
 
   const handleExportPdf = () => {
@@ -193,6 +194,7 @@ export default function Journal() {
     )}\n\n${activeEntry.content}\n`;
     openPrintWindow(`Journal: ${activeEntry.title}`, content);
     pushToast({ tone: "success", message: "Print preview opened." });
+    window.dispatchEvent(new globalThis.CustomEvent("tm.tutorial.journal-exported"));
   };
 
   const handleNavigate = (screen: string) => {
