@@ -98,10 +98,18 @@ export async function seedDatabase(
     [{ count: journalCount }],
     [{ count: characterCount }]
   ] = await Promise.all([
-    db.select<{ count: number }[]>("SELECT COUNT(*) as count FROM campaigns"),
-    db.select<{ count: number }[]>("SELECT COUNT(*) as count FROM sessions"),
-    db.select<{ count: number }[]>("SELECT COUNT(*) as count FROM journal_entries"),
-    db.select<{ count: number }[]>("SELECT COUNT(*) as count FROM characters")
+    db.select<{ count: number }[]>(
+      "SELECT COUNT(*) as count FROM campaigns WHERE deleted_at IS NULL"
+    ),
+    db.select<{ count: number }[]>(
+      "SELECT COUNT(*) as count FROM sessions WHERE deleted_at IS NULL"
+    ),
+    db.select<{ count: number }[]>(
+      "SELECT COUNT(*) as count FROM journal_entries WHERE deleted_at IS NULL"
+    ),
+    db.select<{ count: number }[]>(
+      "SELECT COUNT(*) as count FROM characters WHERE deleted_at IS NULL"
+    )
   ]);
 
   if (

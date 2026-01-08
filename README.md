@@ -56,12 +56,13 @@ Recommended default model: `llama3.1:8b` (swap as needed for your Mac).
 - LLM runtime: `docs/LLM_RUNTIME.md`
 - Sync strategy: `docs/SUPABASE_SYNC.md`
 - UI style: `docs/UI_STYLE.md`
-- Implementation plan: `IMPLEMENTATION_PLAN.md`
+- Implementation plans: `IMPLEMENTATION_PLAN_1.md`, `IMPLEMENTATION_PLAN_2_UI_REDESIGN.md`,
+  `IMPLEMENTATION_PLAN_3_TUTORIAL_CAMPAIGN.md`
 
 ## App Icons
 
-Icons live in `src-tauri/icons`. Regenerate them with:
+Icons live in `src-tauri/icons`. For macOS-only assets, regenerate with:
 
 ```bash
-npx --no-install tauri icon src-tauri/icons/icon.png
+npx --no-install tauri icon src-tauri/icons/app-icon.png
 ```

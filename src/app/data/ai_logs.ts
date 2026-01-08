@@ -102,14 +102,24 @@ export async function listAiLogs(params: {
   const entries = await Promise.all(
     rows.map(async (row) => {
       const content = await decryptValue(row.content);
-      const payloadRaw = await decryptValue(row.payload_json);
+      let payload: Record<string, unknown> | undefined;
+      if (row.payload_json) {
+        const payloadRaw = await decryptValue(row.payload_json);
+        if (payloadRaw) {
+          try {
+            payload = JSON.parse(payloadRaw) as Record<string, unknown>;
+          } catch {
+            payload = undefined;
+          }
+        }
+      }
       return {
         id: row.id,
         campaignId: row.campaign_id ?? undefined,
         sessionId: row.session_id ?? undefined,
         kind: row.kind,
         content: content ?? row.content,
-        payload: payloadRaw ? JSON.parse(payloadRaw) : undefined,
+        payload,
         createdAt: row.created_at,
         updatedAt: row.updated_at
       };

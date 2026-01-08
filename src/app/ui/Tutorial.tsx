@@ -20,6 +20,7 @@ type TutorialState = {
   version: string;
   status: TutorialStatus;
   stepIndex: number;
+  autoStart: boolean;
 };
 
 type TutorialContextValue = {
@@ -40,7 +41,8 @@ type TutorialContextValue = {
 const defaultState: TutorialState = {
   version: tutorialVersion,
   status: "idle",
-  stepIndex: 0
+  stepIndex: 0,
+  autoStart: true
 };
 
 const TutorialContext = createContext<TutorialContextValue | undefined>(undefined);
@@ -53,11 +55,16 @@ export function TutorialProvider({ children }: PropsWithChildren) {
       return;
     }
     if (state.version !== tutorialVersion) {
-      setState({ version: tutorialVersion, status: "idle", stepIndex: 0 });
+      setState({
+        version: tutorialVersion,
+        status: "idle",
+        stepIndex: 0,
+        autoStart: true
+      });
       return;
     }
-    if (state.status === "idle") {
-      setState({ ...state, status: "active", stepIndex: 0 });
+    if (state.status === "idle" && state.autoStart) {
+      setState({ ...state, status: "active", stepIndex: 0, autoStart: false });
     }
   }, [state, setState]);
 
@@ -69,7 +76,7 @@ export function TutorialProvider({ children }: PropsWithChildren) {
     if (!tutorialSteps.length) {
       return;
     }
-    setState({ version: tutorialVersion, status: "active", stepIndex: 0 });
+    setState({ version: tutorialVersion, status: "active", stepIndex: 0, autoStart: false });
   }, [setState]);
 
   const resumeTutorial = useCallback(() => {
@@ -94,11 +101,11 @@ export function TutorialProvider({ children }: PropsWithChildren) {
   }, [setState, state]);
 
   const restartTutorial = useCallback(() => {
-    setState({ version: tutorialVersion, status: "active", stepIndex: 0 });
+    setState({ version: tutorialVersion, status: "active", stepIndex: 0, autoStart: false });
   }, [setState]);
 
   const resetTutorial = useCallback(() => {
-    setState({ version: tutorialVersion, status: "idle", stepIndex: 0 });
+    setState({ version: tutorialVersion, status: "idle", stepIndex: 0, autoStart: false });
   }, [setState]);
 
   const nextStep = useCallback(() => {
@@ -143,7 +150,12 @@ export function TutorialProvider({ children }: PropsWithChildren) {
       return;
     }
     if (currentStep.advanceOn.type === "event") {
+      let handled = false;
       const handleAdvance = () => {
+        if (handled) {
+          return;
+        }
+        handled = true;
         nextStep();
       };
       window.addEventListener(currentStep.advanceOn.name, handleAdvance);
