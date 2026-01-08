@@ -52,6 +52,26 @@ if (!window.open) {
   });
 }
 
+const localStorageRef = window.localStorage;
+if (!localStorageRef || typeof localStorageRef.clear !== "function") {
+  const store = new Map<string, string>();
+  Object.defineProperty(window, "localStorage", {
+    writable: true,
+    value: {
+      getItem: (key: string) => (store.has(key) ? store.get(key)! : null),
+      setItem: (key: string, value: string) => {
+        store.set(key, value);
+      },
+      removeItem: (key: string) => {
+        store.delete(key);
+      },
+      clear: () => {
+        store.clear();
+      }
+    }
+  });
+}
+
 if (!globalThis.crypto) {
   globalThis.crypto = {
     randomUUID: () => "test-uuid"

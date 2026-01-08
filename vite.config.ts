@@ -9,6 +9,14 @@ export default defineConfig({
     port: 5173
   },
   test: {
-    environment: "node"
+    environment: "jsdom",
+    setupFiles: ["src/app/test/setup.ts"],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "html"],
+      reportsDirectory: "coverage",
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: ["src/**/*.test.{ts,tsx}", "src/app/test/**", "src-tauri/**", "dist/**"]
+    }
   }
 });
