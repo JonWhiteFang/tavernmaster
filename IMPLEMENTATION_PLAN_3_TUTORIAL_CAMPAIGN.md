@@ -141,8 +141,8 @@ Blocks: Release
 
 ### Acceptance criteria
 
-- [ ] First-run experience is clear and does not auto-create data.
-- [ ] Tutorial is usable, accessible, and easy to restart.
+- [x] First-run experience is clear and does not auto-create data.
+- [x] Tutorial is usable, accessible, and easy to restart.
 
 ### Testing
 
