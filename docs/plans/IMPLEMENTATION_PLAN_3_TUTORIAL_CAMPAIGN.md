@@ -137,7 +137,7 @@ Blocks: Release
 - [x] Ensure tutorial overlay is accessible (aria labels, focus order).
 - [x] Verify tutorial does not block critical actions; allow Skip at all times.
 - [x] Validate the tutorial across screen sizes (desktop + small viewport).
-- [x] Update `docs/USER_GUIDE.md` with tutorial and first-run behavior.
+- [x] Update `docs/guides/USER_GUIDE.md` with tutorial and first-run behavior.
 
 ### Acceptance criteria
 

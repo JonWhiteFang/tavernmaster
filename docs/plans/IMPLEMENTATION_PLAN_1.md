@@ -23,7 +23,7 @@ A living plan to track progress for the AI Dungeon Master desktop app (Mac, offl
 ### 2) Data Layer & Persistence (SQLite)
 
 - [x] Choose SQLite adapter and migration tool (tauri-plugin-sql).
-- [x] Implement schema initialization from `docs/DATA_MODEL.md`.
+- [x] Implement schema initialization from `docs/architecture/DATA_MODEL.md`.
 - [x] Add baseline repository for Campaigns.
 - [x] Add repositories for Characters, Encounters, Journal.
 - [x] Implement SRD import on first launch (from bundled JSON).
@@ -78,10 +78,10 @@ A living plan to track progress for the AI Dungeon Master desktop app (Mac, offl
 - [x] Unit tests for rules engine and dice roller.
 - [x] Integration tests for sync + SRD ingestion.
 - [x] Build automation for unsigned DMG (GitHub Actions).
-- [x] Release checklist and user docs (`docs/USER_GUIDE.md`).
+- [x] Release checklist and user docs (`docs/guides/USER_GUIDE.md`).
 
 ## Current File Map
 
 - UI shell: `src/app/App.tsx`, `src/app/screens/Dashboard.tsx`, `src/styles/*.css`
-- Architecture docs: `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md`, `docs/LLM_RUNTIME.md`, `docs/SUPABASE_SYNC.md`, `docs/UI_STYLE.md`
+- Architecture docs: `docs/architecture/ARCHITECTURE.md`, `docs/architecture/DATA_MODEL.md`, `docs/runtime/LLM_RUNTIME.md`, `docs/sync/SUPABASE_SYNC.md`, `docs/design/UI_STYLE.md`
 - Stubs: `src/app/ai/prompts.ts`, `src/app/rules/srd.ts`, `src/app/sync/client.ts`

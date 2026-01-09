@@ -1,6 +1,6 @@
 # UI Redesign Phase 0 Review Notes
 
-This review validates Phase 0 items from `IMPLEMENTATION_PLAN_2_UI_REDESIGN.md` against the current repo state.
+This review validates Phase 0 items from `docs/plans/IMPLEMENTATION_PLAN_2_UI_REDESIGN.md` against the current repo state.
 
 ## Goals and non-goals (confirmed)
 
