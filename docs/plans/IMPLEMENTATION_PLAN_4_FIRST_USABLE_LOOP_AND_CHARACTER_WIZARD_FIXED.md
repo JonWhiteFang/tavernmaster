@@ -173,9 +173,11 @@ This plan merges the "First Usable Loop" roadmap with the "Questweaver-style Cha
 
 ---
 
-### PR 6 — AI Director: attach to active campaign/session + persist proposals
+### PR 6 — AI Director: attach to active campaign/session + persist proposals ✅ COMPLETE
 
 **Goal:** AI output becomes part of the session record.
+
+**Status:** Implemented. Created action_proposals data module with persistence, updated usePartyProposals hook to persist proposals and log to ai_logs, updated buildRoster to include character IDs, and added encounter requirement warning in AiDirector.
 
 **Scope**
 
