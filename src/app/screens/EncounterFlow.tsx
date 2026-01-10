@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Character } from "../data/types";
+import type { Encounter } from "../data/types";
 import { listCharacters } from "../data/characters";
+import { listEncounters, createEncounter } from "../data/encounters";
 import {
   clearEncounterRecovery,
   loadEncounterRecovery,
@@ -26,11 +28,23 @@ const demoAction = {
 } as const;
 
 export default function EncounterFlow() {
-  const { activeCampaignId } = useAppContext();
+  const { activeCampaignId, activeEncounterId, setActiveEncounterId } = useAppContext();
+  const [encounters, setEncounters] = useState<Encounter[]>([]);
+  const [showNewEncounter, setShowNewEncounter] = useState(false);
+  const [newEncounterName, setNewEncounterName] = useState("");
   const [rulesState, setRulesState] = useState<RulesState | null>(null);
   const [log, setLog] = useState<string[]>([]);
   const [rngSeed, setRngSeed] = useState(42);
   const [loadedRecovery, setLoadedRecovery] = useState(false);
+
+  // Load encounters for campaign
+  useEffect(() => {
+    if (!activeCampaignId) {
+      setEncounters([]);
+      return;
+    }
+    void listEncounters(activeCampaignId).then(setEncounters);
+  }, [activeCampaignId]);
 
   useEffect(() => {
     let isMounted = true;
@@ -181,6 +195,21 @@ export default function EncounterFlow() {
     window.dispatchEvent(new globalThis.CustomEvent("tm.navigate", { detail: { screen } }));
   };
 
+  const handleCreateEncounter = async () => {
+    if (!activeCampaignId || !newEncounterName.trim()) return;
+    const enc = await createEncounter({
+      campaignId: activeCampaignId,
+      name: newEncounterName.trim(),
+      difficulty: "medium"
+    });
+    setEncounters((prev) => [enc, ...prev]);
+    setActiveEncounterId(enc.id);
+    setNewEncounterName("");
+    setShowNewEncounter(false);
+  };
+
+  const activeEncounter = encounters.find((e) => e.id === activeEncounterId);
+
   if (!activeCampaignId) {
     return (
       <div className="encounter">
@@ -225,6 +254,51 @@ export default function EncounterFlow() {
         <div className="panel-subtitle">
           Initiative order, turn management, and condition tracking for active encounters.
         </div>
+        <div className="form-field" style={{ marginTop: "1rem", maxWidth: 300 }}>
+          <span className="form-label">Active Encounter</span>
+          <select
+            className="form-select"
+            value={activeEncounterId ?? ""}
+            onChange={(e) => setActiveEncounterId(e.target.value || null)}
+          >
+            <option value="">Select encounter...</option>
+            {encounters.map((enc) => (
+              <option key={enc.id} value={enc.id}>
+                {enc.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="button-row" style={{ marginTop: "0.8rem" }}>
+          <Button variant="secondary" onClick={() => setShowNewEncounter(true)}>
+            New Encounter
+          </Button>
+        </div>
+        {showNewEncounter && (
+          <div className="form-field" style={{ marginTop: "1rem", maxWidth: 300 }}>
+            <span className="form-label">Encounter Name</span>
+            <input
+              className="form-input"
+              value={newEncounterName}
+              onChange={(e) => setNewEncounterName(e.target.value)}
+              placeholder="e.g. Goblin Ambush"
+            />
+            <div className="button-row" style={{ marginTop: "0.5rem" }}>
+              <Button onClick={handleCreateEncounter} disabled={!newEncounterName.trim()}>
+                Create
+              </Button>
+              <Button variant="ghost" onClick={() => setShowNewEncounter(false)}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        )}
+        {activeEncounter && (
+          <div className="status-row" style={{ marginTop: "1rem" }}>
+            <Chip>{activeEncounter.difficulty}</Chip>
+            <Chip>Round {activeEncounter.round}</Chip>
+          </div>
+        )}
       </section>
 
       <div className="encounter-grid">
