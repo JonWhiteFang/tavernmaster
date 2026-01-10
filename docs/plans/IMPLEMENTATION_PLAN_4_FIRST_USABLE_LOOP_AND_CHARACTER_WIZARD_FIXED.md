@@ -258,9 +258,11 @@ This plan merges the "First Usable Loop" roadmap with the "Questweaver-style Cha
 
 ---
 
-### PR 9 — Combat log becomes first-class + unify the "Narrative Feed"
+### PR 9 — Combat log becomes first-class + unify the "Narrative Feed" ✅ COMPLETE
 
 **Goal:** The app chrome timeline becomes a real merged session feed.
+
+**Status:** Implemented. Created combat_log data module, wired EncounterFlow to write combat log on action resolution, updated TimelineDrawer to merge AI logs and combat logs sorted by timestamp.
 
 **Scope**
 
