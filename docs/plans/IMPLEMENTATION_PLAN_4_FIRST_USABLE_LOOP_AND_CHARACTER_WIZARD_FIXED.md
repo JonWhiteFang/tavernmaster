@@ -496,9 +496,11 @@ This plan merges the "First Usable Loop" roadmap with the "Questweaver-style Cha
 
 ---
 
-### PR 16 — Wizard shell UI as a modal (stepper + nav)
+### PR 16 — Wizard shell UI as a modal (stepper + nav) ✅ COMPLETE
 
 **Goal:** Visible progress early, minimal disruption to app navigation.
+
+**Status:** Implemented. Added CharacterCreationModal with stepper and navigation, AbilityScoresStep with all three methods (standard array, point buy, rolling), and wizard CSS styles.
 
 **Add**
 
