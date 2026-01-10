@@ -3,12 +3,16 @@ import { describe, expect, it, vi } from "vitest";
 import TimelineDrawer from "./TimelineDrawer";
 import { useAppContext } from "../state/AppContext";
 import { listAiLogs } from "../data/ai_logs";
+import { listCombatLogByCampaign } from "../data/combat_log";
 
 vi.mock("../state/AppContext", () => ({
   useAppContext: vi.fn()
 }));
 vi.mock("../data/ai_logs", () => ({
   listAiLogs: vi.fn()
+}));
+vi.mock("../data/combat_log", () => ({
+  listCombatLogByCampaign: vi.fn()
 }));
 
 describe("TimelineDrawer", () => {
@@ -32,6 +36,8 @@ describe("TimelineDrawer", () => {
         updatedAt: new Date().toISOString()
       }
     ]);
+
+    vi.mocked(listCombatLogByCampaign).mockResolvedValue([]);
 
     render(<TimelineDrawer onOpenLogs={onOpenLogs} />);
 

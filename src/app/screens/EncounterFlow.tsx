@@ -9,6 +9,7 @@ import {
   updateEncounterTurn,
   getEncounter
 } from "../data/encounters";
+import { appendCombatLog } from "../data/combat_log";
 import {
   clearEncounterRecovery,
   loadEncounterRecovery,
@@ -224,6 +225,16 @@ export default function EncounterFlow() {
       const nextState = applyEffects(rulesState, result.effects, rng);
       setRulesState(nextState);
       setLog((current) => [...result.log, ...current]);
+
+      // Write to combat log if encounter selected
+      if (activeEncounterId) {
+        void appendCombatLog(activeEncounterId, "attack", {
+          attackerId,
+          targetId,
+          log: result.log,
+          effects: result.effects
+        });
+      }
     }
   };
 
