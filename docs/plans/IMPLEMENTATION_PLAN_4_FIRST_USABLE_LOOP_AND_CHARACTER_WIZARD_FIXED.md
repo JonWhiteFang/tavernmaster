@@ -143,9 +143,11 @@ This plan merges the "First Usable Loop" roadmap with the "Questweaver-style Cha
 
 ---
 
-### PR 5 — Logs & Exports: scope by active context + Export "Session Packet" (Markdown)
+### PR 5 — Logs & Exports: scope by active context + Export "Session Packet" (Markdown) ✅ COMPLETE
 
 **Goal:** Export produces something a DM actually keeps after a session.
+
+**Status:** Implemented. Added Export Session Packet that includes session recap, AI logs, and recent journal entries.
 
 **Scope**
 

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { listAiLogs } from "../data/ai_logs";
 import type { AiLogEntry } from "../data/ai_logs";
+import { listJournalEntries } from "../data/journal";
 import { downloadTextFile, openPrintWindow, toFilename } from "../ui/exports";
 import { useAppContext } from "../state/AppContext";
 import Button from "../ui/Button";
@@ -18,7 +19,7 @@ const kindLabels: Record<AiLogEntry["kind"], string> = {
 const kindOptions: AiLogEntry["kind"][] = ["dm", "party", "summary", "system", "user"];
 
 export default function LogsExports() {
-  const { activeCampaignId, activeSessionId } = useAppContext();
+  const { activeCampaignId, activeSessionId, activeSession } = useAppContext();
   const { pushToast } = useToast();
   const [entries, setEntries] = useState<AiLogEntry[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -161,6 +162,67 @@ export default function LogsExports() {
     }
   };
 
+  const handleExportSessionPacket = async () => {
+    if (!activeCampaignId || !activeSessionId) {
+      pushToast({ tone: "error", message: "Select a session before exporting." });
+      return;
+    }
+    setIsExporting(true);
+    try {
+      const [logs, journalEntries] = await Promise.all([
+        listAiLogs({ campaignId: activeCampaignId, sessionId: activeSessionId, limit: 200 }),
+        listJournalEntries(activeCampaignId)
+      ]);
+
+      const sections: string[] = [];
+
+      // Session recap
+      if (activeSession?.recap) {
+        sections.push(`## Session Recap\n\n${activeSession.recap}`);
+      }
+
+      // AI logs
+      if (logs.length) {
+        const logsBody = logs
+          .slice()
+          .reverse()
+          .map(
+            (entry) =>
+              `### ${kindLabels[entry.kind]} — ${formatDateTime(entry.createdAt)}\n\n${entry.content}`
+          )
+          .join("\n\n");
+        sections.push(`## AI Logs\n\n${logsBody}`);
+      }
+
+      // Journal entries (recent 5)
+      if (journalEntries.length) {
+        const recentJournal = journalEntries.slice(0, 5);
+        const journalBody = recentJournal
+          .map(
+            (entry) => `### ${entry.title} — ${formatDateTime(entry.createdAt)}\n\n${entry.content}`
+          )
+          .join("\n\n");
+        sections.push(`## Journal Entries\n\n${journalBody}`);
+      }
+
+      if (!sections.length) {
+        pushToast({ tone: "error", message: "No content available for export." });
+        return;
+      }
+
+      const title = activeSession?.title ?? "Session Packet";
+      const content = `# ${title}\n\nGenerated: ${formatDateTime(new Date().toISOString())}\n\n${sections.join("\n\n---\n\n")}\n`;
+      const filename = toFilename(title, "session-packet", "md");
+      downloadTextFile(filename, content, "text/markdown");
+      pushToast({ tone: "success", message: "Session packet exported." });
+    } catch (error) {
+      console.error("Failed to export session packet", error);
+      pushToast({ tone: "error", message: "Unable to export session packet." });
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const handleNavigate = (screen: string) => {
     window.dispatchEvent(new globalThis.CustomEvent("tm.navigate", { detail: { screen } }));
   };
@@ -235,6 +297,13 @@ export default function LogsExports() {
               : activeSessionId
                 ? "Export Session Transcript"
                 : "Export Campaign Transcript"}
+          </Button>
+          <Button
+            onClick={handleExportSessionPacket}
+            disabled={!activeSessionId || isExporting}
+            data-tutorial-id="logs-export-session-packet"
+          >
+            Export Session Packet
           </Button>
         </div>
       </section>
