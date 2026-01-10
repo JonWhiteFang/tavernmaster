@@ -291,9 +291,11 @@ This plan merges the "First Usable Loop" roadmap with the "Questweaver-style Cha
 
 ---
 
-### PR 10 — "First playable loop" polish pass
+### PR 10 — "First playable loop" polish pass ✅ COMPLETE
 
 **Goal:** Make the new workflow smooth and debuggable.
+
+**Status:** Implemented. Added Quick Actions to Dashboard, ErrorBoundary component, and spine-flow integration test. Empty-state CTAs already existed in all screens.
 
 **Scope**
 
