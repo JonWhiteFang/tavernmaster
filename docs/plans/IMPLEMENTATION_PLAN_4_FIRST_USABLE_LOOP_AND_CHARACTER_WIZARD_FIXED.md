@@ -207,9 +207,11 @@ This plan merges the "First Usable Loop" roadmap with the "Questweaver-style Cha
 
 ---
 
-### PR 7 — Encounters: create/select encounter for active campaign (DB-backed)
+### PR 7 — Encounters: create/select encounter for active campaign (DB-backed) ✅ COMPLETE
 
 **Goal:** Encounter Flow operates primarily on `encounters` table, not recovery snapshot.
+
+**Status:** Implemented. Added encounter selector dropdown, New Encounter creation form, and integration with activeEncounterId from App Spine.
 
 **Scope**
 
