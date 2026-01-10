@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createSession, listSessions } from "./sessions";
+import { createSession, listSessions, updateSession } from "./sessions";
 import { getDatabase } from "./db";
 import { decryptValue, encryptValue } from "./encryption";
 import { enqueueUpsertAndSchedule } from "../sync/ops";
@@ -90,6 +90,39 @@ describe("sessions data", () => {
       recap: "Recap",
       startedAt: "2024-01-01T00:00:00.000Z"
     });
+
+    vi.useRealTimers();
+  });
+
+  it("updates a session recap and enqueues sync", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2024-01-01T00:00:00Z"));
+
+    select.mockResolvedValue([
+      {
+        id: "sess-1",
+        campaign_id: "camp-1",
+        title: "Session 1",
+        started_at: "t0",
+        ended_at: null,
+        recap: "encrypted",
+        created_at: "t1",
+        updated_at: "2024-01-01T00:00:00.000Z"
+      }
+    ]);
+
+    await updateSession("sess-1", { recap: "Updated recap" });
+
+    expect(execute).toHaveBeenCalledWith(
+      expect.stringContaining("UPDATE sessions SET"),
+      expect.arrayContaining(["sess-1"])
+    );
+    expect(mockEncryptValue).toHaveBeenCalledWith("Updated recap");
+    expect(mockEnqueueUpsertAndSchedule).toHaveBeenCalledWith(
+      "sessions",
+      "sess-1",
+      expect.objectContaining({ id: "sess-1" })
+    );
 
     vi.useRealTimers();
   });

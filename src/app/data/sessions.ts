@@ -86,3 +86,50 @@ export async function createSession(input: {
     updatedAt: now
   };
 }
+
+export async function updateSession(
+  id: string,
+  input: { title?: string; recap?: string; endedAt?: string }
+): Promise<void> {
+  const db = await getDatabase();
+  const now = new Date().toISOString();
+
+  const sets: string[] = ["updated_at = ?"];
+  const values: (string | null)[] = [now];
+
+  if (input.title !== undefined) {
+    sets.push("title = ?");
+    values.push(input.title);
+  }
+  if (input.recap !== undefined) {
+    sets.push("recap = ?");
+    values.push(await encryptValue(input.recap));
+  }
+  if (input.endedAt !== undefined) {
+    sets.push("ended_at = ?");
+    values.push(input.endedAt);
+  }
+
+  values.push(id);
+  await db.execute(`UPDATE sessions SET ${sets.join(", ")} WHERE id = ?`, values);
+
+  const rows = await db.select<SessionRow[]>(
+    `SELECT id, campaign_id, title, started_at, ended_at, recap, created_at, updated_at
+     FROM sessions WHERE id = ?`,
+    [id]
+  );
+  if (rows.length) {
+    const row = rows[0];
+    await enqueueUpsertAndSchedule("sessions", id, {
+      id: row.id,
+      campaign_id: row.campaign_id,
+      title: row.title,
+      started_at: row.started_at,
+      ended_at: row.ended_at,
+      recap: row.recap,
+      deleted_at: null,
+      created_at: row.created_at,
+      updated_at: now
+    });
+  }
+}
