@@ -462,9 +462,11 @@ This plan merges the "First Usable Loop" roadmap with the "Questweaver-style Cha
 
 ---
 
-### PR 15 — CharacterBuilder (pure) outputs `NewCharacterInput` + tests
+### PR 15 — CharacterBuilder (pure) outputs `NewCharacterInput` + tests ✅ COMPLETE
 
 **Goal:** Copy Questweaver's CharacterBuilder concept.
+
+**Status:** Implemented. Added src/app/characterCreation/builder.ts with applyRacialBonuses, deriveVitals, and buildNewCharacterInput. 10 tests covering racial bonuses, vitals derivation for fighter/wizard, and full input building.
 
 **Add**
 
