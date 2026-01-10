@@ -1,4 +1,11 @@
 import type { AbilityScore } from "../data/types";
+import type { RandomSource } from "./rng";
+
+// Standard array for quick character creation
+export const STANDARD_ARRAY = [15, 14, 13, 12, 10, 8] as const;
+
+// Point buy budget per PHB rules
+export const POINT_BUY_BUDGET = 27;
 
 type BonusChoices = {
   count: number;
@@ -220,4 +227,36 @@ export function calculateDerivedStats(input: {
     initiativeBonus: dexMod,
     speed: ancestry?.speed ?? 30
   };
+}
+
+/**
+ * Roll 4d6, drop the lowest die.
+ */
+export function roll4d6DropLowest(rng: RandomSource): number {
+  const rolls = [1, 2, 3, 4].map(() => Math.floor(rng() * 6) + 1);
+  rolls.sort((a, b) => b - a);
+  return rolls[0] + rolls[1] + rolls[2];
+}
+
+/**
+ * Roll a full set of 6 ability scores using 4d6 drop lowest.
+ */
+export function rollAbilityScores(rng: RandomSource): number[] {
+  return [1, 2, 3, 4, 5, 6].map(() => roll4d6DropLowest(rng));
+}
+
+/**
+ * Get point buy cost for a score (8-15 valid range).
+ */
+export function pointBuyCost(score: number): number {
+  return getAbilityScoreCost(score);
+}
+
+/**
+ * Check if point buy scores are valid (within budget).
+ */
+export function isValidPointBuy(scores: Record<AbilityScore, number>): boolean {
+  const total = getPointBuyTotal(scores);
+  const allInRange = abilityOrder.every((a) => scores[a] >= 8 && scores[a] <= 15);
+  return allInRange && total <= POINT_BUY_BUDGET;
 }
