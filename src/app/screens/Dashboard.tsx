@@ -136,6 +136,10 @@ export default function Dashboard({ onResumePlay }: DashboardProps) {
     }
   };
 
+  const handleNavigate = (screen: string) => {
+    window.dispatchEvent(new globalThis.CustomEvent("tm.navigate", { detail: { screen } }));
+  };
+
   return (
     <div className="dashboard">
       <section className="panel" style={{ marginBottom: "1.4rem" }}>
@@ -263,6 +267,24 @@ export default function Dashboard({ onResumePlay }: DashboardProps) {
                         <div className="panel-copy">Select a session to view summary.</div>
                       )}
                     </div>
+                  </div>
+                </div>
+
+                <div className="session-block">
+                  <div className="panel-title">Quick Actions</div>
+                  <div className="button-row" style={{ marginTop: "0.5rem", flexWrap: "wrap" }}>
+                    <button className="secondary-button" onClick={() => handleNavigate("director")}>
+                      Open AI Director
+                    </button>
+                    <button
+                      className="secondary-button"
+                      onClick={() => handleNavigate("encounter")}
+                    >
+                      Open Encounter Flow
+                    </button>
+                    <button className="secondary-button" onClick={() => handleNavigate("journal")}>
+                      New Journal Entry
+                    </button>
                   </div>
                 </div>
 

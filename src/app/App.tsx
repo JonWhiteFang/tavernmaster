@@ -18,6 +18,7 @@ import ContextRail from "./layout/ContextRail";
 import TimelineDrawer from "./layout/TimelineDrawer";
 import { ToastProvider } from "./ui/Toast";
 import { TutorialProvider } from "./ui/Tutorial";
+import ErrorBoundary from "./ui/ErrorBoundary";
 
 type ScreenKey =
   | "play"
@@ -46,13 +47,15 @@ const MemoizedAppShell = memo(AppShell);
 
 export default function App() {
   return (
-    <AppProvider>
-      <ToastProvider>
-        <TutorialProvider>
-          <MemoizedAppShell />
-        </TutorialProvider>
-      </ToastProvider>
-    </AppProvider>
+    <ErrorBoundary>
+      <AppProvider>
+        <ToastProvider>
+          <TutorialProvider>
+            <MemoizedAppShell />
+          </TutorialProvider>
+        </ToastProvider>
+      </AppProvider>
+    </ErrorBoundary>
   );
 }
 
