@@ -87,9 +87,11 @@ This plan merges the "First Usable Loop" roadmap with the "Questweaver-style Cha
 
 ---
 
-### PR 3 — Dashboard becomes Home: Campaign create + Session create + Set Active
+### PR 3 — Dashboard becomes Home: Campaign create + Session create + Set Active ✅ COMPLETE
 
 **Goal:** User can create their own campaign and sessions and set them active (regardless of demo seed data).
+
+**Status:** Already implemented. Dashboard has New Campaign/Session modals, campaign/session lists with click-to-activate, and createSession supports recap.
 
 **Scope**
 
