@@ -238,6 +238,7 @@ export const syncedTables: readonly TableSpec[] = [
     table: "app_settings",
     primaryKey: "key",
     columns: ["key", "value_json", "deleted_at", "created_at", "updated_at"],
+    // Only sync "app_settings" key; "ui_state" stays local-only (active campaign/session/encounter IDs)
     syncFilter: (row) => row.key === "app_settings"
   }
 ] as const;

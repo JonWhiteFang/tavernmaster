@@ -8,270 +8,288 @@ import {
   useState
 } from "react";
 import type { PropsWithChildren } from "react";
-import type { Campaign, Session } from "../data/types";
+import type { Campaign, Encounter, Session } from "../data/types";
 import { listCampaigns } from "../data/campaigns";
 import { listSessions } from "../data/sessions";
-import { usePersistentState } from "../hooks/usePersistentState";
+import { listEncounters } from "../data/encounters";
+import {
+  getUiState,
+  setUiState,
+  migrateLocalStorageToUiState,
+  type UiState
+} from "../data/ui_state";
 
 type AppContextValue = {
   campaigns: Campaign[];
   sessions: Session[];
+  encounters: Encounter[];
   activeCampaignId: string | null;
   activeSessionId: string | null;
+  activeEncounterId: string | null;
   activeCampaign: Campaign | null;
   activeSession: Session | null;
+  activeEncounter: Encounter | null;
   setActiveCampaignId: (id: string | null) => void;
   setActiveSessionId: (id: string | null) => void;
+  setActiveEncounterId: (id: string | null) => void;
   refreshCampaigns: () => Promise<void>;
   refreshSessions: (campaignId?: string | null) => Promise<void>;
-  ensureDefaults: (
-    nextCampaigns?: Campaign[],
-    nextSessions?: Session[],
-    sessionsForCampaignId?: string | null
-  ) => void;
+  refreshEncounters: (campaignId?: string | null) => Promise<void>;
 };
 
 const AppContext = createContext<AppContextValue | undefined>(undefined);
 
 function areCampaignsEqual(current: Campaign[], next: Campaign[]) {
-  if (current === next) {
-    return true;
-  }
-  if (current.length !== next.length) {
-    return false;
-  }
-  return current.every((campaign, index) => {
-    const compare = next[index];
-    return campaign.id === compare.id && campaign.updatedAt === compare.updatedAt;
-  });
+  if (current === next) return true;
+  if (current.length !== next.length) return false;
+  return current.every((c, i) => c.id === next[i].id && c.updatedAt === next[i].updatedAt);
 }
 
 function areSessionsEqual(current: Session[], next: Session[]) {
-  if (current === next) {
-    return true;
-  }
-  if (current.length !== next.length) {
-    return false;
-  }
-  return current.every((session, index) => {
-    const compare = next[index];
-    return (
-      session.id === compare.id &&
-      session.campaignId === compare.campaignId &&
-      session.updatedAt === compare.updatedAt
-    );
-  });
+  if (current === next) return true;
+  if (current.length !== next.length) return false;
+  return current.every(
+    (s, i) =>
+      s.id === next[i].id &&
+      s.campaignId === next[i].campaignId &&
+      s.updatedAt === next[i].updatedAt
+  );
+}
+
+function areEncountersEqual(current: Encounter[], next: Encounter[]) {
+  if (current === next) return true;
+  if (current.length !== next.length) return false;
+  return current.every((e, i) => e.id === next[i].id && e.campaignId === next[i].campaignId);
 }
 
 export function AppProvider({ children }: PropsWithChildren) {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
+  const [encounters, setEncounters] = useState<Encounter[]>([]);
+  const [uiState, setUiStateLocal] = useState<UiState>({
+    activeCampaignId: null,
+    activeSessionId: null,
+    activeEncounterId: null
+  });
+  const [initialized, setInitialized] = useState(false);
   const [campaignsLoaded, setCampaignsLoaded] = useState(false);
-  const [sessionsCampaignId, setSessionsCampaignId] = useState<string | null>(null);
-  const [activeCampaignId, setActiveCampaignId] = usePersistentState<string | null>(
-    "tm.activeCampaignId",
-    null
-  );
-  const [activeSessionId, setActiveSessionId] = usePersistentState<string | null>(
-    "tm.activeSessionId",
-    null
-  );
-  const [hasSelectedCampaign, setHasSelectedCampaign] = usePersistentState(
-    "tm.hasSelectedCampaign",
-    false
-  );
-  const [hasSelectedSession, setHasSelectedSession] = usePersistentState(
-    "tm.hasSelectedSession",
-    false
-  );
 
-  const setCampaignId = useCallback(
-    (id: string | null) => {
-      if (id === activeCampaignId) {
-        return;
+  const persistUiState = useCallback(async (state: UiState) => {
+    setUiStateLocal(state);
+    await setUiState(state);
+  }, []);
+
+  // Initialize: migrate localStorage if needed, then load from SQLite
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const migrated = await migrateLocalStorageToUiState();
+      if (cancelled) return;
+      if (migrated) {
+        await setUiState(migrated);
+        setUiStateLocal(migrated);
+      } else {
+        const stored = await getUiState();
+        if (!cancelled) setUiStateLocal(stored);
       }
-      setActiveCampaignId(id);
-      setHasSelectedCampaign(Boolean(id));
-      setActiveSessionId(null);
-      setHasSelectedSession(false);
-    },
-    [
-      activeCampaignId,
-      setActiveCampaignId,
-      setActiveSessionId,
-      setHasSelectedCampaign,
-      setHasSelectedSession
-    ]
-  );
+      if (!cancelled) setInitialized(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
-  const setSessionId = useCallback(
+  const setActiveCampaignId = useCallback(
     (id: string | null) => {
-      if (id === activeSessionId) {
-        return;
-      }
-      setActiveSessionId(id);
-      setHasSelectedSession(Boolean(id));
+      if (id === uiState.activeCampaignId) return;
+      void persistUiState({
+        activeCampaignId: id,
+        activeSessionId: null,
+        activeEncounterId: null
+      });
     },
-    [activeSessionId, setActiveSessionId, setHasSelectedSession]
+    [uiState.activeCampaignId, persistUiState]
   );
 
-  const ensureDefaults = useCallback(
-    (
-      nextCampaigns?: Campaign[],
-      nextSessions?: Session[],
-      sessionsForCampaignId?: string | null
+  const setActiveSessionId = useCallback(
+    (id: string | null) => {
+      if (id === uiState.activeSessionId) return;
+      void persistUiState({
+        ...uiState,
+        activeSessionId: id,
+        activeEncounterId: null
+      });
+    },
+    [uiState, persistUiState]
+  );
+
+  const setActiveEncounterId = useCallback(
+    (id: string | null) => {
+      if (id === uiState.activeEncounterId) return;
+      void persistUiState({ ...uiState, activeEncounterId: id });
+    },
+    [uiState, persistUiState]
+  );
+
+  // Validate and reset invalid IDs
+  const validateAndReset = useCallback(
+    async (
+      loadedCampaigns: Campaign[],
+      loadedSessions?: Session[],
+      loadedEncounters?: Encounter[]
     ) => {
-      const campaignsToUse = nextCampaigns ?? campaigns;
-      const sessionsToUse = nextSessions ?? sessions;
-      const resolvedCampaignsLoaded = nextCampaigns !== undefined || campaignsLoaded;
-      const resolvedSessionsCampaignId = sessionsForCampaignId ?? sessionsCampaignId;
+      let needsUpdate = false;
+      const newState = { ...uiState };
 
-      if (!hasSelectedCampaign) {
-        if (activeCampaignId !== null) {
-          setActiveCampaignId(null);
-        }
-        if (activeSessionId !== null) {
-          setActiveSessionId(null);
-        }
-        if (hasSelectedSession) {
-          setHasSelectedSession(false);
-        }
-        return;
+      if (
+        uiState.activeCampaignId &&
+        !loadedCampaigns.some((c) => c.id === uiState.activeCampaignId)
+      ) {
+        newState.activeCampaignId = null;
+        newState.activeSessionId = null;
+        newState.activeEncounterId = null;
+        needsUpdate = true;
       }
 
-      if (!resolvedCampaignsLoaded) {
-        return;
+      if (
+        loadedSessions &&
+        newState.activeSessionId &&
+        !loadedSessions.some((s) => s.id === newState.activeSessionId)
+      ) {
+        newState.activeSessionId = null;
+        needsUpdate = true;
       }
 
-      const campaignExists = activeCampaignId
-        ? campaignsToUse.some((campaign) => campaign.id === activeCampaignId)
-        : false;
-      if (!campaignExists) {
-        setActiveCampaignId(null);
-        setActiveSessionId(null);
-        setHasSelectedCampaign(false);
-        setHasSelectedSession(false);
-        return;
+      if (
+        loadedEncounters &&
+        newState.activeEncounterId &&
+        !loadedEncounters.some((e) => e.id === newState.activeEncounterId)
+      ) {
+        newState.activeEncounterId = null;
+        needsUpdate = true;
       }
 
-      if (!hasSelectedSession) {
-        if (activeSessionId !== null) {
-          setActiveSessionId(null);
-        }
-        return;
-      }
-
-      if (resolvedSessionsCampaignId !== activeCampaignId) {
-        return;
-      }
-
-      const sessionExists = activeSessionId
-        ? sessionsToUse.some((session) => session.id === activeSessionId)
-        : false;
-      if (!sessionExists) {
-        setActiveSessionId(null);
-        setHasSelectedSession(false);
+      if (needsUpdate) {
+        await persistUiState(newState);
       }
     },
-    [
-      activeCampaignId,
-      activeSessionId,
-      campaigns,
-      sessions,
-      campaignsLoaded,
-      sessionsCampaignId,
-      hasSelectedCampaign,
-      hasSelectedSession,
-      setActiveCampaignId,
-      setActiveSessionId,
-      setHasSelectedCampaign,
-      setHasSelectedSession
-    ]
+    [uiState, persistUiState]
   );
 
   const refreshCampaigns = useCallback(async () => {
     const data = await listCampaigns();
     setCampaigns((current) => (areCampaignsEqual(current, data) ? current : data));
     setCampaignsLoaded(true);
-    ensureDefaults(data);
-  }, [ensureDefaults]);
+    await validateAndReset(data);
+  }, [validateAndReset]);
 
   const refreshSessions = useCallback(
     async (campaignId?: string | null) => {
-      const resolvedCampaignId = campaignId === undefined ? activeCampaignId : campaignId;
-      if (!resolvedCampaignId) {
-        setSessions((current) => (current.length === 0 ? current : []));
-        setSessionsCampaignId((current) => (current === null ? current : null));
-        setActiveSessionId((current) => (current === null ? current : null));
-        setHasSelectedSession((current) => (current ? false : current));
+      const resolvedId = campaignId === undefined ? uiState.activeCampaignId : campaignId;
+      if (!resolvedId) {
+        setSessions([]);
         return;
       }
-      const data = await listSessions(resolvedCampaignId);
+      const data = await listSessions(resolvedId);
       setSessions((current) => (areSessionsEqual(current, data) ? current : data));
-      setSessionsCampaignId(resolvedCampaignId);
-      const campaignsForDefaults = campaignsLoaded ? campaigns : undefined;
-      ensureDefaults(campaignsForDefaults, data, resolvedCampaignId);
+      if (campaignsLoaded) {
+        await validateAndReset(campaigns, data);
+      }
     },
-    [
-      activeCampaignId,
-      campaigns,
-      campaignsLoaded,
-      ensureDefaults,
-      setActiveSessionId,
-      setHasSelectedSession
-    ]
+    [uiState.activeCampaignId, campaigns, campaignsLoaded, validateAndReset]
   );
 
+  const refreshEncounters = useCallback(
+    async (campaignId?: string | null) => {
+      const resolvedId = campaignId === undefined ? uiState.activeCampaignId : campaignId;
+      if (!resolvedId) {
+        setEncounters([]);
+        return;
+      }
+      const data = await listEncounters(resolvedId);
+      setEncounters((current) => (areEncountersEqual(current, data) ? current : data));
+      if (campaignsLoaded) {
+        await validateAndReset(campaigns, sessions, data);
+      }
+    },
+    [uiState.activeCampaignId, campaigns, sessions, campaignsLoaded, validateAndReset]
+  );
+
+  // Load campaigns on init
   useEffect(() => {
+    if (!initialized) return;
     void refreshCampaigns();
-  }, [refreshCampaigns]);
+  }, [initialized, refreshCampaigns]);
 
+  // Load sessions when campaign changes
   const refreshSessionsRef = useRef(refreshSessions);
-
   useEffect(() => {
     refreshSessionsRef.current = refreshSessions;
   }, [refreshSessions]);
 
   useEffect(() => {
-    void refreshSessionsRef.current(activeCampaignId);
-  }, [activeCampaignId]);
+    if (!initialized) return;
+    void refreshSessionsRef.current(uiState.activeCampaignId);
+  }, [initialized, uiState.activeCampaignId]);
+
+  // Load encounters when campaign changes
+  const refreshEncountersRef = useRef(refreshEncounters);
+  useEffect(() => {
+    refreshEncountersRef.current = refreshEncounters;
+  }, [refreshEncounters]);
+
+  useEffect(() => {
+    if (!initialized) return;
+    void refreshEncountersRef.current(uiState.activeCampaignId);
+  }, [initialized, uiState.activeCampaignId]);
 
   const activeCampaign = useMemo(
-    () => campaigns.find((campaign) => campaign.id === activeCampaignId) ?? null,
-    [campaigns, activeCampaignId]
+    () => campaigns.find((c) => c.id === uiState.activeCampaignId) ?? null,
+    [campaigns, uiState.activeCampaignId]
   );
 
   const activeSession = useMemo(
-    () => sessions.find((session) => session.id === activeSessionId) ?? null,
-    [sessions, activeSessionId]
+    () => sessions.find((s) => s.id === uiState.activeSessionId) ?? null,
+    [sessions, uiState.activeSessionId]
+  );
+
+  const activeEncounter = useMemo(
+    () => encounters.find((e) => e.id === uiState.activeEncounterId) ?? null,
+    [encounters, uiState.activeEncounterId]
   );
 
   const value = useMemo<AppContextValue>(
     () => ({
       campaigns,
       sessions,
-      activeCampaignId,
-      activeSessionId,
+      encounters,
+      activeCampaignId: uiState.activeCampaignId,
+      activeSessionId: uiState.activeSessionId,
+      activeEncounterId: uiState.activeEncounterId,
       activeCampaign,
       activeSession,
-      setActiveCampaignId: setCampaignId,
-      setActiveSessionId: setSessionId,
+      activeEncounter,
+      setActiveCampaignId,
+      setActiveSessionId,
+      setActiveEncounterId,
       refreshCampaigns,
       refreshSessions,
-      ensureDefaults
+      refreshEncounters
     }),
     [
       campaigns,
       sessions,
-      activeCampaignId,
-      activeSessionId,
+      encounters,
+      uiState,
       activeCampaign,
       activeSession,
+      activeEncounter,
+      setActiveCampaignId,
+      setActiveSessionId,
+      setActiveEncounterId,
       refreshCampaigns,
       refreshSessions,
-      ensureDefaults,
-      setCampaignId,
-      setSessionId
+      refreshEncounters
     ]
   );
 
