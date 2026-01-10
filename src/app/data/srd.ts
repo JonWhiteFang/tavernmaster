@@ -13,6 +13,9 @@ type SrdBundle = {
   monsters: SrdEntry[];
   conditions: SrdEntry[];
   rules: SrdEntry[];
+  classes: SrdEntry[];
+  races: SrdEntry[];
+  backgrounds: SrdEntry[];
 };
 
 const bundle = srdBundle as SrdBundle;
@@ -27,19 +30,38 @@ async function insertEntries(table: string, entries: SrdEntry[], now: string): P
   }
 }
 
-export async function importSrdIfNeeded(): Promise<void> {
+async function tableIsEmpty(table: string): Promise<boolean> {
   const db = await getDatabase();
-  const rows = await db.select<{ count: number }[]>("SELECT COUNT(*) as count FROM srd_spells");
-  const count = rows[0]?.count ?? 0;
+  const rows = await db.select<{ count: number }[]>(`SELECT COUNT(*) as count FROM ${table}`);
+  return (rows[0]?.count ?? 0) === 0;
+}
 
-  if (count > 0) {
-    return;
-  }
-
+export async function importSrdIfNeeded(): Promise<void> {
   const now = new Date().toISOString();
-  await insertEntries("srd_spells", bundle.spells, now);
-  await insertEntries("srd_items", bundle.items, now);
-  await insertEntries("srd_monsters", bundle.monsters, now);
-  await insertEntries("srd_conditions", bundle.conditions, now);
-  await insertEntries("srd_rules", bundle.rules, now);
+
+  // Check each table independently for upgrade-safe ingestion
+  if (await tableIsEmpty("srd_spells")) {
+    await insertEntries("srd_spells", bundle.spells, now);
+  }
+  if (await tableIsEmpty("srd_items")) {
+    await insertEntries("srd_items", bundle.items, now);
+  }
+  if (await tableIsEmpty("srd_monsters")) {
+    await insertEntries("srd_monsters", bundle.monsters, now);
+  }
+  if (await tableIsEmpty("srd_conditions")) {
+    await insertEntries("srd_conditions", bundle.conditions, now);
+  }
+  if (await tableIsEmpty("srd_rules")) {
+    await insertEntries("srd_rules", bundle.rules, now);
+  }
+  if (await tableIsEmpty("srd_classes")) {
+    await insertEntries("srd_classes", bundle.classes, now);
+  }
+  if (await tableIsEmpty("srd_races")) {
+    await insertEntries("srd_races", bundle.races, now);
+  }
+  if (await tableIsEmpty("srd_backgrounds")) {
+    await insertEntries("srd_backgrounds", bundle.backgrounds, now);
+  }
 }

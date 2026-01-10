@@ -37,8 +37,9 @@ export class FakeDb {
   async select<T>(query: string, params: unknown[] = []): Promise<T> {
     const normalized = query.replace(/\s+/g, " ").trim();
 
-    if (normalized === "SELECT COUNT(*) as count FROM srd_spells") {
-      const table = this.getTable("srd_spells");
+    const countMatch = normalized.match(/^SELECT COUNT\(\*\) as count FROM ([a-z_]+)$/i);
+    if (countMatch) {
+      const table = this.getTable(countMatch[1]);
       return [{ count: table.size }] as unknown as T;
     }
 
@@ -192,6 +193,16 @@ export class FakeDb {
       }
       const columns = splitColumns(columnsRaw);
       return [projectRow(row, columns)] as unknown as T;
+    }
+
+    const selectOrderByNameMatch = normalized.match(/^SELECT (.+) FROM ([a-z_]+) ORDER BY name$/i);
+    if (selectOrderByNameMatch) {
+      const [, columnsRaw, tableName] = selectOrderByNameMatch;
+      const columns = splitColumns(columnsRaw);
+      const table = this.getTable(tableName);
+      const rows = Array.from(table.values());
+      rows.sort((a, b) => String(a.name).localeCompare(String(b.name)));
+      return rows.map((row) => projectRow(row, columns)) as unknown as T;
     }
 
     throw new Error(`FakeDb.select unhandled query: ${normalized}`);

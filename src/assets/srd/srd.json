@@ -58,5 +58,156 @@
         "summary": "Roll two d20s and take the higher or lower as appropriate."
       }
     }
+  ],
+  "classes": [
+    { "id": "class-barbarian", "name": "Barbarian", "data": { "hitDie": 12 } },
+    { "id": "class-bard", "name": "Bard", "data": { "hitDie": 8 } },
+    { "id": "class-cleric", "name": "Cleric", "data": { "hitDie": 8 } },
+    { "id": "class-druid", "name": "Druid", "data": { "hitDie": 8 } },
+    { "id": "class-fighter", "name": "Fighter", "data": { "hitDie": 10 } },
+    { "id": "class-monk", "name": "Monk", "data": { "hitDie": 8 } },
+    { "id": "class-paladin", "name": "Paladin", "data": { "hitDie": 10 } },
+    { "id": "class-ranger", "name": "Ranger", "data": { "hitDie": 10 } },
+    { "id": "class-rogue", "name": "Rogue", "data": { "hitDie": 8 } },
+    { "id": "class-sorcerer", "name": "Sorcerer", "data": { "hitDie": 6 } },
+    { "id": "class-warlock", "name": "Warlock", "data": { "hitDie": 8 } },
+    { "id": "class-wizard", "name": "Wizard", "data": { "hitDie": 6 } }
+  ],
+  "races": [
+    {
+      "id": "race-hill-dwarf",
+      "name": "Hill Dwarf",
+      "data": { "speed": 25, "abilityBonuses": { "con": 2, "wis": 1 } }
+    },
+    {
+      "id": "race-mountain-dwarf",
+      "name": "Mountain Dwarf",
+      "data": { "speed": 25, "abilityBonuses": { "con": 2, "str": 2 } }
+    },
+    {
+      "id": "race-high-elf",
+      "name": "High Elf",
+      "data": { "speed": 30, "abilityBonuses": { "dex": 2, "int": 1 } }
+    },
+    {
+      "id": "race-wood-elf",
+      "name": "Wood Elf",
+      "data": { "speed": 35, "abilityBonuses": { "dex": 2, "wis": 1 } }
+    },
+    {
+      "id": "race-lightfoot-halfling",
+      "name": "Lightfoot Halfling",
+      "data": { "speed": 25, "abilityBonuses": { "dex": 2, "cha": 1 } }
+    },
+    {
+      "id": "race-stout-halfling",
+      "name": "Stout Halfling",
+      "data": { "speed": 25, "abilityBonuses": { "dex": 2, "con": 1 } }
+    },
+    {
+      "id": "race-human",
+      "name": "Human",
+      "data": {
+        "speed": 30,
+        "abilityBonuses": { "str": 1, "dex": 1, "con": 1, "int": 1, "wis": 1, "cha": 1 }
+      }
+    },
+    {
+      "id": "race-dragonborn",
+      "name": "Dragonborn",
+      "data": { "speed": 30, "abilityBonuses": { "str": 2, "cha": 1 } }
+    },
+    {
+      "id": "race-forest-gnome",
+      "name": "Forest Gnome",
+      "data": { "speed": 25, "abilityBonuses": { "int": 2, "dex": 1 } }
+    },
+    {
+      "id": "race-rock-gnome",
+      "name": "Rock Gnome",
+      "data": { "speed": 25, "abilityBonuses": { "int": 2, "con": 1 } }
+    },
+    {
+      "id": "race-half-elf",
+      "name": "Half-Elf",
+      "data": {
+        "speed": 30,
+        "abilityBonuses": { "cha": 2 },
+        "bonusChoices": { "count": 2, "value": 1, "options": ["str", "dex", "con", "int", "wis"] }
+      }
+    },
+    {
+      "id": "race-half-orc",
+      "name": "Half-Orc",
+      "data": { "speed": 30, "abilityBonuses": { "str": 2, "con": 1 } }
+    },
+    {
+      "id": "race-tiefling",
+      "name": "Tiefling",
+      "data": { "speed": 30, "abilityBonuses": { "cha": 2, "int": 1 } }
+    }
+  ],
+  "backgrounds": [
+    {
+      "id": "bg-acolyte",
+      "name": "Acolyte",
+      "data": { "skillProficiencies": ["Insight", "Religion"] }
+    },
+    {
+      "id": "bg-charlatan",
+      "name": "Charlatan",
+      "data": { "skillProficiencies": ["Deception", "Sleight of Hand"] }
+    },
+    {
+      "id": "bg-criminal",
+      "name": "Criminal",
+      "data": { "skillProficiencies": ["Deception", "Stealth"] }
+    },
+    {
+      "id": "bg-entertainer",
+      "name": "Entertainer",
+      "data": { "skillProficiencies": ["Acrobatics", "Performance"] }
+    },
+    {
+      "id": "bg-folk-hero",
+      "name": "Folk Hero",
+      "data": { "skillProficiencies": ["Animal Handling", "Survival"] }
+    },
+    {
+      "id": "bg-guild-artisan",
+      "name": "Guild Artisan",
+      "data": { "skillProficiencies": ["Insight", "Persuasion"] }
+    },
+    {
+      "id": "bg-hermit",
+      "name": "Hermit",
+      "data": { "skillProficiencies": ["Medicine", "Religion"] }
+    },
+    {
+      "id": "bg-noble",
+      "name": "Noble",
+      "data": { "skillProficiencies": ["History", "Persuasion"] }
+    },
+    {
+      "id": "bg-outlander",
+      "name": "Outlander",
+      "data": { "skillProficiencies": ["Athletics", "Survival"] }
+    },
+    { "id": "bg-sage", "name": "Sage", "data": { "skillProficiencies": ["Arcana", "History"] } },
+    {
+      "id": "bg-sailor",
+      "name": "Sailor",
+      "data": { "skillProficiencies": ["Athletics", "Perception"] }
+    },
+    {
+      "id": "bg-soldier",
+      "name": "Soldier",
+      "data": { "skillProficiencies": ["Athletics", "Intimidation"] }
+    },
+    {
+      "id": "bg-urchin",
+      "name": "Urchin",
+      "data": { "skillProficiencies": ["Sleight of Hand", "Stealth"] }
+    }
   ]
 }

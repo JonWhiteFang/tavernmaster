@@ -196,6 +196,27 @@ export const schemaStatements: string[] = [
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL
   );`,
+  `CREATE TABLE IF NOT EXISTS srd_classes (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    data_json TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+  );`,
+  `CREATE TABLE IF NOT EXISTS srd_races (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    data_json TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+  );`,
+  `CREATE TABLE IF NOT EXISTS srd_backgrounds (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    data_json TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+  );`,
   `CREATE TABLE IF NOT EXISTS sync_state (
     id TEXT PRIMARY KEY,
     last_pulled_at TEXT,
