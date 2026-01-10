@@ -15,6 +15,7 @@ import AbilityScoresStep from "./AbilityScoresStep";
 import ClassStep from "./ClassStep";
 import RaceStep from "./RaceStep";
 import BackgroundStep from "./BackgroundStep";
+import ConfirmStep from "./ConfirmStep";
 
 type Props = {
   isOpen: boolean;
@@ -101,7 +102,7 @@ export default function CharacterCreationModal({ isOpen, onClose, onComplete }: 
           dispatch={dispatch}
         />
       )}
-      {state.step === "confirm" && <div className="empty-state">Confirmation step coming soon</div>}
+      {state.step === "confirm" && <ConfirmStep state={state} dispatch={dispatch} />}
     </Modal>
   );
 }

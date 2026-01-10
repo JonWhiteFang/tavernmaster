@@ -22,6 +22,9 @@ import {
   srdBackgrounds,
   srdClasses
 } from "../rules/characterCreation";
+import CharacterCreationModal from "../ui/characterCreation/CharacterCreationModal";
+import type { CharacterCreationState } from "../characterCreation/state";
+import { buildNewCharacterInput } from "../characterCreation/builder";
 
 type InventoryEntryForm = {
   entryId: string;
@@ -87,6 +90,7 @@ export default function PartySheets() {
   const [autoDerived, setAutoDerived] = useState(true);
   const [srdItems, setSrdItems] = useState<SrdRecord[]>([]);
   const [srdSpells, setSrdSpells] = useState<SrdRecord[]>([]);
+  const [wizardOpen, setWizardOpen] = useState(false);
 
   const loadCharacters = useCallback(async (preferredId?: string) => {
     const data = await listCharacters();
@@ -337,6 +341,14 @@ export default function PartySheets() {
     }));
   };
 
+  const handleWizardComplete = async (wizardState: CharacterCreationState) => {
+    const input = buildNewCharacterInput(wizardState);
+    const saved = await createCharacter(input);
+    await loadCharacters(saved.id);
+    setWizardOpen(false);
+    window.dispatchEvent(new globalThis.CustomEvent("tm.tutorial.character-created"));
+  };
+
   return (
     <div className="party">
       <section className="panel" style={{ marginBottom: "1.4rem" }}>
@@ -353,14 +365,23 @@ export default function PartySheets() {
               <div className="panel-title">Roster</div>
               <div className="panel-subtitle">{characters.length} party members</div>
             </div>
-            <button
-              className="secondary-button"
-              onClick={handleStartCreate}
-              disabled={mode !== "view"}
-              data-tutorial-id="party-create-character"
-            >
-              Create Character
-            </button>
+            <div className="button-row" style={{ gap: "0.5rem" }}>
+              <button
+                className="primary-button"
+                onClick={() => setWizardOpen(true)}
+                disabled={mode !== "view"}
+              >
+                Wizard
+              </button>
+              <button
+                className="secondary-button"
+                onClick={handleStartCreate}
+                disabled={mode !== "view"}
+                data-tutorial-id="party-create-character"
+              >
+                Manual
+              </button>
+            </div>
           </div>
           <div className="panel-body">
             {characters.length === 0 ? (
@@ -1025,6 +1046,12 @@ export default function PartySheets() {
           </div>
         </section>
       </div>
+
+      <CharacterCreationModal
+        isOpen={wizardOpen}
+        onClose={() => setWizardOpen(false)}
+        onComplete={handleWizardComplete}
+      />
     </div>
   );
 }

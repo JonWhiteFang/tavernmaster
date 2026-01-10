@@ -27,7 +27,7 @@ describe("PartySheets", () => {
       await screen.findByText("No characters yet. Create a party member to begin.")
     ).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Create Character" }));
+    await user.click(screen.getByRole("button", { name: "Manual" }));
 
     expect(screen.getByText("New Character")).toBeInTheDocument();
   });
