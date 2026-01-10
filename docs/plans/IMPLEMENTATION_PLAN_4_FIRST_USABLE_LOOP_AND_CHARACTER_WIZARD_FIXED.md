@@ -327,9 +327,11 @@ This plan merges the "First Usable Loop" roadmap with the "Questweaver-style Cha
 
 ## Phase B: Character Creation Wizard (PR 11-20)
 
-### PR 11 — Ability score engine (pure logic + tests)
+### PR 11 — Ability score engine (pure logic + tests) ✅ COMPLETE
 
 **Goal:** Port Questweaver's AbilityScoreGenerator into TS with strong tests.
+
+**Status:** Implemented. Added STANDARD_ARRAY, POINT_BUY_BUDGET, roll4d6DropLowest, rollAbilityScores, pointBuyCost, isValidPointBuy to characterCreation.ts with comprehensive tests.
 
 **Add**
 
