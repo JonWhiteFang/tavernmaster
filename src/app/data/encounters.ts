@@ -126,3 +126,91 @@ export async function createEncounter(input: NewEncounterInput): Promise<Encount
     conditions: []
   };
 }
+
+export async function saveInitiativeOrder(
+  encounterId: string,
+  characterIds: string[]
+): Promise<void> {
+  const db = await getDatabase();
+  const now = new Date().toISOString();
+
+  // Clear existing entries
+  await db.execute("DELETE FROM initiative_entries WHERE encounter_id = ?", [encounterId]);
+
+  // Insert new order
+  for (let i = 0; i < characterIds.length; i++) {
+    const id = crypto.randomUUID();
+    await db.execute(
+      `INSERT INTO initiative_entries (id, encounter_id, character_id, order_index, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [id, encounterId, characterIds[i], i, now, now]
+    );
+    await enqueueUpsertAndSchedule("initiative_entries", id, {
+      id,
+      encounter_id: encounterId,
+      character_id: characterIds[i],
+      order_index: i,
+      deleted_at: null,
+      created_at: now,
+      updated_at: now
+    });
+  }
+}
+
+export async function updateEncounterTurn(
+  encounterId: string,
+  round: number,
+  activeTurnId: string | null
+): Promise<void> {
+  const db = await getDatabase();
+  const now = new Date().toISOString();
+
+  await db.execute(
+    `UPDATE encounters SET round = ?, active_turn_id = ?, updated_at = ? WHERE id = ?`,
+    [round, activeTurnId, now, encounterId]
+  );
+
+  // Get full row for sync
+  const rows = await db.select<EncounterRow[]>(
+    `SELECT id, campaign_id, name, environment, difficulty, round, active_turn_id FROM encounters WHERE id = ?`,
+    [encounterId]
+  );
+  if (rows.length) {
+    const row = rows[0];
+    await enqueueUpsertAndSchedule("encounters", encounterId, {
+      id: row.id,
+      campaign_id: row.campaign_id,
+      name: row.name,
+      environment: row.environment,
+      difficulty: row.difficulty,
+      round,
+      active_turn_id: activeTurnId,
+      deleted_at: null,
+      created_at: now,
+      updated_at: now
+    });
+  }
+}
+
+export async function getEncounter(encounterId: string): Promise<Encounter | null> {
+  const db = await getDatabase();
+  const rows = await db.select<EncounterRow[]>(
+    `SELECT id, campaign_id, name, environment, difficulty, round, active_turn_id
+     FROM encounters WHERE id = ?`,
+    [encounterId]
+  );
+  if (!rows.length) return null;
+
+  const row = rows[0];
+  const initiative = await db.select<InitiativeRow[]>(
+    "SELECT character_id, order_index FROM initiative_entries WHERE encounter_id = ?",
+    [encounterId]
+  );
+  const conditions = await db.select<ConditionRow[]>(
+    `SELECT c.name FROM encounter_conditions ec
+     JOIN conditions c ON c.id = ec.condition_id
+     WHERE ec.encounter_id = ?`,
+    [encounterId]
+  );
+  return mapEncounter(row, initiative, conditions);
+}

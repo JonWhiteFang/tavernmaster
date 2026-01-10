@@ -2,7 +2,13 @@ import { useEffect, useMemo, useState } from "react";
 import type { Character } from "../data/types";
 import type { Encounter } from "../data/types";
 import { listCharacters } from "../data/characters";
-import { listEncounters, createEncounter } from "../data/encounters";
+import {
+  listEncounters,
+  createEncounter,
+  saveInitiativeOrder,
+  updateEncounterTurn,
+  getEncounter
+} from "../data/encounters";
 import {
   clearEncounterRecovery,
   loadEncounterRecovery,
@@ -45,6 +51,38 @@ export default function EncounterFlow() {
     }
     void listEncounters(activeCampaignId).then(setEncounters);
   }, [activeCampaignId]);
+
+  // Load encounter state when encounter selected
+  useEffect(() => {
+    if (!activeEncounterId) return;
+    void (async () => {
+      const enc = await getEncounter(activeEncounterId);
+      if (!enc) return;
+      const characters = await listCharacters();
+      if (!characters.length) return;
+
+      // Build participants from characters
+      const state = buildRulesState(characters);
+
+      // Apply saved initiative order if exists
+      if (enc.initiativeOrder.length) {
+        const validOrder = enc.initiativeOrder.filter((id) => state.participants[id]);
+        const activeTurnIndex = enc.activeTurnId
+          ? Math.max(0, validOrder.indexOf(enc.activeTurnId))
+          : 0;
+        setRulesState({
+          ...state,
+          round: enc.round,
+          turnOrder: validOrder,
+          activeTurnIndex
+        });
+      } else {
+        setRulesState({ ...state, round: enc.round });
+      }
+      setLog([]);
+      setLoadedRecovery(false);
+    })();
+  }, [activeEncounterId]);
 
   useEffect(() => {
     let isMounted = true;
@@ -114,16 +152,23 @@ export default function EncounterFlow() {
     const nameLookup = new Map(
       participants.map((participant) => [participant.id, participant.name])
     );
-    setRulesState({
+    const newState = {
       ...rulesState,
       turnOrder: order,
       activeTurnIndex: 0
-    });
+    };
+    setRulesState(newState);
     setLog((current) => [
       "Initiative rolled:",
       ...rolls.map((roll) => `${nameLookup.get(roll.participantId)}: ${roll.total}`),
       ...current
     ]);
+
+    // Persist to DB if encounter selected
+    if (activeEncounterId) {
+      void saveInitiativeOrder(activeEncounterId, order);
+      void updateEncounterTurn(activeEncounterId, newState.round, order[0] ?? null);
+    }
   };
 
   const handleStartEncounter = () => {
@@ -138,13 +183,33 @@ export default function EncounterFlow() {
       ...result.rolls.map((roll) => `${roll.label}: ${roll.total}`),
       ...current
     ]);
+
+    // Persist to DB if encounter selected
+    if (activeEncounterId) {
+      void saveInitiativeOrder(activeEncounterId, result.state.turnOrder);
+      void updateEncounterTurn(
+        activeEncounterId,
+        result.state.round,
+        result.state.turnOrder[result.state.activeTurnIndex] ?? null
+      );
+    }
   };
 
   const handleAdvanceTurn = () => {
     if (!rulesState) {
       return;
     }
-    setRulesState((current) => (current ? advanceTurn(current) : current));
+    const newState = advanceTurn(rulesState);
+    setRulesState(newState);
+
+    // Persist to DB if encounter selected
+    if (activeEncounterId) {
+      void updateEncounterTurn(
+        activeEncounterId,
+        newState.round,
+        newState.turnOrder[newState.activeTurnIndex] ?? null
+      );
+    }
   };
 
   const handleResolveDemo = () => {
