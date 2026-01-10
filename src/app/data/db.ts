@@ -63,4 +63,5 @@ export async function initDatabase(): Promise<void> {
   await ensureColumn(db, "characters", "control_mode", "TEXT NOT NULL DEFAULT 'player'");
   await ensureColumn(db, "characters", "proficiencies_json", "TEXT NOT NULL DEFAULT '[]'");
   await ensureColumn(db, "characters", "ancestry_bonus_json", "TEXT NOT NULL DEFAULT '[]'");
+  await ensureColumn(db, "action_proposals", "payload_json", "TEXT");
 }

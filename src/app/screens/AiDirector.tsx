@@ -152,7 +152,7 @@ const buildActionDetails = (action: Action) => {
 };
 
 export default function AiDirector() {
-  const { activeCampaignId, activeSessionId } = useAppContext();
+  const { activeCampaignId, activeSessionId, activeEncounterId } = useAppContext();
   const { pushToast } = useToast();
   const [rulesState, setRulesState] = useState<RulesState | null>(null);
   const [partyRoster, setPartyRoster] = useState(defaultRoster);
@@ -214,7 +214,7 @@ export default function AiDirector() {
     approve,
     reject,
     approveAllSafe
-  } = usePartyProposals(partyContext, rulesState);
+  } = usePartyProposals(partyContext, rulesState, activeEncounterId);
 
   const handleStreamNarration = () => {
     void streamNarration();
@@ -289,6 +289,11 @@ export default function AiDirector() {
           <span className="status-chip">Approved: {approvalCounts.approved}</span>
           <span className="status-chip">Rejected: {approvalCounts.rejected}</span>
         </div>
+        {!activeEncounterId && (
+          <div className="panel-copy" style={{ marginTop: "1rem", color: "var(--color-warning)" }}>
+            Select an encounter in Encounter Flow to persist party proposals.
+          </div>
+        )}
       </section>
 
       <div className="director-grid">

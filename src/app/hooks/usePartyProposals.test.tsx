@@ -9,6 +9,23 @@ vi.mock("../ai/orchestrator", () => ({
   validatePartyProposals: vi.fn()
 }));
 
+vi.mock("../data/ai_logs", () => ({
+  insertAiLog: vi.fn().mockResolvedValue({})
+}));
+
+vi.mock("../data/action_proposals", () => ({
+  createActionProposals: vi.fn().mockImplementation(async (_encounterId, proposals) =>
+    proposals.map((p: { characterId: string }, i: number) => ({
+      id: `proposal-${i}`,
+      encounterId: _encounterId,
+      characterId: p.characterId,
+      status: "pending"
+    }))
+  ),
+  listProposalsByEncounter: vi.fn().mockResolvedValue([]),
+  updateProposalStatus: vi.fn().mockResolvedValue(undefined)
+}));
+
 import { getPartyProposals, validatePartyProposals } from "../ai/orchestrator";
 
 const partyContext: PartyContext = {
@@ -27,6 +44,8 @@ const rulesState = {
   log: []
 };
 
+const encounterId = "enc-1";
+
 describe("usePartyProposals", () => {
   const mockGetPartyProposals = vi.mocked(getPartyProposals);
   const mockValidatePartyProposals = vi.mocked(validatePartyProposals);
@@ -36,10 +55,20 @@ describe("usePartyProposals", () => {
     mockValidatePartyProposals.mockReset();
   });
 
+  it("handles missing encounter", async () => {
+    const { result } = renderHook(() => usePartyProposals(partyContext, rulesState, null));
+
+    await act(async () => {
+      await result.current.generate();
+    });
+
+    expect(result.current.proposalError).toBe("Select an encounter before generating proposals.");
+  });
+
   it("handles empty proposals", async () => {
     mockGetPartyProposals.mockResolvedValue(null);
 
-    const { result } = renderHook(() => usePartyProposals(partyContext, rulesState));
+    const { result } = renderHook(() => usePartyProposals(partyContext, rulesState, encounterId));
 
     await act(async () => {
       await result.current.generate();
@@ -84,7 +113,7 @@ describe("usePartyProposals", () => {
       }
     ] as never);
 
-    const { result } = renderHook(() => usePartyProposals(partyContext, rulesState));
+    const { result } = renderHook(() => usePartyProposals(partyContext, rulesState, encounterId));
 
     await act(async () => {
       await result.current.generate();

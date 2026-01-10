@@ -201,6 +201,7 @@ export const syncedTables: readonly TableSpec[] = [
       "summary",
       "rules_refs",
       "status",
+      "payload_json",
       "deleted_at",
       "created_at",
       "updated_at"

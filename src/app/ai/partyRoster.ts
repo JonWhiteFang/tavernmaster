@@ -3,7 +3,10 @@ import type { RulesParticipant, RulesState } from "../rules/types";
 
 export function buildRoster(characters: Character[]): string {
   return characters
-    .map((character) => `${character.name} (${character.className} ${character.level})`)
+    .map(
+      (character) =>
+        `[${character.id}] ${character.name} (${character.className} ${character.level})`
+    )
     .join("\n");
 }
 

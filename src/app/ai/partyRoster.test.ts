@@ -68,8 +68,8 @@ describe("party roster helpers", () => {
     }
   ];
 
-  it("builds a display roster", () => {
-    expect(buildRoster(characters)).toBe("Aria (Rogue 3)\nBorin (Fighter 5)");
+  it("builds a display roster with character IDs", () => {
+    expect(buildRoster(characters)).toBe("[char-1] Aria (Rogue 3)\n[char-2] Borin (Fighter 5)");
   });
 
   it("builds a rules state with participants", () => {
