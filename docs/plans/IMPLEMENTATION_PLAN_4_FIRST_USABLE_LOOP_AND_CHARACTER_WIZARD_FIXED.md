@@ -62,9 +62,11 @@ This plan merges the "First Usable Loop" roadmap with the "Questweaver-style Cha
 
 ---
 
-### PR 2 — Shell cleanup: wire topbar + remove hard-coded pills/placeholders
+### PR 2 — Shell cleanup: wire topbar + remove hard-coded pills/placeholders ✅ COMPLETE
 
 **Goal:** App chrome reflects real settings and selected campaign/session.
+
+**Status:** Already implemented. Topbar uses real campaign/session data from AppContext, shows real LLM model/host from settings, and TimelineDrawer shows real ai_logs entries with proper empty states.
 
 **Scope**
 
