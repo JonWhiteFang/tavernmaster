@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useReducer, useEffect, useState } from "react";
 import Modal from "../Modal";
 import Button from "../Button";
 import {
@@ -9,7 +9,12 @@ import {
   type CharacterCreationState,
   type CreationStep
 } from "../../characterCreation/state";
+import type { SrdClass, SrdRace, SrdBackground } from "../../characterCreation/types";
+import { listSrdClasses, listSrdRaces, listSrdBackgrounds } from "../../data/srdContent";
 import AbilityScoresStep from "./AbilityScoresStep";
+import ClassStep from "./ClassStep";
+import RaceStep from "./RaceStep";
+import BackgroundStep from "./BackgroundStep";
 
 type Props = {
   isOpen: boolean;
@@ -29,6 +34,17 @@ const stepOrder: CreationStep[] = ["ability", "class", "race", "background", "co
 
 export default function CharacterCreationModal({ isOpen, onClose, onComplete }: Props) {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [classes, setClasses] = useState<SrdClass[]>([]);
+  const [races, setRaces] = useState<SrdRace[]>([]);
+  const [backgrounds, setBackgrounds] = useState<SrdBackground[]>([]);
+
+  useEffect(() => {
+    if (isOpen) {
+      listSrdClasses().then(setClasses);
+      listSrdRaces().then(setRaces);
+      listSrdBackgrounds().then(setBackgrounds);
+    }
+  }, [isOpen]);
 
   const handleNext = () => {
     if (state.step === "confirm" && canProceed(state)) {
@@ -43,7 +59,7 @@ export default function CharacterCreationModal({ isOpen, onClose, onComplete }: 
   const currentIndex = stepOrder.indexOf(state.step);
 
   const footer = (
-    <div className="wizard-footer">
+    <div className="wizard-nav">
       <Button variant="ghost" onClick={handleBack} disabled={!canGoBack(state)}>
         Back
       </Button>
@@ -65,24 +81,27 @@ export default function CharacterCreationModal({ isOpen, onClose, onComplete }: 
         {stepOrder.map((step, i) => (
           <div
             key={step}
-            className={`wizard-step ${i === currentIndex ? "active" : ""} ${i < currentIndex ? "complete" : ""}`}
+            className={`wizard-step ${i === currentIndex ? "is-active" : ""} ${i < currentIndex ? "is-complete" : ""}`}
           >
-            <span className="wizard-step-dot" />
-            <span className="wizard-step-label">{stepLabels[step]}</span>
+            {stepLabels[step]}
           </div>
         ))}
       </div>
-      <div className="wizard-content">
-        {state.step === "ability" && <AbilityScoresStep state={state} dispatch={dispatch} />}
-        {state.step === "class" && <div className="empty-state">Class selection coming soon</div>}
-        {state.step === "race" && <div className="empty-state">Race selection coming soon</div>}
-        {state.step === "background" && (
-          <div className="empty-state">Background selection coming soon</div>
-        )}
-        {state.step === "confirm" && (
-          <div className="empty-state">Confirmation step coming soon</div>
-        )}
-      </div>
+      {state.step === "ability" && <AbilityScoresStep state={state} dispatch={dispatch} />}
+      {state.step === "class" && (
+        <ClassStep classes={classes} selected={state.selectedClass} dispatch={dispatch} />
+      )}
+      {state.step === "race" && (
+        <RaceStep races={races} selected={state.selectedRace} dispatch={dispatch} />
+      )}
+      {state.step === "background" && (
+        <BackgroundStep
+          backgrounds={backgrounds}
+          selected={state.selectedBackground}
+          dispatch={dispatch}
+        />
+      )}
+      {state.step === "confirm" && <div className="empty-state">Confirmation step coming soon</div>}
     </Modal>
   );
 }
