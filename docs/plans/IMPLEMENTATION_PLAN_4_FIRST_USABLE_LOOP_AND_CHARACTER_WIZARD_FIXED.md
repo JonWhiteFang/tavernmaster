@@ -357,9 +357,11 @@ This plan merges the "First Usable Loop" roadmap with the "Questweaver-style Cha
 
 ---
 
-### PR 12 — Add SRD-lite tables + ingestion upgrade
+### PR 12 — Add SRD-lite tables + ingestion upgrade ✅ COMPLETE
 
 **Goal:** Make the wizard data-driven with upgrade-safe SRD ingestion.
+
+**Status:** Implemented. Added srd_classes, srd_races, srd_backgrounds tables to schema. Extended srd.json with full SRD class/race/background data. Updated srd.ts to check each table independently for upgrade-safe ingestion.
 
 **Schema**
 
@@ -395,9 +397,11 @@ This plan merges the "First Usable Loop" roadmap with the "Questweaver-style Cha
 
 ---
 
-### PR 13 — SRD content access layer (typed list functions)
+### PR 13 — SRD content access layer (typed list functions) ✅ COMPLETE
 
 **Goal:** Avoid JSON parsing in UI.
+
+**Status:** Implemented. Added src/app/data/srdContent.ts with listSrdClasses, listSrdRaces, listSrdBackgrounds. Added src/app/characterCreation/types.ts with SrdClass, SrdRace, SrdBackground types.
 
 **Add**
 
