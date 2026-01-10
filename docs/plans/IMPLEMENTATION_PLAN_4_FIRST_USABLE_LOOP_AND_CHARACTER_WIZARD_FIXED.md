@@ -231,9 +231,11 @@ This plan merges the "First Usable Loop" roadmap with the "Questweaver-style Cha
 
 ---
 
-### PR 8 — Persist initiative + turn state in DB
+### PR 8 — Persist initiative + turn state in DB ✅ COMPLETE
 
 **Goal:** Combat state survives reload and sync.
+
+**Status:** Implemented. Added saveInitiativeOrder, updateEncounterTurn, getEncounter functions. Wired EncounterFlow handlers to persist on roll initiative, start encounter, and advance turn. Added effect to load encounter state when selected.
 
 **Scope**
 
