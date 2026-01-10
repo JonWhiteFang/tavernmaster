@@ -423,9 +423,11 @@ This plan merges the "First Usable Loop" roadmap with the "Questweaver-style Cha
 
 ---
 
-### PR 14 — Wizard reducer/state machine (Questweaver-style) + tests
+### PR 14 — Wizard reducer/state machine (Questweaver-style) + tests ✅ COMPLETE
 
 **Goal:** Implement "intents in, state out" pattern.
+
+**Status:** Implemented. Added src/app/characterCreation/state.ts with reducer, actions, and selectors. Equipment step skipped in v1 flow. 26 comprehensive tests covering step gating, data preservation, and all ability methods.
 
 **Add**
 
