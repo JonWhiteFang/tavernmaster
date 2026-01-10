@@ -119,9 +119,11 @@ This plan merges the "First Usable Loop" roadmap with the "Questweaver-style Cha
 
 ---
 
-### PR 4 — Journal: remove seed-campaign hard-code + add New Entry + basic edit
+### PR 4 — Journal: remove seed-campaign hard-code + add New Entry + basic edit ✅ COMPLETE
 
 **Goal:** Journal becomes usable per campaign.
+
+**Status:** Already implemented. Journal uses activeCampaignId from AppContext, has New Entry and Edit Entry modes, and updateJournalEntry exists in data layer.
 
 **Scope**
 
