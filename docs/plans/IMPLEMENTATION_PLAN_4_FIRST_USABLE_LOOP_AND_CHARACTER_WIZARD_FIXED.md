@@ -91,15 +91,15 @@ This plan merges the "First Usable Loop" roadmap with the "Questweaver-style Cha
 
 **Goal:** User can create their own campaign and sessions and set them active (regardless of demo seed data).
 
-**Status:** Already implemented. Dashboard has New Campaign/Session modals, campaign/session lists with click-to-activate, and createSession supports recap.
+**Status:** Already implemented. Dashboard has New Campaign/Session modals, campaign/session lists with click-to-activate, createSession supports recap, and updateSession added for recap edits.
 
 **Scope**
 
 - "New Campaign" modal/form (use existing `createCampaign()` flow).
 - Add "New Session" for the active campaign.
 - Implement missing session writes in `src/app/data/sessions.ts`:
-  - `createSession(...)`
-  - `updateSession(...)` (optional; for recap edits)
+  - `createSession(...)` ✅
+  - `updateSession(...)` (optional; for recap edits) ✅
 - Capture session recap during session creation (optional text area).
 - Add explicit "Set Active Session" action (updates App Spine).
 - Note: `seedDatabase()` currently creates a demo campaign/session when the DB is empty. Keep this for v1, but ensure the UI always allows creating a new campaign and switching active selection. (Optional later: first-run prompt “Start with demo campaign?”)
