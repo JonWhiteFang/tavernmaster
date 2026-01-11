@@ -129,9 +129,9 @@ export async function seedDatabase(
     "A coastal relic hunt with storms, rival crews, and ancient wards."
   );
   await db.execute(
-    `INSERT INTO campaigns (id, name, summary, active_scene_id, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?)`,
-    [campaignId, "Copperbound", campaignSummary, null, now, now]
+    `INSERT INTO campaigns (id, name, summary, active_scene_id, ruleset_version, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [campaignId, "Copperbound", campaignSummary, null, "5.1", now, now]
   );
   created = true;
 
