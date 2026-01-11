@@ -18,27 +18,34 @@ import type { Manifest, SrdEntry, SrdVersion } from "./types.js";
 const ASSETS_DIR = path.resolve(import.meta.dirname, "../../src/assets/srd");
 const MANIFEST_PATH = path.join(ASSETS_DIR, "manifest.json");
 
-// Minimum expected counts per type (adjust as data grows)
+// Minimum expected counts per type (based on actual SRD content)
+// SRD 5.1 only has 1 background (Acolyte) and 1 feat (Grappler)
 const MIN_COUNTS: Record<string, Record<string, number>> = {
   "5.1": {
-    spell: 1,
-    equipment: 10,
-    monster: 1,
-    condition: 1,
+    spell: 300,
+    equipment: 200,
+    monster: 300,
+    condition: 10,
     rule: 1,
-    class: 10,
+    class: 12,
     species: 10,
-    background: 10
+    background: 1,
+    magic_item: 200,
+    subclass: 10,
+    feat: 1
   },
   "5.2.1": {
-    spell: 1,
-    equipment: 10,
-    monster: 1,
-    condition: 1,
-    rule: 1,
-    class: 10,
+    spell: 500,
+    equipment: 200,
+    monster: 300,
+    condition: 10,
+    rule: 5,
+    class: 12,
     species: 10,
-    background: 10
+    background: 10,
+    magic_item: 200,
+    subclass: 10,
+    feat: 1
   }
 };
 
@@ -48,7 +55,9 @@ const KNOWN_ENTRIES: Record<string, string[]> = {
     "srd:5.1:class:fighter",
     "srd:5.1:class:wizard",
     "srd:5.1:species:human",
-    "srd:5.1:background:soldier"
+    "srd:5.1:spell:fireball",
+    "srd:5.1:monster:adult-red-dragon",
+    "srd:5.1:background:acolyte"
   ],
   "5.2.1": [
     "srd:5.2.1:class:fighter",
