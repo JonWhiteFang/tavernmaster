@@ -8,50 +8,47 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import * as crypto from "node:crypto";
 import type { Manifest, SrdEntry, SrdVersion } from "./types.js";
+import { downloadPdf } from "./download.js";
+import { extractPdfText } from "./extract.js";
+import { segmentPages } from "./segment.js";
 
 const ASSETS_DIR = path.resolve(import.meta.dirname, "../../src/assets/srd");
 const MANIFEST_PATH = path.join(ASSETS_DIR, "manifest.json");
-
-async function downloadPdf(url: string, destPath: string): Promise<string> {
-  console.log(`Downloading ${url}...`);
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to download: ${response.status}`);
-  }
-  const buffer = Buffer.from(await response.arrayBuffer());
-  fs.writeFileSync(destPath, buffer);
-  const hash = crypto.createHash("sha256").update(buffer).digest("hex");
-  console.log(`Downloaded to ${destPath} (sha256: ${hash.slice(0, 16)}...)`);
-  return hash;
-}
 
 async function generateForVersion(
   version: SrdVersion,
   pdfUrl: string
 ): Promise<{ entries: SrdEntry[]; sha256: string }> {
-  const tempDir = path.join(ASSETS_DIR, ".temp");
-  fs.mkdirSync(tempDir, { recursive: true });
-  const pdfPath = path.join(tempDir, `srd-${version}.pdf`);
+  console.log(`\n  Downloading PDF...`);
+  const { path: pdfPath, sha256 } = await downloadPdf(pdfUrl, version);
 
-  // Download PDF
-  const sha256 = await downloadPdf(pdfUrl, pdfPath);
+  console.log(`  Extracting text from PDF...`);
+  const pages = await extractPdfText(pdfPath);
+  console.log(`  Extracted ${pages.length} pages`);
 
-  // For now, return empty entries - PDF parsing will be added incrementally
-  // This skeleton allows the pipeline to run and produce valid output
-  console.log(`PDF parsing for ${version} not yet implemented - generating empty entries`);
-  const entries: SrdEntry[] = [];
+  console.log(`  Segmenting into entries...`);
+  const entries = segmentPages(pages, {
+    version,
+    pdfUrl,
+    pdfSha256: sha256
+  });
 
-  // Cleanup temp file
-  fs.unlinkSync(pdfPath);
-  fs.rmdirSync(tempDir, { recursive: true });
+  // Count by type
+  const byType: Record<string, number> = {};
+  for (const entry of entries) {
+    byType[entry.type] = (byType[entry.type] || 0) + 1;
+  }
+  console.log(`  Generated ${entries.length} entries:`);
+  for (const [type, count] of Object.entries(byType).sort()) {
+    console.log(`    ${type}: ${count}`);
+  }
 
   return { entries, sha256 };
 }
 
 async function main() {
-  console.log("SRD Generator starting...\n");
+  console.log("SRD Generator starting...");
 
   const manifest: Manifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, "utf-8"));
   const now = new Date().toISOString();
@@ -59,20 +56,25 @@ async function main() {
   for (const dataset of manifest.datasets) {
     console.log(`\n=== Processing SRD ${dataset.version} ===`);
 
-    const { entries, sha256 } = await generateForVersion(
-      dataset.version as SrdVersion,
-      dataset.sourcePdfUrl
-    );
+    try {
+      const { entries, sha256 } = await generateForVersion(
+        dataset.version as SrdVersion,
+        dataset.sourcePdfUrl
+      );
 
-    // Update manifest
-    dataset.sourcePdfSha256 = sha256;
-    dataset.generatedAt = now;
+      // Update manifest
+      dataset.sourcePdfSha256 = sha256;
+      dataset.generatedAt = now;
 
-    // Write entries
-    const entriesPath = path.join(ASSETS_DIR, dataset.entriesPath);
-    fs.mkdirSync(path.dirname(entriesPath), { recursive: true });
-    fs.writeFileSync(entriesPath, JSON.stringify(entries, null, 2));
-    console.log(`Wrote ${entries.length} entries to ${dataset.entriesPath}`);
+      // Write entries
+      const entriesPath = path.join(ASSETS_DIR, dataset.entriesPath);
+      fs.mkdirSync(path.dirname(entriesPath), { recursive: true });
+      fs.writeFileSync(entriesPath, JSON.stringify(entries, null, 2));
+      console.log(`  Wrote to ${dataset.entriesPath}`);
+    } catch (error) {
+      console.error(`  Error processing ${dataset.version}:`, error);
+      throw error;
+    }
   }
 
   // Write updated manifest
