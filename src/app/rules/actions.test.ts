@@ -303,4 +303,109 @@ describe("action resolution", () => {
     const helped = help.effects.find((effect) => effect.type === "addCondition");
     expect(helped && "condition" in helped ? helped.condition.name : "").toBe("helped");
   });
+
+  it("resolves dash action", () => {
+    const rng = sequenceRng([]);
+    const result = resolveAction({ type: "dash", actorId: "attacker" }, baseState, rng);
+    expect(result.ok).toBe(true);
+    const effect = result.effects.find((e) => e.type === "addCondition");
+    expect(effect && "condition" in effect ? effect.condition.name : "").toBe("dashing");
+    expect(result.log.join(" ")).toContain("speed doubled");
+  });
+
+  it("resolves disengage action", () => {
+    const rng = sequenceRng([]);
+    const result = resolveAction({ type: "disengage", actorId: "attacker" }, baseState, rng);
+    expect(result.ok).toBe(true);
+    const effect = result.effects.find((e) => e.type === "addCondition");
+    expect(effect && "condition" in effect ? effect.condition.name : "").toBe("disengaged");
+    expect(result.log.join(" ")).toContain("no opportunity attacks");
+  });
+
+  it("resolves hide action", () => {
+    const rng = sequenceRng([]);
+    const result = resolveAction({ type: "hide", actorId: "attacker" }, baseState, rng);
+    expect(result.ok).toBe(true);
+    const effect = result.effects.find((e) => e.type === "addCondition");
+    expect(effect && "condition" in effect ? effect.condition.name : "").toBe("hidden");
+  });
+
+  it("resolves ready action", () => {
+    const rng = sequenceRng([]);
+    const result = resolveAction(
+      { type: "ready", actorId: "attacker", trigger: "enemy approaches" },
+      baseState,
+      rng
+    );
+    expect(result.ok).toBe(true);
+    const effect = result.effects.find((e) => e.type === "addCondition");
+    expect(effect && "condition" in effect ? effect.condition.name : "").toBe("readying");
+    expect(result.log.join(" ")).toContain("enemy approaches");
+  });
+
+  it("validates incapacitated actors cannot act", () => {
+    const state: RulesState = {
+      ...baseState,
+      participants: {
+        ...baseState.participants,
+        attacker: {
+          ...baseState.participants.attacker,
+          conditions: [{ id: "c1", name: "stunned", remainingRounds: 1 }]
+        }
+      }
+    };
+    const result = validateAction({ type: "dash", actorId: "attacker" }, state);
+    expect(result.ok).toBe(false);
+    expect(result.errors.join(" ")).toContain("cannot act");
+  });
+
+  it("validates actors at 0 HP cannot act", () => {
+    const state: RulesState = {
+      ...baseState,
+      participants: {
+        ...baseState.participants,
+        attacker: { ...baseState.participants.attacker, hp: 0 }
+      }
+    };
+    const result = validateAction({ type: "dodge", actorId: "attacker" }, state);
+    expect(result.ok).toBe(false);
+    expect(result.errors.join(" ")).toContain("cannot act");
+  });
+
+  it("handles spell miss logging", () => {
+    const rng = sequenceRng([0.0]); // roll 1, miss
+    const state: RulesState = {
+      ...baseState,
+      participants: {
+        caster: {
+          id: "caster",
+          name: "Mage",
+          maxHp: 10,
+          hp: 10,
+          armorClass: 10,
+          initiativeBonus: 0,
+          speed: 30,
+          abilities: { str: 8, dex: 10, con: 10, int: 16, wis: 10, cha: 10 },
+          savingThrows: {},
+          proficiencyBonus: 2,
+          conditions: [],
+          spellcasting: { spellSaveDc: 13, spellAttackBonus: 5, slots: {} }
+        },
+        target: { ...baseState.participants.target, armorClass: 20 }
+      }
+    };
+    const result = resolveAction(
+      {
+        type: "cast",
+        casterId: "caster",
+        spellId: "ray",
+        slotLevel: 0,
+        targetIds: ["target"],
+        attack: { bonus: 5, isMelee: false }
+      },
+      state,
+      rng
+    );
+    expect(result.log.join(" ")).toContain("misses");
+  });
 });
