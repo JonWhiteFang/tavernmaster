@@ -1,1 +1,1216 @@
-[]
+[
+  {
+    "id": "srd:5.2.1:spell:fire-bolt",
+    "name": "Fire Bolt",
+    "type": "spell",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "level": 0,
+      "school": "Evocation",
+      "casting_time": "1 action",
+      "range": "120 feet",
+      "components": ["V", "S"],
+      "duration": "Instantaneous",
+      "damage": "1d10 fire",
+      "description": "You hurl a mote of fire at a creature or object within range."
+    },
+    "search_text": "fire bolt you hurl a mote of fire at a creature or object within range.",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "spell"
+    }
+  },
+  {
+    "id": "srd:5.2.1:equipment:potion-of-healing",
+    "name": "Potion of Healing",
+    "type": "equipment",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "type": "Potion",
+      "rarity": "Common",
+      "description": "You regain 2d4 + 2 hit points when you drink this potion."
+    },
+    "search_text": "potion of healing you regain 2d4 + 2 hit points when you drink this potion.",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "equipment"
+    }
+  },
+  {
+    "id": "srd:5.2.1:equipment:longsword",
+    "name": "Longsword",
+    "type": "equipment",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "type": "Weapon",
+      "damage": "1d8 slashing",
+      "properties": ["Versatile (1d10)"]
+    },
+    "search_text": "longsword",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "equipment"
+    }
+  },
+  {
+    "id": "srd:5.2.1:equipment:shortsword",
+    "name": "Shortsword",
+    "type": "equipment",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "type": "Weapon",
+      "damage": "1d6 piercing",
+      "properties": ["Finesse", "Light"]
+    },
+    "search_text": "shortsword",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "equipment"
+    }
+  },
+  {
+    "id": "srd:5.2.1:equipment:dagger",
+    "name": "Dagger",
+    "type": "equipment",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "type": "Weapon",
+      "damage": "1d4 piercing",
+      "properties": ["Finesse", "Light", "Thrown (20/60)"]
+    },
+    "search_text": "dagger",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "equipment"
+    }
+  },
+  {
+    "id": "srd:5.2.1:equipment:greataxe",
+    "name": "Greataxe",
+    "type": "equipment",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "type": "Weapon",
+      "damage": "1d12 slashing",
+      "properties": ["Heavy", "Two-Handed"]
+    },
+    "search_text": "greataxe",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "equipment"
+    }
+  },
+  {
+    "id": "srd:5.2.1:equipment:handaxe",
+    "name": "Handaxe",
+    "type": "equipment",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "type": "Weapon",
+      "damage": "1d6 slashing",
+      "properties": ["Light", "Thrown (20/60)"]
+    },
+    "search_text": "handaxe",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "equipment"
+    }
+  },
+  {
+    "id": "srd:5.2.1:equipment:quarterstaff",
+    "name": "Quarterstaff",
+    "type": "equipment",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "type": "Weapon",
+      "damage": "1d6 bludgeoning",
+      "properties": ["Versatile (1d8)"]
+    },
+    "search_text": "quarterstaff",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "equipment"
+    }
+  },
+  {
+    "id": "srd:5.2.1:equipment:rapier",
+    "name": "Rapier",
+    "type": "equipment",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "type": "Weapon",
+      "damage": "1d8 piercing",
+      "properties": ["Finesse"]
+    },
+    "search_text": "rapier",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "equipment"
+    }
+  },
+  {
+    "id": "srd:5.2.1:equipment:longbow",
+    "name": "Longbow",
+    "type": "equipment",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "type": "Weapon",
+      "damage": "1d8 piercing",
+      "properties": ["Ammunition (150/600)", "Heavy", "Two-Handed"]
+    },
+    "search_text": "longbow",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "equipment"
+    }
+  },
+  {
+    "id": "srd:5.2.1:equipment:shortbow",
+    "name": "Shortbow",
+    "type": "equipment",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "type": "Weapon",
+      "damage": "1d6 piercing",
+      "properties": ["Ammunition (80/320)", "Two-Handed"]
+    },
+    "search_text": "shortbow",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "equipment"
+    }
+  },
+  {
+    "id": "srd:5.2.1:equipment:light-crossbow",
+    "name": "Light Crossbow",
+    "type": "equipment",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "type": "Weapon",
+      "damage": "1d8 piercing",
+      "properties": ["Ammunition (80/320)", "Loading", "Two-Handed"]
+    },
+    "search_text": "light crossbow",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "equipment"
+    }
+  },
+  {
+    "id": "srd:5.2.1:equipment:mace",
+    "name": "Mace",
+    "type": "equipment",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "type": "Weapon",
+      "damage": "1d6 bludgeoning",
+      "properties": []
+    },
+    "search_text": "mace",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "equipment"
+    }
+  },
+  {
+    "id": "srd:5.2.1:equipment:shield",
+    "name": "Shield",
+    "type": "equipment",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "type": "Armor",
+      "armorClass": "+2",
+      "properties": []
+    },
+    "search_text": "shield",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "equipment"
+    }
+  },
+  {
+    "id": "srd:5.2.1:equipment:leather-armor",
+    "name": "Leather Armor",
+    "type": "equipment",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "type": "Armor",
+      "armorClass": "11 + Dex",
+      "properties": ["Light"]
+    },
+    "search_text": "leather armor",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "equipment"
+    }
+  },
+  {
+    "id": "srd:5.2.1:equipment:chain-mail",
+    "name": "Chain Mail",
+    "type": "equipment",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "type": "Armor",
+      "armorClass": "16",
+      "properties": ["Heavy", "Stealth Disadvantage"]
+    },
+    "search_text": "chain mail",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "equipment"
+    }
+  },
+  {
+    "id": "srd:5.2.1:equipment:scale-mail",
+    "name": "Scale Mail",
+    "type": "equipment",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "type": "Armor",
+      "armorClass": "14 + Dex (max 2)",
+      "properties": ["Medium", "Stealth Disadvantage"]
+    },
+    "search_text": "scale mail",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "equipment"
+    }
+  },
+  {
+    "id": "srd:5.2.1:equipment:explorer-s-pack",
+    "name": "Explorer's Pack",
+    "type": "equipment",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "type": "Equipment",
+      "description": "Backpack, bedroll, mess kit, tinderbox, torches (10), rations (10 days), waterskin, rope (50 ft)"
+    },
+    "search_text": "explorer's pack backpack, bedroll, mess kit, tinderbox, torches (10), rations (10 days), waterskin, rope (50 ft)",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "equipment"
+    }
+  },
+  {
+    "id": "srd:5.2.1:equipment:dungeoneer-s-pack",
+    "name": "Dungeoneer's Pack",
+    "type": "equipment",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "type": "Equipment",
+      "description": "Backpack, crowbar, hammer, pitons (10), torches (10), tinderbox, rations (10 days), waterskin, rope (50 ft)"
+    },
+    "search_text": "dungeoneer's pack backpack, crowbar, hammer, pitons (10), torches (10), tinderbox, rations (10 days), waterskin, rope (50 ft)",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "equipment"
+    }
+  },
+  {
+    "id": "srd:5.2.1:equipment:priest-s-pack",
+    "name": "Priest's Pack",
+    "type": "equipment",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "type": "Equipment",
+      "description": "Backpack, blanket, candles (10), tinderbox, alms box, incense (2 blocks), censer, vestments, rations (2 days), waterskin"
+    },
+    "search_text": "priest's pack backpack, blanket, candles (10), tinderbox, alms box, incense (2 blocks), censer, vestments, rations (2 days), waterskin",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "equipment"
+    }
+  },
+  {
+    "id": "srd:5.2.1:equipment:scholar-s-pack",
+    "name": "Scholar's Pack",
+    "type": "equipment",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "type": "Equipment",
+      "description": "Backpack, book of lore, ink, ink pen, parchment (10 sheets), little bag of sand, small knife"
+    },
+    "search_text": "scholar's pack backpack, book of lore, ink, ink pen, parchment (10 sheets), little bag of sand, small knife",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "equipment"
+    }
+  },
+  {
+    "id": "srd:5.2.1:equipment:burglar-s-pack",
+    "name": "Burglar's Pack",
+    "type": "equipment",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "type": "Equipment",
+      "description": "Backpack, ball bearings (1000), string (10 ft), bell, candles (5), crowbar, hammer, pitons (10), hooded lantern, oil (2 flasks), rations (5 days), tinderbox, waterskin"
+    },
+    "search_text": "burglar's pack backpack, ball bearings (1000), string (10 ft), bell, candles (5), crowbar, hammer, pitons (10), hooded lantern, oil (2 flasks), rations (5 days), tinderbox, waterskin",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "equipment"
+    }
+  },
+  {
+    "id": "srd:5.2.1:equipment:thieves-tools",
+    "name": "Thieves' Tools",
+    "type": "equipment",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "type": "Tools",
+      "description": "Lockpicks, small file, small mirror, narrow scissors, pliers"
+    },
+    "search_text": "thieves' tools lockpicks, small file, small mirror, narrow scissors, pliers",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "equipment"
+    }
+  },
+  {
+    "id": "srd:5.2.1:equipment:holy-symbol",
+    "name": "Holy Symbol",
+    "type": "equipment",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "type": "Focus",
+      "description": "A holy symbol for spellcasting"
+    },
+    "search_text": "holy symbol a holy symbol for spellcasting",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "equipment"
+    }
+  },
+  {
+    "id": "srd:5.2.1:equipment:arcane-focus",
+    "name": "Arcane Focus",
+    "type": "equipment",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "type": "Focus",
+      "description": "An arcane focus for spellcasting"
+    },
+    "search_text": "arcane focus an arcane focus for spellcasting",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "equipment"
+    }
+  },
+  {
+    "id": "srd:5.2.1:equipment:component-pouch",
+    "name": "Component Pouch",
+    "type": "equipment",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "type": "Focus",
+      "description": "A pouch containing spell components"
+    },
+    "search_text": "component pouch a pouch containing spell components",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "equipment"
+    }
+  },
+  {
+    "id": "srd:5.2.1:equipment:arrows-20",
+    "name": "Arrows (20)",
+    "type": "equipment",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "type": "Ammunition",
+      "description": "20 arrows for bows"
+    },
+    "search_text": "arrows (20) 20 arrows for bows",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "equipment"
+    }
+  },
+  {
+    "id": "srd:5.2.1:equipment:crossbow-bolts-20",
+    "name": "Crossbow Bolts (20)",
+    "type": "equipment",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "type": "Ammunition",
+      "description": "20 bolts for crossbows"
+    },
+    "search_text": "crossbow bolts (20) 20 bolts for crossbows",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "equipment"
+    }
+  },
+  {
+    "id": "srd:5.2.1:monster:goblin",
+    "name": "Goblin",
+    "type": "monster",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "size": "Small",
+      "type": "Humanoid",
+      "alignment": "Neutral Evil",
+      "armor_class": 15,
+      "hit_points": 7,
+      "speed": "30 ft.",
+      "abilities": {
+        "str": 8,
+        "dex": 14,
+        "con": 10,
+        "int": 10,
+        "wis": 8,
+        "cha": 8
+      }
+    },
+    "search_text": "goblin",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "monster"
+    }
+  },
+  {
+    "id": "srd:5.2.1:condition:prone",
+    "name": "Prone",
+    "type": "condition",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "summary": "A prone creature has disadvantage on attack rolls and grants advantage to attackers within 5 feet."
+    },
+    "search_text": "prone",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "condition"
+    }
+  },
+  {
+    "id": "srd:5.2.1:rule:advantage-disadvantage",
+    "name": "Advantage & Disadvantage",
+    "type": "rule",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "summary": "Roll two d20s and take the higher or lower as appropriate."
+    },
+    "search_text": "advantage & disadvantage",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "rule"
+    }
+  },
+  {
+    "id": "srd:5.2.1:class:barbarian",
+    "name": "Barbarian",
+    "type": "class",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "hitDie": 12,
+      "startingItemIds": ["item-greataxe", "item-handaxe", "item-explorers-pack"]
+    },
+    "search_text": "barbarian",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "class"
+    }
+  },
+  {
+    "id": "srd:5.2.1:class:bard",
+    "name": "Bard",
+    "type": "class",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "hitDie": 8,
+      "startingItemIds": ["item-rapier", "item-dagger", "item-leather-armor", "item-explorers-pack"]
+    },
+    "search_text": "bard",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "class"
+    }
+  },
+  {
+    "id": "srd:5.2.1:class:cleric",
+    "name": "Cleric",
+    "type": "class",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "hitDie": 8,
+      "startingItemIds": [
+        "item-mace",
+        "item-scale-mail",
+        "item-shield",
+        "item-holy-symbol",
+        "item-priests-pack"
+      ]
+    },
+    "search_text": "cleric",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "class"
+    }
+  },
+  {
+    "id": "srd:5.2.1:class:druid",
+    "name": "Druid",
+    "type": "class",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "hitDie": 8,
+      "startingItemIds": ["item-quarterstaff", "item-leather-armor", "item-explorers-pack"]
+    },
+    "search_text": "druid",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "class"
+    }
+  },
+  {
+    "id": "srd:5.2.1:class:fighter",
+    "name": "Fighter",
+    "type": "class",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "hitDie": 10,
+      "startingItemIds": [
+        "item-longsword",
+        "item-shield",
+        "item-chain-mail",
+        "item-light-crossbow",
+        "item-bolts",
+        "item-dungeoneers-pack"
+      ]
+    },
+    "search_text": "fighter",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "class"
+    }
+  },
+  {
+    "id": "srd:5.2.1:class:monk",
+    "name": "Monk",
+    "type": "class",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "hitDie": 8,
+      "startingItemIds": ["item-shortsword", "item-dagger", "item-explorers-pack"]
+    },
+    "search_text": "monk",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "class"
+    }
+  },
+  {
+    "id": "srd:5.2.1:class:paladin",
+    "name": "Paladin",
+    "type": "class",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "hitDie": 10,
+      "startingItemIds": [
+        "item-longsword",
+        "item-shield",
+        "item-chain-mail",
+        "item-holy-symbol",
+        "item-priests-pack"
+      ]
+    },
+    "search_text": "paladin",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "class"
+    }
+  },
+  {
+    "id": "srd:5.2.1:class:ranger",
+    "name": "Ranger",
+    "type": "class",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "hitDie": 10,
+      "startingItemIds": [
+        "item-longbow",
+        "item-arrows",
+        "item-shortsword",
+        "item-leather-armor",
+        "item-explorers-pack"
+      ]
+    },
+    "search_text": "ranger",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "class"
+    }
+  },
+  {
+    "id": "srd:5.2.1:class:rogue",
+    "name": "Rogue",
+    "type": "class",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "hitDie": 8,
+      "startingItemIds": [
+        "item-rapier",
+        "item-shortbow",
+        "item-arrows",
+        "item-leather-armor",
+        "item-thieves-tools",
+        "item-burglars-pack"
+      ]
+    },
+    "search_text": "rogue",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "class"
+    }
+  },
+  {
+    "id": "srd:5.2.1:class:sorcerer",
+    "name": "Sorcerer",
+    "type": "class",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "hitDie": 6,
+      "startingItemIds": [
+        "item-dagger",
+        "item-light-crossbow",
+        "item-bolts",
+        "item-component-pouch",
+        "item-explorers-pack"
+      ]
+    },
+    "search_text": "sorcerer",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "class"
+    }
+  },
+  {
+    "id": "srd:5.2.1:class:warlock",
+    "name": "Warlock",
+    "type": "class",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "hitDie": 8,
+      "startingItemIds": [
+        "item-light-crossbow",
+        "item-bolts",
+        "item-leather-armor",
+        "item-arcane-focus",
+        "item-scholars-pack"
+      ]
+    },
+    "search_text": "warlock",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "class"
+    }
+  },
+  {
+    "id": "srd:5.2.1:class:wizard",
+    "name": "Wizard",
+    "type": "class",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "hitDie": 6,
+      "startingItemIds": ["item-quarterstaff", "item-component-pouch", "item-scholars-pack"]
+    },
+    "search_text": "wizard",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "class"
+    }
+  },
+  {
+    "id": "srd:5.2.1:species:hill-dwarf",
+    "name": "Hill Dwarf",
+    "type": "species",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "speed": 25,
+      "abilityBonuses": {
+        "con": 2,
+        "wis": 1
+      }
+    },
+    "search_text": "hill dwarf",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "species"
+    }
+  },
+  {
+    "id": "srd:5.2.1:species:mountain-dwarf",
+    "name": "Mountain Dwarf",
+    "type": "species",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "speed": 25,
+      "abilityBonuses": {
+        "con": 2,
+        "str": 2
+      }
+    },
+    "search_text": "mountain dwarf",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "species"
+    }
+  },
+  {
+    "id": "srd:5.2.1:species:high-elf",
+    "name": "High Elf",
+    "type": "species",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "speed": 30,
+      "abilityBonuses": {
+        "dex": 2,
+        "int": 1
+      }
+    },
+    "search_text": "high elf",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "species"
+    }
+  },
+  {
+    "id": "srd:5.2.1:species:wood-elf",
+    "name": "Wood Elf",
+    "type": "species",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "speed": 35,
+      "abilityBonuses": {
+        "dex": 2,
+        "wis": 1
+      }
+    },
+    "search_text": "wood elf",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "species"
+    }
+  },
+  {
+    "id": "srd:5.2.1:species:lightfoot-halfling",
+    "name": "Lightfoot Halfling",
+    "type": "species",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "speed": 25,
+      "abilityBonuses": {
+        "dex": 2,
+        "cha": 1
+      }
+    },
+    "search_text": "lightfoot halfling",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "species"
+    }
+  },
+  {
+    "id": "srd:5.2.1:species:stout-halfling",
+    "name": "Stout Halfling",
+    "type": "species",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "speed": 25,
+      "abilityBonuses": {
+        "dex": 2,
+        "con": 1
+      }
+    },
+    "search_text": "stout halfling",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "species"
+    }
+  },
+  {
+    "id": "srd:5.2.1:species:human",
+    "name": "Human",
+    "type": "species",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "speed": 30,
+      "abilityBonuses": {
+        "str": 1,
+        "dex": 1,
+        "con": 1,
+        "int": 1,
+        "wis": 1,
+        "cha": 1
+      }
+    },
+    "search_text": "human",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "species"
+    }
+  },
+  {
+    "id": "srd:5.2.1:species:dragonborn",
+    "name": "Dragonborn",
+    "type": "species",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "speed": 30,
+      "abilityBonuses": {
+        "str": 2,
+        "cha": 1
+      }
+    },
+    "search_text": "dragonborn",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "species"
+    }
+  },
+  {
+    "id": "srd:5.2.1:species:forest-gnome",
+    "name": "Forest Gnome",
+    "type": "species",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "speed": 25,
+      "abilityBonuses": {
+        "int": 2,
+        "dex": 1
+      }
+    },
+    "search_text": "forest gnome",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "species"
+    }
+  },
+  {
+    "id": "srd:5.2.1:species:rock-gnome",
+    "name": "Rock Gnome",
+    "type": "species",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "speed": 25,
+      "abilityBonuses": {
+        "int": 2,
+        "con": 1
+      }
+    },
+    "search_text": "rock gnome",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "species"
+    }
+  },
+  {
+    "id": "srd:5.2.1:species:half-elf",
+    "name": "Half-Elf",
+    "type": "species",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "speed": 30,
+      "abilityBonuses": {
+        "cha": 2
+      },
+      "bonusChoices": {
+        "count": 2,
+        "value": 1,
+        "options": ["str", "dex", "con", "int", "wis"]
+      }
+    },
+    "search_text": "half-elf",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "species"
+    }
+  },
+  {
+    "id": "srd:5.2.1:species:half-orc",
+    "name": "Half-Orc",
+    "type": "species",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "speed": 30,
+      "abilityBonuses": {
+        "str": 2,
+        "con": 1
+      }
+    },
+    "search_text": "half-orc",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "species"
+    }
+  },
+  {
+    "id": "srd:5.2.1:species:tiefling",
+    "name": "Tiefling",
+    "type": "species",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "speed": 30,
+      "abilityBonuses": {
+        "cha": 2,
+        "int": 1
+      }
+    },
+    "search_text": "tiefling",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "species"
+    }
+  },
+  {
+    "id": "srd:5.2.1:background:acolyte",
+    "name": "Acolyte",
+    "type": "background",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "skillProficiencies": ["Insight", "Religion"]
+    },
+    "search_text": "acolyte",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "background"
+    }
+  },
+  {
+    "id": "srd:5.2.1:background:charlatan",
+    "name": "Charlatan",
+    "type": "background",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "skillProficiencies": ["Deception", "Sleight of Hand"]
+    },
+    "search_text": "charlatan",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "background"
+    }
+  },
+  {
+    "id": "srd:5.2.1:background:criminal",
+    "name": "Criminal",
+    "type": "background",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "skillProficiencies": ["Deception", "Stealth"]
+    },
+    "search_text": "criminal",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "background"
+    }
+  },
+  {
+    "id": "srd:5.2.1:background:entertainer",
+    "name": "Entertainer",
+    "type": "background",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "skillProficiencies": ["Acrobatics", "Performance"]
+    },
+    "search_text": "entertainer",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "background"
+    }
+  },
+  {
+    "id": "srd:5.2.1:background:folk-hero",
+    "name": "Folk Hero",
+    "type": "background",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "skillProficiencies": ["Animal Handling", "Survival"]
+    },
+    "search_text": "folk hero",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "background"
+    }
+  },
+  {
+    "id": "srd:5.2.1:background:guild-artisan",
+    "name": "Guild Artisan",
+    "type": "background",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "skillProficiencies": ["Insight", "Persuasion"]
+    },
+    "search_text": "guild artisan",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "background"
+    }
+  },
+  {
+    "id": "srd:5.2.1:background:hermit",
+    "name": "Hermit",
+    "type": "background",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "skillProficiencies": ["Medicine", "Religion"]
+    },
+    "search_text": "hermit",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "background"
+    }
+  },
+  {
+    "id": "srd:5.2.1:background:noble",
+    "name": "Noble",
+    "type": "background",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "skillProficiencies": ["History", "Persuasion"]
+    },
+    "search_text": "noble",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "background"
+    }
+  },
+  {
+    "id": "srd:5.2.1:background:outlander",
+    "name": "Outlander",
+    "type": "background",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "skillProficiencies": ["Athletics", "Survival"]
+    },
+    "search_text": "outlander",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "background"
+    }
+  },
+  {
+    "id": "srd:5.2.1:background:sage",
+    "name": "Sage",
+    "type": "background",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "skillProficiencies": ["Arcana", "History"]
+    },
+    "search_text": "sage",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "background"
+    }
+  },
+  {
+    "id": "srd:5.2.1:background:sailor",
+    "name": "Sailor",
+    "type": "background",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "skillProficiencies": ["Athletics", "Perception"]
+    },
+    "search_text": "sailor",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "background"
+    }
+  },
+  {
+    "id": "srd:5.2.1:background:soldier",
+    "name": "Soldier",
+    "type": "background",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "skillProficiencies": ["Athletics", "Intimidation"]
+    },
+    "search_text": "soldier",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "background"
+    }
+  },
+  {
+    "id": "srd:5.2.1:background:urchin",
+    "name": "Urchin",
+    "type": "background",
+    "srd_version": "5.2.1",
+    "data_json": {
+      "skillProficiencies": ["Sleight of Hand", "Stealth"]
+    },
+    "search_text": "urchin",
+    "source_json": {
+      "pdfUrl": "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+      "pdfSha256": "",
+      "section": "background"
+    }
+  }
+]
