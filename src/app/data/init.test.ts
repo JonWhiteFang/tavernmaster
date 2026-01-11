@@ -3,6 +3,7 @@ import { initializeData } from "./init";
 import { initDatabase } from "./db";
 import { ensureSettings } from "./settings";
 import { importSrdIfNeeded } from "./srd";
+import { syncSrdIfNeeded } from "./srdSync";
 import { seedDatabase } from "./seed";
 
 vi.mock("./db", () => ({
@@ -13,6 +14,9 @@ vi.mock("./settings", () => ({
 }));
 vi.mock("./srd", () => ({
   importSrdIfNeeded: vi.fn()
+}));
+vi.mock("./srdSync", () => ({
+  syncSrdIfNeeded: vi.fn()
 }));
 vi.mock("./seed", () => ({
   seedDatabase: vi.fn()
@@ -25,6 +29,7 @@ describe("initializeData", () => {
     expect(initDatabase).toHaveBeenCalled();
     expect(ensureSettings).toHaveBeenCalled();
     expect(importSrdIfNeeded).toHaveBeenCalled();
+    expect(syncSrdIfNeeded).toHaveBeenCalled();
     expect(seedDatabase).toHaveBeenCalledWith({ includeDemoData: false });
   });
 });
