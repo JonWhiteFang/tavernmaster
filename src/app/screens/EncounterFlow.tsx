@@ -23,6 +23,7 @@ import type { RulesState, RulesParticipant } from "../rules/types";
 import Button from "../ui/Button";
 import Chip from "../ui/Chip";
 import { useAppContext } from "../state/AppContext";
+import { useToast } from "../ui/Toast";
 
 const demoAction = {
   type: "attack",
@@ -36,6 +37,7 @@ const demoAction = {
 
 export default function EncounterFlow() {
   const { activeCampaignId, activeEncounterId, setActiveEncounterId } = useAppContext();
+  const { pushToast } = useToast();
   const [encounters, setEncounters] = useState<Encounter[]>([]);
   const [showNewEncounter, setShowNewEncounter] = useState(false);
   const [newEncounterName, setNewEncounterName] = useState("");
@@ -120,8 +122,9 @@ export default function EncounterFlow() {
     }
     void saveEncounterRecovery({ rulesState, log, rngSeed }).catch((error) => {
       console.error("Failed to save encounter recovery snapshot.", error);
+      pushToast({ tone: "error", message: "Failed to save recovery snapshot." });
     });
-  }, [rulesState, log, rngSeed]);
+  }, [rulesState, log, rngSeed, pushToast]);
 
   useEffect(() => {
     const detail = rulesState ? buildEncounterSummary(rulesState) : null;
@@ -243,6 +246,7 @@ export default function EncounterFlow() {
       await clearEncounterRecovery();
     } catch (error) {
       console.error("Failed to clear encounter recovery snapshot.", error);
+      pushToast({ tone: "error", message: "Failed to clear recovery snapshot." });
     }
 
     setLoadedRecovery(false);
@@ -264,6 +268,7 @@ export default function EncounterFlow() {
       setLoadedRecovery(false);
     } catch (error) {
       console.error("Failed to clear encounter recovery snapshot.", error);
+      pushToast({ tone: "error", message: "Failed to clear recovery snapshot." });
     }
   };
 

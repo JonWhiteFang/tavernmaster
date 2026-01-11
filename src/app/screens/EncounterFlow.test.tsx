@@ -14,6 +14,7 @@ import { advanceTurn, buildTurnOrder, rollInitiative, startEncounter } from "../
 import { applyEffects } from "../rules/effects";
 import { createSeededRng } from "../rules/rng";
 import { resolveAction } from "../rules/actions";
+import { ToastProvider } from "../ui/Toast";
 
 vi.mock("../state/AppContext", () => ({
   useAppContext: vi.fn()
@@ -45,6 +46,8 @@ vi.mock("../rules/actions", () => ({
   resolveAction: vi.fn()
 }));
 
+const renderWithToast = (ui: React.ReactElement) => render(<ToastProvider>{ui}</ToastProvider>);
+
 describe("EncounterFlow", () => {
   it("shows prompt when no campaign is active", () => {
     vi.mocked(useAppContext).mockReturnValue({ activeCampaignId: null } as never);
@@ -52,7 +55,7 @@ describe("EncounterFlow", () => {
     vi.mocked(listEncounters).mockResolvedValue([]);
     vi.mocked(loadEncounterRecovery).mockResolvedValue(null);
 
-    render(<EncounterFlow />);
+    renderWithToast(<EncounterFlow />);
 
     expect(screen.getByText("Encounter Flow")).toBeInTheDocument();
     expect(screen.getByText(/Create or select a campaign/)).toBeInTheDocument();
@@ -64,7 +67,7 @@ describe("EncounterFlow", () => {
     vi.mocked(listCharacters).mockResolvedValue([]);
     vi.mocked(listEncounters).mockResolvedValue([]);
 
-    render(<EncounterFlow />);
+    renderWithToast(<EncounterFlow />);
 
     expect(
       await screen.findByText("Create party members to start initiative tracking and combat turns.")
@@ -155,7 +158,7 @@ describe("EncounterFlow", () => {
     vi.mocked(resolveAction).mockReturnValue({ ok: false, log: [], effects: [] } as never);
     vi.mocked(applyEffects).mockReturnValue({} as never);
 
-    render(<EncounterFlow />);
+    renderWithToast(<EncounterFlow />);
 
     await screen.findByText("Initiative & Turn Order");
 
