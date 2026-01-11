@@ -5,6 +5,7 @@ export const schemaStatements: string[] = [
     name TEXT NOT NULL,
     summary TEXT,
     active_scene_id TEXT,
+    ruleset_version TEXT NOT NULL DEFAULT '5.1',
     deleted_at TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL

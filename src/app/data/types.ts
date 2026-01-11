@@ -1,3 +1,5 @@
+export type SrdRulesetVersion = "5.1" | "5.2.1";
+
 export type AbilityScore = "str" | "dex" | "con" | "int" | "wis" | "cha";
 
 export type CharacterRole = "player" | "ally" | "npc";
@@ -49,6 +51,7 @@ export interface Campaign {
   id: string;
   name: string;
   summary?: string;
+  rulesetVersion: SrdRulesetVersion;
   createdAt: string;
   updatedAt: string;
   activeSceneId?: string;

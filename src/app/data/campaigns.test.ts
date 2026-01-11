@@ -40,6 +40,7 @@ describe("campaigns data", () => {
         name: "Quest",
         summary: "cipher",
         active_scene_id: null,
+        ruleset_version: "5.1",
         created_at: "t1",
         updated_at: "t2"
       }
@@ -52,6 +53,7 @@ describe("campaigns data", () => {
         id: "camp-1",
         name: "Quest",
         summary: "decrypted",
+        rulesetVersion: "5.1",
         activeSceneId: undefined,
         createdAt: "t1",
         updatedAt: "t2"
@@ -80,6 +82,7 @@ describe("campaigns data", () => {
       id: expect.any(String),
       name: "New",
       summary: "Short",
+      rulesetVersion: "5.1",
       createdAt: "2024-01-01T00:00:00.000Z",
       updatedAt: "2024-01-01T00:00:00.000Z"
     });
