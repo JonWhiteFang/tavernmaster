@@ -12,6 +12,7 @@ import { getSrdById } from "./srd_queries";
 
 type CharacterRow = {
   id: string;
+  campaign_id: string | null;
   name: string;
   role: CharacterRole;
   control_mode: CharacterControl | null;
@@ -108,6 +109,7 @@ export type CharacterSpellInput = {
 };
 
 export type NewCharacterInput = {
+  campaignId?: string;
   name: string;
   role: CharacterRole;
   controlMode: CharacterControl;
@@ -216,6 +218,7 @@ function mapCharacter(
 ): Character {
   return {
     id: row.id,
+    campaignId: row.campaign_id ?? undefined,
     name: row.name,
     role: row.role,
     controlMode: row.control_mode ?? "player",
@@ -237,14 +240,19 @@ function mapCharacter(
   };
 }
 
-export async function listCharacters(): Promise<Character[]> {
+export async function listCharacters(campaignId?: string): Promise<Character[]> {
   const db = await getDatabase();
+  const whereClause = campaignId
+    ? "WHERE deleted_at IS NULL AND (campaign_id = ? OR campaign_id IS NULL)"
+    : "WHERE deleted_at IS NULL";
+  const params = campaignId ? [campaignId] : [];
   const rows = await db.select<CharacterRow[]>(
-    `SELECT id, name, role, control_mode, level, class_name, ancestry, background, alignment,
+    `SELECT id, campaign_id, name, role, control_mode, level, class_name, ancestry, background, alignment,
       proficiencies_json, ancestry_bonus_json, deleted_at, created_at, updated_at
      FROM characters
-     WHERE deleted_at IS NULL
-     ORDER BY name`
+     ${whereClause}
+     ORDER BY name`,
+    params
   );
 
   const characters = await Promise.all(
@@ -337,11 +345,12 @@ export async function createCharacter(input: NewCharacterInput): Promise<Charact
   await withTransaction(async (db) => {
     await db.execute(
       `INSERT INTO characters
-        (id, name, role, control_mode, level, class_name, ancestry, background, alignment,
+        (id, campaign_id, name, role, control_mode, level, class_name, ancestry, background, alignment,
          proficiencies_json, ancestry_bonus_json, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         id,
+        input.campaignId ?? null,
         input.name,
         input.role,
         input.controlMode,
@@ -432,6 +441,7 @@ export async function createCharacter(input: NewCharacterInput): Promise<Charact
       entityId: id,
       payload: {
         id,
+        campaign_id: input.campaignId ?? null,
         name: input.name,
         role: input.role,
         control_mode: input.controlMode,
@@ -500,6 +510,7 @@ export async function createCharacter(input: NewCharacterInput): Promise<Charact
 
   return {
     id,
+    campaignId: input.campaignId,
     name: input.name,
     role: input.role,
     controlMode: input.controlMode,
@@ -524,7 +535,7 @@ export async function createCharacter(input: NewCharacterInput): Promise<Charact
 async function getCharacterPayload(id: string): Promise<CharacterRow | null> {
   const db = await getDatabase();
   const rows = await db.select<CharacterRow[]>(
-    `SELECT id, name, role, control_mode, level, class_name, ancestry, background, alignment,
+    `SELECT id, campaign_id, name, role, control_mode, level, class_name, ancestry, background, alignment,
       proficiencies_json, ancestry_bonus_json, deleted_at, created_at, updated_at
      FROM characters
      WHERE id = ?
@@ -842,6 +853,7 @@ export async function updateCharacter(id: string, input: NewCharacterInput): Pro
 
   return {
     id,
+    campaignId: input.campaignId,
     name: input.name,
     role: input.role,
     controlMode: input.controlMode,

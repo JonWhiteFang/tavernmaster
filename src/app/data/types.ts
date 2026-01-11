@@ -24,6 +24,7 @@ export type CharacterSpell = {
 
 export interface Character {
   id: string;
+  campaignId?: string;
   name: string;
   role: CharacterRole;
   controlMode: CharacterControl;

@@ -63,6 +63,7 @@ export const syncedTables: readonly TableSpec[] = [
     primaryKey: "id",
     columns: [
       "id",
+      "campaign_id",
       "name",
       "role",
       "control_mode",

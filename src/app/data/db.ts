@@ -73,6 +73,7 @@ export async function initDatabase(): Promise<void> {
     await db.execute(statement);
   }
   await ensureSoftDeleteColumns(db);
+  await ensureColumn(db, "characters", "campaign_id", "TEXT");
   await ensureColumn(db, "characters", "control_mode", "TEXT NOT NULL DEFAULT 'player'");
   await ensureColumn(db, "characters", "proficiencies_json", "TEXT NOT NULL DEFAULT '[]'");
   await ensureColumn(db, "characters", "ancestry_bonus_json", "TEXT NOT NULL DEFAULT '[]'");

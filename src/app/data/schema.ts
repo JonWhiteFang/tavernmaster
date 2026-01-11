@@ -34,6 +34,7 @@ export const schemaStatements: string[] = [
   );`,
   `CREATE TABLE IF NOT EXISTS characters (
     id TEXT PRIMARY KEY,
+    campaign_id TEXT,
     name TEXT NOT NULL,
     role TEXT NOT NULL,
     control_mode TEXT NOT NULL DEFAULT 'player',
