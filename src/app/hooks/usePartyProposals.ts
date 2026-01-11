@@ -3,7 +3,7 @@ import type { PartyActionProposal } from "../ai/types";
 import type { PartyContext } from "../ai/orchestrator";
 import { getPartyProposals, validatePartyProposals } from "../ai/orchestrator";
 import type { RulesState } from "../rules/types";
-import { insertAiLog } from "../data/ai_logs";
+
 import {
   createActionProposals,
   listProposalsByEncounter,
@@ -84,15 +84,6 @@ export function usePartyProposals(
         setProposals([]);
         return;
       }
-
-      // Log to ai_logs
-      await insertAiLog({
-        campaignId: partyContext.campaignId,
-        sessionId: partyContext.sessionId,
-        kind: "party",
-        content: JSON.stringify(payload),
-        payload: payload as unknown as Record<string, unknown>
-      });
 
       const validated = rulesState ? validatePartyProposals(rulesState, payload) : [];
       const nextProposals = payload.proposals.map((proposal) => {
