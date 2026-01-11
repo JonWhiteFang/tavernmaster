@@ -200,6 +200,16 @@ interface Trait5e {
   desc: string[];
 }
 
+interface Feature5e {
+  index: string;
+  name: string;
+  class: ApiReference;
+  subclass?: ApiReference;
+  level: number;
+  desc: string[];
+  prerequisites?: unknown[];
+}
+
 function convertSpells(spells: Spell5e[], version: SrdVersion, source: SourceInfo): SrdEntry[] {
   return spells.map((s) => ({
     id: generateEntryId(version, "spell", s.name),
@@ -504,6 +514,44 @@ function convertRules(rules: Rule5e[], version: SrdVersion, source: SourceInfo):
   }));
 }
 
+function convertTraits(traits: Trait5e[], version: SrdVersion, source: SourceInfo): SrdEntry[] {
+  return traits.map((t) => ({
+    id: generateEntryId(version, "glossary_term", t.name),
+    name: t.name,
+    type: "glossary_term" as const,
+    srd_version: version,
+    data_json: {
+      description: t.desc.join("\n\n"),
+      races: t.races.map((r) => r.name),
+      category: "Racial Trait"
+    },
+    search_text: generateSearchText(t.name, { description: t.desc.join(" ") }),
+    source_json: source
+  }));
+}
+
+function convertFeatures(
+  features: Feature5e[],
+  version: SrdVersion,
+  source: SourceInfo
+): SrdEntry[] {
+  return features.map((f) => ({
+    id: generateEntryId(version, "glossary_term", `${f.class.name}-${f.name}-${f.level}`),
+    name: f.name,
+    type: "glossary_term" as const,
+    srd_version: version,
+    data_json: {
+      description: f.desc.join("\n\n"),
+      class: f.class.name,
+      subclass: f.subclass?.name,
+      level: f.level,
+      category: "Class Feature"
+    },
+    search_text: generateSearchText(f.name, { description: f.desc.join(" "), class: f.class.name }),
+    source_json: source
+  }));
+}
+
 export async function fetch5eDatabase(
   version: SrdVersion,
   source: SourceInfo
@@ -525,7 +573,9 @@ export async function fetch5eDatabase(
     backgrounds,
     conditions,
     feats,
-    rules
+    rules,
+    traits,
+    features
   ] = await Promise.all([
     fetchJson<Spell5e[]>("5e-SRD-Spells.json"),
     fetchJson<Monster5e[]>("5e-SRD-Monsters.json"),
@@ -538,7 +588,9 @@ export async function fetch5eDatabase(
     fetchJson<Background5e[]>("5e-SRD-Backgrounds.json"),
     fetchJson<Condition5e[]>("5e-SRD-Conditions.json"),
     fetchJson<Feat5e[]>("5e-SRD-Feats.json"),
-    fetchJson<Rule5e[]>("5e-SRD-Rules.json")
+    fetchJson<Rule5e[]>("5e-SRD-Rules.json"),
+    fetchJson<Trait5e[]>("5e-SRD-Traits.json"),
+    fetchJson<Feature5e[]>("5e-SRD-Features.json")
   ]);
 
   // Convert all data
@@ -553,6 +605,8 @@ export async function fetch5eDatabase(
   entries.push(...convertConditions(conditions, version, source));
   entries.push(...convertFeats(feats, version, source));
   entries.push(...convertRules(rules, version, source));
+  entries.push(...convertTraits(traits, version, source));
+  entries.push(...convertFeatures(features, version, source));
 
   // Count by type
   const byType: Record<string, number> = {};

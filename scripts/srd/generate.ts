@@ -157,6 +157,17 @@ async function main() {
     });
   }
 
+  // Use 5.1 glossary terms (traits, features) converted to 5.2.1
+  const glossary51 = entries51.filter((e) => e.type === "glossary_term");
+  for (const g of glossary51) {
+    entries521.push({
+      ...g,
+      id: g.id.replace("5.1", "5.2.1"),
+      srd_version: "5.2.1",
+      source_json: { pdfUrl: dataset521.sourcePdfUrl, pdfSha256: sha521 }
+    });
+  }
+
   // Deduplicate
   const seen = new Set<string>();
   const deduped = entries521.filter((e) => {
