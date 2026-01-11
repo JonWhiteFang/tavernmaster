@@ -219,6 +219,24 @@ export const schemaStatements: string[] = [
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL
   );`,
+  // New unified SRD tables for versioned content
+  `CREATE TABLE IF NOT EXISTS srd_entries (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    type TEXT NOT NULL,
+    srd_version TEXT NOT NULL,
+    data_json TEXT NOT NULL,
+    search_text TEXT,
+    source_json TEXT,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+  );`,
+  `CREATE TABLE IF NOT EXISTS srd_meta (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+  );`,
+  "CREATE INDEX IF NOT EXISTS idx_srd_entries_version_type ON srd_entries(srd_version, type);",
+  "CREATE INDEX IF NOT EXISTS idx_srd_entries_version_name ON srd_entries(srd_version, name);",
   `CREATE TABLE IF NOT EXISTS sync_state (
     id TEXT PRIMARY KEY,
     last_pulled_at TEXT,
