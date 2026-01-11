@@ -10,6 +10,7 @@ import MapStudio from "./screens/MapStudio";
 import LogsExports from "./screens/LogsExports";
 import PartySheets from "./screens/PartySheets";
 import Settings from "./screens/Settings";
+import Licenses from "./screens/Licenses";
 import { AppProvider } from "./state/AppContext";
 import Topbar from "./layout/Topbar";
 import SidebarNav from "./layout/SidebarNav";
@@ -29,7 +30,8 @@ type ScreenKey =
   | "journal"
   | "director"
   | "logs"
-  | "settings";
+  | "settings"
+  | "licenses";
 
 const screens: ScreenKey[] = [
   "play",
@@ -40,7 +42,8 @@ const screens: ScreenKey[] = [
   "journal",
   "director",
   "logs",
-  "settings"
+  "settings",
+  "licenses"
 ];
 
 const MemoizedAppShell = memo(AppShell);
@@ -82,7 +85,8 @@ function AppShell() {
         title: "SYSTEM",
         items: [
           { id: "logs" as const, label: "Transcripts & Exports" },
-          { id: "settings" as const, label: "Settings" }
+          { id: "settings" as const, label: "Settings" },
+          { id: "licenses" as const, label: "Licenses" }
         ]
       }
     ],
@@ -132,6 +136,8 @@ function AppShell() {
         return <PlayWorkspace />;
       case "settings":
         return <Settings />;
+      case "licenses":
+        return <Licenses />;
       case "director":
         return <AiDirector />;
       case "encounter":
@@ -156,7 +162,7 @@ function AppShell() {
     }
   };
 
-  const showContextRail = activeScreen !== "settings";
+  const showContextRail = activeScreen !== "settings" && activeScreen !== "licenses";
 
   return (
     <div className="app">
