@@ -145,6 +145,7 @@ export const schemaStatements: string[] = [
     summary TEXT NOT NULL,
     rules_refs TEXT NOT NULL,
     status TEXT NOT NULL,
+    payload_json TEXT,
     deleted_at TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,

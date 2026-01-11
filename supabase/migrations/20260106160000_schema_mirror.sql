@@ -169,6 +169,7 @@ create table if not exists public.action_proposals (
   summary text not null,
   rules_refs text not null,
   status text not null,
+  payload_json text,
   deleted_at text,
   created_at text not null default public.utc_now_iso(),
   updated_at text not null default public.utc_now_iso()
