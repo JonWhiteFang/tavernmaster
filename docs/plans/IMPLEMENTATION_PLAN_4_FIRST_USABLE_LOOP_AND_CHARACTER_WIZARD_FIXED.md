@@ -1,6 +1,13 @@
 # Tavern Master: First Usable Loop + Character Creation Wizard (Implementation Plan)
 
+**STATUS: ✅ COMPLETE** - All 20 PRs implemented (January 2026)
+
 This plan merges the "First Usable Loop" roadmap with the "Questweaver-style Character Creation Wizard" roadmap into a single, ordered sequence. It is structured for PR-sized execution while keeping dependencies explicit.
+
+## Summary
+
+- **Phase A (PRs 1-10)**: First Usable Loop - App Spine, DB-backed state, encounters, combat log, exports
+- **Phase B (PRs 11-20)**: Character Creation Wizard - SRD-lite data, ability score engine, wizard UI with 6 steps
 
 ## Goals
 

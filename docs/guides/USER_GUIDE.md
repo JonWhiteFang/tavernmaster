@@ -36,13 +36,30 @@ npm run tauri:build
 
 ## Party Sheets & Character Creation
 
-Party creation happens in `Party Sheets`. Each party member is created individually and can be set to either player- or AI-controlled.
+Party creation happens in `Party Sheets`. You can create characters using either the guided wizard or manual entry.
 
-### Create a party member
+### Character Creation Wizard (Recommended)
+
+The wizard provides a step-by-step flow for creating SRD-compliant characters:
 
 1. Open `Party Sheets`.
-2. Click `Create Character`.
-3. Fill out the core identity fields (name, controller, role, class, level, ancestry, background, alignment).
+2. Click **Wizard** in the roster panel.
+3. Complete each step:
+   - **Abilities**: Choose standard array, point buy, or roll 4d6 drop lowest
+   - **Class**: Select from all 12 SRD classes (Fighter, Wizard, Rogue, etc.)
+   - **Race**: Select from 13 SRD races with ability bonuses
+   - **Background**: Select from 13 SRD backgrounds with skill proficiencies
+   - **Equipment**: Review starting equipment based on your class
+   - **Confirm**: Enter name, choose alignment, review summary
+4. Click **Create Character** to add to your roster.
+
+See `docs/guides/CHARACTER_CREATION_WIZARD.md` for detailed documentation.
+
+### Manual Character Creation
+
+1. Open `Party Sheets`.
+2. Click **Manual** in the roster panel.
+3. Fill out all fields manually (name, class, abilities, etc.).
 
 ### Ability Scores (SRD Point Buy)
 

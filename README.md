@@ -57,16 +57,13 @@ Recommended default model: `llama3.1:8b` (swap as needed for your Mac).
 ## Documentation
 
 - User guide: `docs/guides/USER_GUIDE.md`
+- Character creation wizard: `docs/guides/CHARACTER_CREATION_WIZARD.md`
 - Architecture: `docs/architecture/ARCHITECTURE.md`
 - Data model: `docs/architecture/DATA_MODEL.md`
 - LLM runtime: `docs/runtime/LLM_RUNTIME.md`
 - Sync strategy: `docs/sync/SUPABASE_SYNC.md`
 - UI style: `docs/design/UI_STYLE.md`
-- Implementation plans: `docs/plans/IMPLEMENTATION_PLAN_1.md`,
-  `docs/plans/IMPLEMENTATION_PLAN_2_UI_REDESIGN.md`,
-  `docs/plans/IMPLEMENTATION_PLAN_2_UI_REDESIGN_NOTES.md`,
-  `docs/plans/IMPLEMENTATION_PLAN_3_TUTORIAL_CAMPAIGN.md`,
-  `docs/plans/IMPLEMENTATION_PLAN_4_FIRST_USABLE_LOOP_AND_CHARACTER_WIZARD_FIXED.md`
+- Implementation plans: `docs/plans/IMPLEMENTATION_PLAN_4_FIRST_USABLE_LOOP_AND_CHARACTER_WIZARD_FIXED.md` (current)
 
 ## App Icons
 

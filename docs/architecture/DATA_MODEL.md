@@ -31,8 +31,11 @@ User-authored tables also include nullable `deleted_at` for soft deletes (used b
 
 ## SRD Content (Read-Only)
 
-- `srd_spells`, `srd_items`, `srd_monsters`, `srd_conditions`, `srd_rules`.
-- Store the SRD JSON in `assets/` and import into these tables on first launch.
+- `srd_spells`, `srd_items`, `srd_monsters`, `srd_conditions`, `srd_rules`: Core SRD reference data.
+- `srd_classes`: 12 SRD classes with hitDie and startingItemIds.
+- `srd_races`: 13 SRD races with speed, abilityBonuses, and optional bonusChoices.
+- `srd_backgrounds`: 13 SRD backgrounds with skillProficiencies.
+- Store the SRD JSON in `assets/srd/srd.json` and import into these tables on first launch.
 
 ## Sync Metadata
 
