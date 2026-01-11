@@ -11,6 +11,7 @@ import LogsExports from "./screens/LogsExports";
 import PartySheets from "./screens/PartySheets";
 import Settings from "./screens/Settings";
 import Licenses from "./screens/Licenses";
+import SrdBrowser from "./screens/SrdBrowser";
 import { AppProvider } from "./state/AppContext";
 import Topbar from "./layout/Topbar";
 import SidebarNav from "./layout/SidebarNav";
@@ -31,7 +32,8 @@ type ScreenKey =
   | "director"
   | "logs"
   | "settings"
-  | "licenses";
+  | "licenses"
+  | "srd";
 
 const screens: ScreenKey[] = [
   "play",
@@ -43,7 +45,8 @@ const screens: ScreenKey[] = [
   "director",
   "logs",
   "settings",
-  "licenses"
+  "licenses",
+  "srd"
 ];
 
 const MemoizedAppShell = memo(AppShell);
@@ -79,7 +82,10 @@ function AppShell() {
       },
       {
         title: "REFERENCE",
-        items: [{ id: "party" as const, label: "Party" }]
+        items: [
+          { id: "party" as const, label: "Party" },
+          { id: "srd" as const, label: "SRD Browser" }
+        ]
       },
       {
         title: "SYSTEM",
@@ -138,6 +144,8 @@ function AppShell() {
         return <Settings />;
       case "licenses":
         return <Licenses />;
+      case "srd":
+        return <SrdBrowser />;
       case "director":
         return <AiDirector />;
       case "encounter":
