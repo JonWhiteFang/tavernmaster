@@ -1,9 +1,9 @@
 # TavernMaster — Issue Fixes Implementation Plan (Comprehensive)
 
-## ✅ STATUS: CORE FIXES COMPLETE
+## ✅ STATUS: COMPLETE
 
-**Completed:** PR 1.1, 2.1, 3.1, 4.1, 5.1, 6.1, 7.1, 8.1, 9.1
-**Optional/Remaining:** PR 10.1 (RLS security), 11.x (product enhancements)
+**All PRs Completed:** 1.1, 2.1, 3.1, 4.1, 5.1, 6.1, 7.1, 8.1, 9.1, 10.1, 11.1
+**Deferred:** PR 11.2 (Map Studio persistence), PR 11.3 (Streaming UX)
 
 ---
 
@@ -298,11 +298,11 @@ Repo paths referenced below match the current codebase under `src/app/*` and `su
 
 ---
 
-## Phase 10 — Security hardening for Supabase RLS (optional but recommended) (PR 10)
+## Phase 10 — Security hardening for Supabase RLS (optional but recommended) (PR 10) ✅
 
 > **This is a project decision point.** If TavernMaster is intended to ever support multiple users, the current policies (`using (true)`) are unsafe because any authenticated user can read/write everything.
 
-### PR 10.1 — Introduce ownership + RLS enforcement
+### PR 10.1 — Introduce ownership + RLS enforcement ✅
 
 **High-level approach**
 
@@ -332,7 +332,7 @@ Repo paths referenced below match the current codebase under `src/app/*` and `su
 
 These are not “bugs” but known limitations identified in the review.
 
-### PR 11.1 — Campaign-scoped characters (bigger feature)
+### PR 11.1 — Campaign-scoped characters (bigger feature) ✅
 
 **Problem:** `characters` are global; campaigns cannot have distinct party rosters.
 
@@ -342,7 +342,7 @@ These are not “bugs” but known limitations identified in the review.
 - Update UI to show party per campaign.
 - Data migration: assign existing characters to the active campaign or a default.
 
-### PR 11.2 — Persist Map Studio state (currently stubbed)
+### PR 11.2 — Persist Map Studio state (currently stubbed) — DEFERRED
 
 **Problem:** Map Studio uses local component state + localStorage counters, no DB persistence or sync.
 
@@ -354,7 +354,7 @@ These are not “bugs” but known limitations identified in the review.
 - Store map images via a local file store and sync only metadata (or store in Supabase Storage).
 - Wire Map Studio to load/save per campaign.
 
-### PR 11.3 — Improve streaming UX for JSON outputs
+### PR 11.3 — Improve streaming UX for JSON outputs — DEFERRED
 
 **Problem:** streaming JSON is hard to render incrementally.
 
