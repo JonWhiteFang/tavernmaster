@@ -59,7 +59,12 @@ function areSessionsEqual(current: Session[], next: Session[]) {
 function areEncountersEqual(current: Encounter[], next: Encounter[]) {
   if (current === next) return true;
   if (current.length !== next.length) return false;
-  return current.every((e, i) => e.id === next[i].id && e.campaignId === next[i].campaignId);
+  return current.every(
+    (e, i) =>
+      e.id === next[i].id &&
+      e.campaignId === next[i].campaignId &&
+      e.updatedAt === next[i].updatedAt
+  );
 }
 
 export function AppProvider({ children }: PropsWithChildren) {
