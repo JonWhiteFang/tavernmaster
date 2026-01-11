@@ -112,10 +112,12 @@ export async function pushPendingOps(): Promise<SyncResult> {
     }
 
     const row = normalizeRow(payload as Record<string, unknown>);
+    // Inject user_id for RLS enforcement
+    const rowWithUser = { ...row, user_id: sessionData.session.user.id };
     let upsertResponse: Awaited<ReturnType<ReturnType<typeof supabase.from>["upsert"]>>;
     try {
       upsertResponse = await withTimeout(
-        supabase.from(op.entity_type).upsert(row, {
+        supabase.from(op.entity_type).upsert(rowWithUser, {
           onConflict: op.entity_type === "app_settings" ? "key" : "id"
         }),
         `rest.upsert.${op.entity_type}`
