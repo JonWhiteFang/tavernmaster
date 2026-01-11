@@ -51,6 +51,12 @@ export function buildNewCharacterInput(state: CharacterCreationState): NewCharac
     scores: abilities
   });
 
+  const inventory = (state.selectedClass?.startingItemIds ?? []).map((itemId) => ({
+    itemId,
+    quantity: 1,
+    attuned: false
+  }));
+
   return {
     name: state.name,
     role: "player",
@@ -64,7 +70,7 @@ export function buildNewCharacterInput(state: CharacterCreationState): NewCharac
     ...vitals,
     abilities,
     proficiencies: state.selectedBackground?.skillProficiencies ?? [],
-    inventory: [],
+    inventory,
     spells: []
   };
 }

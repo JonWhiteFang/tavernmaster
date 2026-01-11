@@ -527,9 +527,11 @@ This plan merges the "First Usable Loop" roadmap with the "Questweaver-style Cha
 
 ---
 
-### PR 17 — Class/Race/Background steps UI (data-driven lists)
+### PR 17 — Class/Race/Background steps UI (data-driven lists) ✅ COMPLETE
 
 **Goal:** Capture the Questweaver feel with list + detail selection screens.
+
+**Status:** Implemented. Added ClassStep, RaceStep, BackgroundStep components with selection grids. Modal loads SRD data on open.
 
 **Add step components**
 
@@ -552,9 +554,11 @@ This plan merges the "First Usable Loop" roadmap with the "Questweaver-style Cha
 
 ---
 
-### PR 18 — Confirmation step + persistence + Party Sheets integration
+### PR 18 — Confirmation step + persistence + Party Sheets integration ✅ COMPLETE
 
 **Goal:** First fully usable version.
+
+**Status:** Implemented. Added ConfirmStep with name input, alignment dropdown, and character summary. Integrated wizard into PartySheets with Wizard button that persists characters via buildNewCharacterInput.
 
 **Add**
 
@@ -579,9 +583,11 @@ This plan merges the "First Usable Loop" roadmap with the "Questweaver-style Cha
 
 ---
 
-### PR 19 — Equipment step v1 + inventory persistence (optional but high impact)
+### PR 19 — Equipment step v1 + inventory persistence (optional but high impact) ✅ COMPLETE
 
 **Goal:** Start matching Questweaver's starting kit feel.
+
+**Status:** Implemented Option A. Added startingItemIds to SRD classes, created EquipmentStep component showing auto-assigned items, and updated builder to include starting equipment in character inventory.
 
 **Option A (fast + good enough for v1)**
 
@@ -608,7 +614,9 @@ This plan merges the "First Usable Loop" roadmap with the "Questweaver-style Cha
 
 ---
 
-### PR 20 — Wizard polish + future-proofing
+### PR 20 — Wizard polish + future-proofing ✅ COMPLETE
+
+**Status:** Implemented cancel confirmation dialog with isDirty check, created wizard documentation at docs/guides/CHARACTER_CREATION_WIZARD.md. Search/filter and expanded SRD dataset deferred to future iterations.
 
 **Scope**
 

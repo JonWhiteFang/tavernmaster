@@ -8,7 +8,7 @@ import {
 
 export type AbilityMethod = "standard" | "pointBuy" | "rolling";
 
-export type CreationStep = "ability" | "class" | "race" | "background" | "confirm";
+export type CreationStep = "ability" | "class" | "race" | "background" | "equipment" | "confirm";
 
 export type AbilityScores = Record<AbilityKey, number>;
 
@@ -54,7 +54,14 @@ export type CharacterCreationAction =
   | { type: "NEXT_STEP" }
   | { type: "PREV_STEP" };
 
-const stepOrder: CreationStep[] = ["ability", "class", "race", "background", "confirm"];
+const stepOrder: CreationStep[] = [
+  "ability",
+  "class",
+  "race",
+  "background",
+  "equipment",
+  "confirm"
+];
 
 export function reducer(
   state: CharacterCreationState,
@@ -163,6 +170,8 @@ export function canProceed(state: CharacterCreationState): boolean {
       return state.selectedRace !== null;
     case "background":
       return state.selectedBackground !== null;
+    case "equipment":
+      return true;
     case "confirm":
       return state.name.trim().length > 0;
   }

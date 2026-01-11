@@ -24,6 +24,182 @@
         "rarity": "Common",
         "description": "You regain 2d4 + 2 hit points when you drink this potion."
       }
+    },
+    {
+      "id": "item-longsword",
+      "name": "Longsword",
+      "data": { "type": "Weapon", "damage": "1d8 slashing", "properties": ["Versatile (1d10)"] }
+    },
+    {
+      "id": "item-shortsword",
+      "name": "Shortsword",
+      "data": { "type": "Weapon", "damage": "1d6 piercing", "properties": ["Finesse", "Light"] }
+    },
+    {
+      "id": "item-dagger",
+      "name": "Dagger",
+      "data": {
+        "type": "Weapon",
+        "damage": "1d4 piercing",
+        "properties": ["Finesse", "Light", "Thrown (20/60)"]
+      }
+    },
+    {
+      "id": "item-greataxe",
+      "name": "Greataxe",
+      "data": { "type": "Weapon", "damage": "1d12 slashing", "properties": ["Heavy", "Two-Handed"] }
+    },
+    {
+      "id": "item-handaxe",
+      "name": "Handaxe",
+      "data": {
+        "type": "Weapon",
+        "damage": "1d6 slashing",
+        "properties": ["Light", "Thrown (20/60)"]
+      }
+    },
+    {
+      "id": "item-quarterstaff",
+      "name": "Quarterstaff",
+      "data": { "type": "Weapon", "damage": "1d6 bludgeoning", "properties": ["Versatile (1d8)"] }
+    },
+    {
+      "id": "item-rapier",
+      "name": "Rapier",
+      "data": { "type": "Weapon", "damage": "1d8 piercing", "properties": ["Finesse"] }
+    },
+    {
+      "id": "item-longbow",
+      "name": "Longbow",
+      "data": {
+        "type": "Weapon",
+        "damage": "1d8 piercing",
+        "properties": ["Ammunition (150/600)", "Heavy", "Two-Handed"]
+      }
+    },
+    {
+      "id": "item-shortbow",
+      "name": "Shortbow",
+      "data": {
+        "type": "Weapon",
+        "damage": "1d6 piercing",
+        "properties": ["Ammunition (80/320)", "Two-Handed"]
+      }
+    },
+    {
+      "id": "item-light-crossbow",
+      "name": "Light Crossbow",
+      "data": {
+        "type": "Weapon",
+        "damage": "1d8 piercing",
+        "properties": ["Ammunition (80/320)", "Loading", "Two-Handed"]
+      }
+    },
+    {
+      "id": "item-mace",
+      "name": "Mace",
+      "data": { "type": "Weapon", "damage": "1d6 bludgeoning", "properties": [] }
+    },
+    {
+      "id": "item-shield",
+      "name": "Shield",
+      "data": { "type": "Armor", "armorClass": "+2", "properties": [] }
+    },
+    {
+      "id": "item-leather-armor",
+      "name": "Leather Armor",
+      "data": { "type": "Armor", "armorClass": "11 + Dex", "properties": ["Light"] }
+    },
+    {
+      "id": "item-chain-mail",
+      "name": "Chain Mail",
+      "data": {
+        "type": "Armor",
+        "armorClass": "16",
+        "properties": ["Heavy", "Stealth Disadvantage"]
+      }
+    },
+    {
+      "id": "item-scale-mail",
+      "name": "Scale Mail",
+      "data": {
+        "type": "Armor",
+        "armorClass": "14 + Dex (max 2)",
+        "properties": ["Medium", "Stealth Disadvantage"]
+      }
+    },
+    {
+      "id": "item-explorers-pack",
+      "name": "Explorer's Pack",
+      "data": {
+        "type": "Equipment",
+        "description": "Backpack, bedroll, mess kit, tinderbox, torches (10), rations (10 days), waterskin, rope (50 ft)"
+      }
+    },
+    {
+      "id": "item-dungeoneers-pack",
+      "name": "Dungeoneer's Pack",
+      "data": {
+        "type": "Equipment",
+        "description": "Backpack, crowbar, hammer, pitons (10), torches (10), tinderbox, rations (10 days), waterskin, rope (50 ft)"
+      }
+    },
+    {
+      "id": "item-priests-pack",
+      "name": "Priest's Pack",
+      "data": {
+        "type": "Equipment",
+        "description": "Backpack, blanket, candles (10), tinderbox, alms box, incense (2 blocks), censer, vestments, rations (2 days), waterskin"
+      }
+    },
+    {
+      "id": "item-scholars-pack",
+      "name": "Scholar's Pack",
+      "data": {
+        "type": "Equipment",
+        "description": "Backpack, book of lore, ink, ink pen, parchment (10 sheets), little bag of sand, small knife"
+      }
+    },
+    {
+      "id": "item-burglars-pack",
+      "name": "Burglar's Pack",
+      "data": {
+        "type": "Equipment",
+        "description": "Backpack, ball bearings (1000), string (10 ft), bell, candles (5), crowbar, hammer, pitons (10), hooded lantern, oil (2 flasks), rations (5 days), tinderbox, waterskin"
+      }
+    },
+    {
+      "id": "item-thieves-tools",
+      "name": "Thieves' Tools",
+      "data": {
+        "type": "Tools",
+        "description": "Lockpicks, small file, small mirror, narrow scissors, pliers"
+      }
+    },
+    {
+      "id": "item-holy-symbol",
+      "name": "Holy Symbol",
+      "data": { "type": "Focus", "description": "A holy symbol for spellcasting" }
+    },
+    {
+      "id": "item-arcane-focus",
+      "name": "Arcane Focus",
+      "data": { "type": "Focus", "description": "An arcane focus for spellcasting" }
+    },
+    {
+      "id": "item-component-pouch",
+      "name": "Component Pouch",
+      "data": { "type": "Focus", "description": "A pouch containing spell components" }
+    },
+    {
+      "id": "item-arrows",
+      "name": "Arrows (20)",
+      "data": { "type": "Ammunition", "description": "20 arrows for bows" }
+    },
+    {
+      "id": "item-bolts",
+      "name": "Crossbow Bolts (20)",
+      "data": { "type": "Ammunition", "description": "20 bolts for crossbows" }
     }
   ],
   "monsters": [
@@ -60,18 +236,151 @@
     }
   ],
   "classes": [
-    { "id": "class-barbarian", "name": "Barbarian", "data": { "hitDie": 12 } },
-    { "id": "class-bard", "name": "Bard", "data": { "hitDie": 8 } },
-    { "id": "class-cleric", "name": "Cleric", "data": { "hitDie": 8 } },
-    { "id": "class-druid", "name": "Druid", "data": { "hitDie": 8 } },
-    { "id": "class-fighter", "name": "Fighter", "data": { "hitDie": 10 } },
-    { "id": "class-monk", "name": "Monk", "data": { "hitDie": 8 } },
-    { "id": "class-paladin", "name": "Paladin", "data": { "hitDie": 10 } },
-    { "id": "class-ranger", "name": "Ranger", "data": { "hitDie": 10 } },
-    { "id": "class-rogue", "name": "Rogue", "data": { "hitDie": 8 } },
-    { "id": "class-sorcerer", "name": "Sorcerer", "data": { "hitDie": 6 } },
-    { "id": "class-warlock", "name": "Warlock", "data": { "hitDie": 8 } },
-    { "id": "class-wizard", "name": "Wizard", "data": { "hitDie": 6 } }
+    {
+      "id": "class-barbarian",
+      "name": "Barbarian",
+      "data": {
+        "hitDie": 12,
+        "startingItemIds": ["item-greataxe", "item-handaxe", "item-explorers-pack"]
+      }
+    },
+    {
+      "id": "class-bard",
+      "name": "Bard",
+      "data": {
+        "hitDie": 8,
+        "startingItemIds": [
+          "item-rapier",
+          "item-dagger",
+          "item-leather-armor",
+          "item-explorers-pack"
+        ]
+      }
+    },
+    {
+      "id": "class-cleric",
+      "name": "Cleric",
+      "data": {
+        "hitDie": 8,
+        "startingItemIds": [
+          "item-mace",
+          "item-scale-mail",
+          "item-shield",
+          "item-holy-symbol",
+          "item-priests-pack"
+        ]
+      }
+    },
+    {
+      "id": "class-druid",
+      "name": "Druid",
+      "data": {
+        "hitDie": 8,
+        "startingItemIds": ["item-quarterstaff", "item-leather-armor", "item-explorers-pack"]
+      }
+    },
+    {
+      "id": "class-fighter",
+      "name": "Fighter",
+      "data": {
+        "hitDie": 10,
+        "startingItemIds": [
+          "item-longsword",
+          "item-shield",
+          "item-chain-mail",
+          "item-light-crossbow",
+          "item-bolts",
+          "item-dungeoneers-pack"
+        ]
+      }
+    },
+    {
+      "id": "class-monk",
+      "name": "Monk",
+      "data": {
+        "hitDie": 8,
+        "startingItemIds": ["item-shortsword", "item-dagger", "item-explorers-pack"]
+      }
+    },
+    {
+      "id": "class-paladin",
+      "name": "Paladin",
+      "data": {
+        "hitDie": 10,
+        "startingItemIds": [
+          "item-longsword",
+          "item-shield",
+          "item-chain-mail",
+          "item-holy-symbol",
+          "item-priests-pack"
+        ]
+      }
+    },
+    {
+      "id": "class-ranger",
+      "name": "Ranger",
+      "data": {
+        "hitDie": 10,
+        "startingItemIds": [
+          "item-longbow",
+          "item-arrows",
+          "item-shortsword",
+          "item-leather-armor",
+          "item-explorers-pack"
+        ]
+      }
+    },
+    {
+      "id": "class-rogue",
+      "name": "Rogue",
+      "data": {
+        "hitDie": 8,
+        "startingItemIds": [
+          "item-rapier",
+          "item-shortbow",
+          "item-arrows",
+          "item-leather-armor",
+          "item-thieves-tools",
+          "item-burglars-pack"
+        ]
+      }
+    },
+    {
+      "id": "class-sorcerer",
+      "name": "Sorcerer",
+      "data": {
+        "hitDie": 6,
+        "startingItemIds": [
+          "item-dagger",
+          "item-light-crossbow",
+          "item-bolts",
+          "item-component-pouch",
+          "item-explorers-pack"
+        ]
+      }
+    },
+    {
+      "id": "class-warlock",
+      "name": "Warlock",
+      "data": {
+        "hitDie": 8,
+        "startingItemIds": [
+          "item-light-crossbow",
+          "item-bolts",
+          "item-leather-armor",
+          "item-arcane-focus",
+          "item-scholars-pack"
+        ]
+      }
+    },
+    {
+      "id": "class-wizard",
+      "name": "Wizard",
+      "data": {
+        "hitDie": 6,
+        "startingItemIds": ["item-quarterstaff", "item-component-pouch", "item-scholars-pack"]
+      }
+    }
   ],
   "races": [
     {

@@ -15,6 +15,7 @@ import AbilityScoresStep from "./AbilityScoresStep";
 import ClassStep from "./ClassStep";
 import RaceStep from "./RaceStep";
 import BackgroundStep from "./BackgroundStep";
+import EquipmentStep from "./EquipmentStep";
 import ConfirmStep from "./ConfirmStep";
 
 type Props = {
@@ -28,16 +29,26 @@ const stepLabels: Record<CreationStep, string> = {
   class: "Class",
   race: "Race",
   background: "Background",
+  equipment: "Equipment",
   confirm: "Confirm"
 };
 
-const stepOrder: CreationStep[] = ["ability", "class", "race", "background", "confirm"];
+const stepOrder: CreationStep[] = [
+  "ability",
+  "class",
+  "race",
+  "background",
+  "equipment",
+  "confirm"
+];
 
 export default function CharacterCreationModal({ isOpen, onClose, onComplete }: Props) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [classes, setClasses] = useState<SrdClass[]>([]);
   const [races, setRaces] = useState<SrdRace[]>([]);
   const [backgrounds, setBackgrounds] = useState<SrdBackground[]>([]);
+
+  const isDirty = state.step !== "ability" || state.selectedClass || state.name;
 
   useEffect(() => {
     if (isOpen) {
@@ -46,6 +57,13 @@ export default function CharacterCreationModal({ isOpen, onClose, onComplete }: 
       listSrdBackgrounds().then(setBackgrounds);
     }
   }, [isOpen]);
+
+  const handleClose = () => {
+    if (isDirty && !window.confirm("Cancel character creation? Your progress will be lost.")) {
+      return;
+    }
+    onClose();
+  };
 
   const handleNext = () => {
     if (state.step === "confirm" && canProceed(state)) {
@@ -75,7 +93,7 @@ export default function CharacterCreationModal({ isOpen, onClose, onComplete }: 
       isOpen={isOpen}
       title="Create Character"
       subtitle={stepLabels[state.step]}
-      onClose={onClose}
+      onClose={handleClose}
       footer={footer}
     >
       <div className="wizard-stepper">
@@ -102,6 +120,7 @@ export default function CharacterCreationModal({ isOpen, onClose, onComplete }: 
           dispatch={dispatch}
         />
       )}
+      {state.step === "equipment" && <EquipmentStep selectedClass={state.selectedClass} />}
       {state.step === "confirm" && <ConfirmStep state={state} dispatch={dispatch} />}
     </Modal>
   );

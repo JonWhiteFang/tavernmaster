@@ -29,8 +29,18 @@ describe("srdContent", () => {
     const classes = await listSrdClasses();
 
     expect(classes).toHaveLength(2);
-    expect(classes[0]).toEqual({ id: "class-fighter", name: "Fighter", hitDie: 10 });
-    expect(classes[1]).toEqual({ id: "class-wizard", name: "Wizard", hitDie: 6 });
+    expect(classes[0]).toEqual({
+      id: "class-fighter",
+      name: "Fighter",
+      hitDie: 10,
+      startingItemIds: []
+    });
+    expect(classes[1]).toEqual({
+      id: "class-wizard",
+      name: "Wizard",
+      hitDie: 6,
+      startingItemIds: []
+    });
   });
 
   it("listSrdRaces returns typed races with ability bonuses", async () => {

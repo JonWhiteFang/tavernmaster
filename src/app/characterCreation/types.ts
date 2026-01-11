@@ -6,6 +6,12 @@ export interface SrdClass {
   id: string;
   name: string;
   hitDie: number;
+  startingItemIds: string[];
+}
+
+export interface SrdItem {
+  id: string;
+  name: string;
 }
 
 export interface BonusChoices {
