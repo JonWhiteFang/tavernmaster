@@ -10,6 +10,7 @@ let currentMessage: string | null = null;
 let listeners: Listener[] = [];
 let pushTimer: number | null = null;
 let pullInterval: number | null = null;
+let syncPromise: Promise<boolean> | null = null;
 
 function setStatus(status: SyncStatus, message: string | null = null) {
   currentStatus = status;
@@ -80,35 +81,43 @@ export async function syncNow(): Promise<void> {
 }
 
 async function pushOnce(): Promise<boolean> {
+  if (syncPromise) return syncPromise;
   if (!isSupabaseConfigured()) {
     setStatus("offline", "Supabase not configured");
     return false;
   }
 
   setStatus("syncing", "Pushing changes...");
-  const result = await pushPendingOps();
-  if (!result.ok) {
-    setStatus(result.error === "Not signed in." ? "offline" : "error", result.error);
-    return false;
-  }
-  setStatus("idle", null);
-  return true;
+  syncPromise = pushPendingOps().then((result) => {
+    syncPromise = null;
+    if (!result.ok) {
+      setStatus(result.error === "Not signed in." ? "offline" : "error", result.error);
+      return false;
+    }
+    setStatus("idle", null);
+    return true;
+  });
+  return syncPromise;
 }
 
 async function pullOnce(): Promise<boolean> {
+  if (syncPromise) return syncPromise;
   if (!isSupabaseConfigured()) {
     setStatus("offline", "Supabase not configured");
     return false;
   }
 
   setStatus("syncing", "Pulling changes...");
-  const result = await pullRemoteChanges();
-  if (!result.ok) {
-    setStatus(result.error === "Not signed in." ? "offline" : "error", result.error);
-    return false;
-  }
-  setStatus("idle", null);
-  return true;
+  syncPromise = pullRemoteChanges().then((result) => {
+    syncPromise = null;
+    if (!result.ok) {
+      setStatus(result.error === "Not signed in." ? "offline" : "error", result.error);
+      return false;
+    }
+    setStatus("idle", null);
+    return true;
+  });
+  return syncPromise;
 }
 
 export async function signInWithPassword(email: string, password: string): Promise<void> {
