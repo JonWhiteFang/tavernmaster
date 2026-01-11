@@ -9,6 +9,7 @@ import {
   loadEncounterRecovery,
   saveEncounterRecovery
 } from "../data/encounter_recovery";
+import { listEncounters } from "../data/encounters";
 import { advanceTurn, buildTurnOrder, rollInitiative, startEncounter } from "../rules/initiative";
 import { applyEffects } from "../rules/effects";
 import { createSeededRng } from "../rules/rng";
@@ -19,6 +20,9 @@ vi.mock("../state/AppContext", () => ({
 }));
 vi.mock("../data/characters", () => ({
   listCharacters: vi.fn()
+}));
+vi.mock("../data/encounters", () => ({
+  listEncounters: vi.fn()
 }));
 vi.mock("../data/encounter_recovery", () => ({
   clearEncounterRecovery: vi.fn(),
@@ -45,6 +49,7 @@ describe("EncounterFlow", () => {
   it("shows prompt when no campaign is active", () => {
     vi.mocked(useAppContext).mockReturnValue({ activeCampaignId: null } as never);
     vi.mocked(listCharacters).mockResolvedValue([]);
+    vi.mocked(listEncounters).mockResolvedValue([]);
     vi.mocked(loadEncounterRecovery).mockResolvedValue(null);
 
     render(<EncounterFlow />);
@@ -57,6 +62,7 @@ describe("EncounterFlow", () => {
     vi.mocked(useAppContext).mockReturnValue({ activeCampaignId: "camp-1" } as never);
     vi.mocked(loadEncounterRecovery).mockResolvedValue(null);
     vi.mocked(listCharacters).mockResolvedValue([]);
+    vi.mocked(listEncounters).mockResolvedValue([]);
 
     render(<EncounterFlow />);
 
@@ -71,6 +77,7 @@ describe("EncounterFlow", () => {
     vi.mocked(loadEncounterRecovery).mockResolvedValue(null);
     vi.mocked(saveEncounterRecovery).mockResolvedValue();
     vi.mocked(clearEncounterRecovery).mockResolvedValue();
+    vi.mocked(listEncounters).mockResolvedValue([]);
 
     vi.mocked(listCharacters).mockResolvedValue([
       {
