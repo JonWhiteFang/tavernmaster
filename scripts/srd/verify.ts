@@ -18,6 +18,46 @@ import type { Manifest, SrdEntry, SrdVersion } from "./types.js";
 const ASSETS_DIR = path.resolve(import.meta.dirname, "../../src/assets/srd");
 const MANIFEST_PATH = path.join(ASSETS_DIR, "manifest.json");
 
+// Minimum expected counts per type (adjust as data grows)
+const MIN_COUNTS: Record<string, Record<string, number>> = {
+  "5.1": {
+    spell: 1,
+    equipment: 10,
+    monster: 1,
+    condition: 1,
+    rule: 1,
+    class: 10,
+    species: 10,
+    background: 10
+  },
+  "5.2.1": {
+    spell: 1,
+    equipment: 10,
+    monster: 1,
+    condition: 1,
+    rule: 1,
+    class: 10,
+    species: 10,
+    background: 10
+  }
+};
+
+// Known entries that must exist (sanity check)
+const KNOWN_ENTRIES: Record<string, string[]> = {
+  "5.1": [
+    "srd:5.1:class:fighter",
+    "srd:5.1:class:wizard",
+    "srd:5.1:species:human",
+    "srd:5.1:background:soldier"
+  ],
+  "5.2.1": [
+    "srd:5.2.1:class:fighter",
+    "srd:5.2.1:class:wizard",
+    "srd:5.2.1:species:human",
+    "srd:5.2.1:background:soldier"
+  ]
+};
+
 interface VerifyResult {
   version: SrdVersion;
   totalEntries: number;
@@ -36,8 +76,11 @@ function verifyEntries(version: SrdVersion, entries: SrdEntry[]): VerifyResult {
   };
 
   const seenIds = new Set<string>();
+  const entryIds = new Set<string>();
 
   for (const entry of entries) {
+    entryIds.add(entry.id);
+
     // Check for duplicate IDs
     if (seenIds.has(entry.id)) {
       result.errors.push(`Duplicate ID: ${entry.id}`);
@@ -55,6 +98,25 @@ function verifyEntries(version: SrdVersion, entries: SrdEntry[]): VerifyResult {
     result.entriesByType[entry.type] = (result.entriesByType[entry.type] || 0) + 1;
   }
 
+  // Check minimum counts
+  const minCounts = MIN_COUNTS[version] || {};
+  for (const [type, minCount] of Object.entries(minCounts)) {
+    const actual = result.entriesByType[type] || 0;
+    if (actual < minCount) {
+      result.errors.push(
+        `Insufficient ${type} entries: expected at least ${minCount}, got ${actual}`
+      );
+    }
+  }
+
+  // Check known entries exist
+  const knownEntries = KNOWN_ENTRIES[version] || [];
+  for (const knownId of knownEntries) {
+    if (!entryIds.has(knownId)) {
+      result.errors.push(`Missing known entry: ${knownId}`);
+    }
+  }
+
   // Warn if no entries (expected during skeleton phase)
   if (entries.length === 0) {
     result.warnings.push(
@@ -68,6 +130,11 @@ function verifyEntries(version: SrdVersion, entries: SrdEntry[]): VerifyResult {
 async function main() {
   console.log("SRD Verify starting...\n");
 
+  if (!fs.existsSync(MANIFEST_PATH)) {
+    console.error("✗ Manifest file not found:", MANIFEST_PATH);
+    process.exit(1);
+  }
+
   const manifest: Manifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, "utf-8"));
   let hasErrors = false;
 
@@ -77,7 +144,8 @@ async function main() {
     const entriesPath = path.join(ASSETS_DIR, dataset.entriesPath);
 
     if (!fs.existsSync(entriesPath)) {
-      console.log(`  ⚠ Entries file not found: ${dataset.entriesPath}`);
+      console.log(`  ✗ Entries file not found: ${dataset.entriesPath}`);
+      hasErrors = true;
       continue;
     }
 
