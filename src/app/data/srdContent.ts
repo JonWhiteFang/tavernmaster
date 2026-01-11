@@ -7,13 +7,15 @@ import type {
   AbilityBonuses,
   BonusChoices
 } from "../characterCreation/types";
+import type { SrdVersion } from "./srdSync";
 
-type SrdRow = { id: string; name: string; data_json: string };
+type SrdEntryRow = { id: string; name: string; data_json: string };
 
-export async function listSrdClasses(): Promise<SrdClass[]> {
+export async function listSrdClasses(version: SrdVersion = "5.1"): Promise<SrdClass[]> {
   const db = await getDatabase();
-  const rows = await db.select<SrdRow[]>(
-    "SELECT id, name, data_json FROM srd_classes ORDER BY name"
+  const rows = await db.select<SrdEntryRow[]>(
+    "SELECT id, name, data_json FROM srd_entries WHERE type = ? AND srd_version = ? ORDER BY name",
+    ["class", version]
   );
   return rows.map((row) => {
     const data = JSON.parse(row.data_json) as { hitDie: number; startingItemIds?: string[] };
@@ -26,9 +28,12 @@ export async function listSrdClasses(): Promise<SrdClass[]> {
   });
 }
 
-export async function listSrdRaces(): Promise<SrdRace[]> {
+export async function listSrdRaces(version: SrdVersion = "5.1"): Promise<SrdRace[]> {
   const db = await getDatabase();
-  const rows = await db.select<SrdRow[]>("SELECT id, name, data_json FROM srd_races ORDER BY name");
+  const rows = await db.select<SrdEntryRow[]>(
+    "SELECT id, name, data_json FROM srd_entries WHERE type = ? AND srd_version = ? ORDER BY name",
+    ["species", version]
+  );
   return rows.map((row) => {
     const data = JSON.parse(row.data_json) as {
       speed: number;
@@ -45,10 +50,11 @@ export async function listSrdRaces(): Promise<SrdRace[]> {
   });
 }
 
-export async function listSrdBackgrounds(): Promise<SrdBackground[]> {
+export async function listSrdBackgrounds(version: SrdVersion = "5.1"): Promise<SrdBackground[]> {
   const db = await getDatabase();
-  const rows = await db.select<SrdRow[]>(
-    "SELECT id, name, data_json FROM srd_backgrounds ORDER BY name"
+  const rows = await db.select<SrdEntryRow[]>(
+    "SELECT id, name, data_json FROM srd_entries WHERE type = ? AND srd_version = ? ORDER BY name",
+    ["background", version]
   );
   return rows.map((row) => {
     const data = JSON.parse(row.data_json) as { skillProficiencies: string[] };
@@ -56,13 +62,27 @@ export async function listSrdBackgrounds(): Promise<SrdBackground[]> {
   });
 }
 
-export async function getSrdItemsByIds(ids: string[]): Promise<SrdItem[]> {
+export async function getSrdItemsByIds(
+  ids: string[],
+  version: SrdVersion = "5.1"
+): Promise<SrdItem[]> {
   if (ids.length === 0) return [];
   const db = await getDatabase();
-  const placeholders = ids.map(() => "?").join(", ");
-  const rows = await db.select<SrdRow[]>(
-    `SELECT id, name FROM srd_items WHERE id IN (${placeholders})`,
-    ids
+
+  // Map legacy item IDs to new format
+  const newIds = ids.map((id) => {
+    // Convert legacy IDs like "item-longsword" to new format "srd:5.1:equipment:longsword"
+    if (id.startsWith("item-")) {
+      const slug = id.replace("item-", "");
+      return `srd:${version}:equipment:${slug}`;
+    }
+    return id;
+  });
+
+  const placeholders = newIds.map(() => "?").join(", ");
+  const rows = await db.select<SrdEntryRow[]>(
+    `SELECT id, name, data_json FROM srd_entries WHERE id IN (${placeholders}) AND srd_version = ?`,
+    [...newIds, version]
   );
   return rows.map((row) => ({ id: row.id, name: row.name }));
 }

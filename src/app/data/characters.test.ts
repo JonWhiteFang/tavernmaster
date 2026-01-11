@@ -44,14 +44,18 @@ describe("character data", () => {
       randomUUID: () => idQueue.shift() ?? "fallback-id"
     });
 
-    fakeDb.seedRow("srd_items", {
+    fakeDb.seedRow("srd_entries", {
       id: "item-1",
       name: "Potion",
+      type: "equipment",
+      srd_version: "5.1",
       data_json: JSON.stringify({ type: "potion" })
     });
-    fakeDb.seedRow("srd_spells", {
+    fakeDb.seedRow("srd_entries", {
       id: "spell-1",
       name: "Fire Bolt",
+      type: "spell",
+      srd_version: "5.1",
       data_json: JSON.stringify({ level: 0, school: "Evocation" })
     });
 
@@ -89,14 +93,18 @@ describe("character data", () => {
   });
 
   it("lists characters with resolved inventory and spells", async () => {
-    fakeDb.seedRow("srd_items", {
+    fakeDb.seedRow("srd_entries", {
       id: "item-1",
       name: "Potion",
+      type: "equipment",
+      srd_version: "5.1",
       data_json: JSON.stringify({ type: "potion" })
     });
-    fakeDb.seedRow("srd_spells", {
+    fakeDb.seedRow("srd_entries", {
       id: "spell-1",
       name: "Fire Bolt",
+      type: "spell",
+      srd_version: "5.1",
       data_json: JSON.stringify({ level: 0, school: "Evocation" })
     });
 

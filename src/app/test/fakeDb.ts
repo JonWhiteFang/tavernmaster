@@ -205,6 +205,41 @@ export class FakeDb {
       return rows.map((row) => projectRow(row, columns)) as unknown as T;
     }
 
+    // Handle srd_entries queries with type and version filters
+    const srdEntriesMatch = normalized.match(
+      /^SELECT (.+) FROM srd_entries WHERE type = \? AND srd_version = \? ORDER BY name$/i
+    );
+    if (srdEntriesMatch) {
+      const [, columnsRaw] = srdEntriesMatch;
+      const columns = splitColumns(columnsRaw);
+      const type = String(params[0] ?? "");
+      const version = String(params[1] ?? "");
+      const table = this.getTable("srd_entries");
+      const rows = Array.from(table.values()).filter(
+        (row) => row.type === type && row.srd_version === version
+      );
+      rows.sort((a, b) => String(a.name).localeCompare(String(b.name)));
+      return rows.map((row) => projectRow(row, columns)) as unknown as T;
+    }
+
+    // Handle srd_entries query by type, version, and id
+    const srdEntriesByIdMatch = normalized.match(
+      /^SELECT (.+) FROM srd_entries WHERE type = \? AND srd_version = \? AND id = \?$/i
+    );
+    if (srdEntriesByIdMatch) {
+      const [, columnsRaw] = srdEntriesByIdMatch;
+      const columns = splitColumns(columnsRaw);
+      const type = String(params[0] ?? "");
+      const version = String(params[1] ?? "");
+      const id = String(params[2] ?? "");
+      const table = this.getTable("srd_entries");
+      const row = table.get(id);
+      if (!row || row.type !== type || row.srd_version !== version) {
+        return [] as unknown as T;
+      }
+      return [projectRow(row, columns)] as unknown as T;
+    }
+
     throw new Error(`FakeDb.select unhandled query: ${normalized}`);
   }
 
