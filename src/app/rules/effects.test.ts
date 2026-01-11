@@ -102,4 +102,67 @@ describe("effects", () => {
     expect(next.participants.c.concentration?.spellId).toBe("spell-x");
     expect(next.participants.c.concentration?.startedRound).toBe(3);
   });
+
+  it("adds and removes conditions", () => {
+    const state = baseState();
+    const withCondition = applyEffects(state, [
+      {
+        type: "addCondition",
+        targetId: "a",
+        condition: { id: "c1", name: "poisoned", remainingRounds: 2 }
+      }
+    ]);
+    expect(withCondition.participants.a.conditions).toHaveLength(1);
+    expect(withCondition.participants.a.conditions[0].name).toBe("poisoned");
+
+    const removed = applyEffects(withCondition, [
+      { type: "removeCondition", targetId: "a", conditionName: "poisoned" }
+    ]);
+    expect(removed.participants.a.conditions).toHaveLength(0);
+  });
+
+  it("clears concentration", () => {
+    const state = baseState();
+    const cleared = applyEffects(state, [{ type: "clearConcentration", casterId: "a" }]);
+    expect(cleared.participants.a.concentration).toBeUndefined();
+  });
+
+  it("appends log messages", () => {
+    const state = baseState();
+    const logged = applyEffects(state, [{ type: "log", message: "Test message" }]);
+    expect(logged.log).toContain("Test message");
+  });
+
+  it("handles missing participant gracefully", () => {
+    const state = baseState();
+    const result = applyEffects(state, [
+      { type: "damage", targetId: "missing", amount: 10, damageType: "fire" }
+    ]);
+    expect(result).toEqual(state);
+  });
+
+  it("handles missing spell slot level gracefully", () => {
+    const state: RulesState = {
+      ...baseState(),
+      participants: {
+        c: {
+          id: "c",
+          name: "Caster",
+          maxHp: 10,
+          hp: 10,
+          armorClass: 10,
+          initiativeBonus: 0,
+          speed: 30,
+          abilities: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
+          savingThrows: {},
+          proficiencyBonus: 2,
+          conditions: [],
+          spellcasting: { spellSaveDc: 12, spellAttackBonus: 4, slots: {} }
+        }
+      }
+    };
+
+    const result = applyEffects(state, [{ type: "consumeSpellSlot", casterId: "c", level: 5 }]);
+    expect(result.participants.c.spellcasting?.slots[5]).toBeUndefined();
+  });
 });
