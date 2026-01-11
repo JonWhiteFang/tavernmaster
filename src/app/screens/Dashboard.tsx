@@ -3,6 +3,7 @@ import { listAiLogs } from "../data/ai_logs";
 import { createCampaign } from "../data/campaigns";
 import { listCharacters } from "../data/characters";
 import { createSession } from "../data/sessions";
+import type { SrdRulesetVersion } from "../data/types";
 import { useAppContext } from "../state/AppContext";
 import Modal from "../ui/Modal";
 import { useToast } from "../ui/Toast";
@@ -31,6 +32,7 @@ export default function Dashboard({ onResumePlay }: DashboardProps) {
   const [isSessionModalOpen, setIsSessionModalOpen] = useState(false);
   const [campaignName, setCampaignName] = useState("");
   const [campaignSummary, setCampaignSummary] = useState("");
+  const [campaignRuleset, setCampaignRuleset] = useState<SrdRulesetVersion>("5.1");
   const [campaignError, setCampaignError] = useState<string | null>(null);
   const [sessionTitle, setSessionTitle] = useState("");
   const [sessionError, setSessionError] = useState<string | null>(null);
@@ -77,6 +79,7 @@ export default function Dashboard({ onResumePlay }: DashboardProps) {
   const openCampaignModal = () => {
     setCampaignName("");
     setCampaignSummary("");
+    setCampaignRuleset("5.1");
     setCampaignError(null);
     setIsCampaignModalOpen(true);
   };
@@ -96,7 +99,8 @@ export default function Dashboard({ onResumePlay }: DashboardProps) {
     try {
       const campaign = await createCampaign({
         name: trimmedCampaignName,
-        summary: trimmedCampaignSummary ? trimmedCampaignSummary : undefined
+        summary: trimmedCampaignSummary ? trimmedCampaignSummary : undefined,
+        rulesetVersion: campaignRuleset
       });
       await refreshCampaigns();
       setActiveCampaignId(campaign.id);
@@ -206,7 +210,7 @@ export default function Dashboard({ onResumePlay }: DashboardProps) {
                   </div>
                   <div className="detail-badges">
                     <span className="status-chip">Sessions {sessions.length}</span>
-                    <span className="status-chip">SRD 5e</span>
+                    <span className="status-chip">SRD {activeCampaign.rulesetVersion}</span>
                   </div>
                 </div>
                 <div className="panel-copy">
@@ -355,6 +359,17 @@ export default function Dashboard({ onResumePlay }: DashboardProps) {
               onChange={(event) => setCampaignSummary(event.target.value)}
               placeholder="A coastal relic hunt with storms, rival crews, and ancient wards."
             />
+          </label>
+          <label className="form-field">
+            <span className="form-label">Ruleset Version</span>
+            <select
+              className="form-select"
+              value={campaignRuleset}
+              onChange={(event) => setCampaignRuleset(event.target.value as SrdRulesetVersion)}
+            >
+              <option value="5.1">SRD 5.1 (2014 Rules)</option>
+              <option value="5.2.1">SRD 5.2.1 (2024 Rules)</option>
+            </select>
           </label>
         </div>
         {campaignError ? <div className="status-chip status-error">{campaignError}</div> : null}

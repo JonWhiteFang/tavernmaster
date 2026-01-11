@@ -22,6 +22,7 @@ import {
   srdBackgrounds,
   srdClasses
 } from "../rules/characterCreation";
+import { useAppContext } from "../state/AppContext";
 import CharacterCreationModal from "../ui/characterCreation/CharacterCreationModal";
 import type { CharacterCreationState } from "../characterCreation/state";
 import { buildNewCharacterInput } from "../characterCreation/builder";
@@ -81,6 +82,7 @@ const controlLabels: Record<CharacterControl, string> = {
 };
 
 export default function PartySheets() {
+  const { activeCampaign } = useAppContext();
   const [characters, setCharacters] = useState<Character[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [mode, setMode] = useState<FormMode>("view");
@@ -1051,6 +1053,7 @@ export default function PartySheets() {
         isOpen={wizardOpen}
         onClose={() => setWizardOpen(false)}
         onComplete={handleWizardComplete}
+        rulesetVersion={activeCampaign?.rulesetVersion}
       />
     </div>
   );

@@ -395,7 +395,7 @@ Fail builds if SRD dataset is missing or malformed.
 
 ## 11) PR-by-PR execution plan (Codex-friendly)
 
-### PR 1 — Add licensing + attribution surfaces
+### PR 1 — ✅ COMPLETE Add licensing + attribution surfaces
 
 **Files:**
 
@@ -409,7 +409,7 @@ Fail builds if SRD dataset is missing or malformed.
 
 ---
 
-### PR 2 — Add `srd_entries` + `srd_meta` (+ optional FTS) tables
+### PR 2 — ✅ COMPLETE Add `srd_entries` + `srd_meta` (+ optional FTS) tables
 
 **Files:**
 
@@ -423,7 +423,7 @@ Fail builds if SRD dataset is missing or malformed.
 
 ---
 
-### PR 3 — Add SRD manifest + generator skeleton
+### PR 3 — ✅ COMPLETE Add SRD manifest + generator skeleton
 
 **Files:**
 
@@ -438,7 +438,7 @@ Fail builds if SRD dataset is missing or malformed.
 
 ---
 
-### PR 4 — Generate & commit SRD 5.1 dataset
+### PR 4 — ✅ COMPLETE Generate & commit SRD 5.1 dataset
 
 **Files:**
 
@@ -452,7 +452,7 @@ Fail builds if SRD dataset is missing or malformed.
 
 ---
 
-### PR 5 — Generate & commit SRD 5.2.1 dataset
+### PR 5 — ✅ COMPLETE Generate & commit SRD 5.2.1 dataset
 
 **Files:**
 
@@ -465,7 +465,7 @@ Fail builds if SRD dataset is missing or malformed.
 
 ---
 
-### PR 6 — Implement `syncSrdIfNeeded()` and replace startup ingestion
+### PR 6 — ✅ COMPLETE Implement `syncSrdIfNeeded()` and replace startup ingestion
 
 **Files:**
 
@@ -481,7 +481,7 @@ Fail builds if SRD dataset is missing or malformed.
 
 ---
 
-### PR 7 — Refactor `srd_queries.ts` and `srdContent.ts` to read from `srd_entries`
+### PR 7 — ✅ COMPLETE Refactor `srd_queries.ts` and `srdContent.ts` to read from `srd_entries`
 
 **Files:**
 
@@ -496,7 +496,7 @@ Fail builds if SRD dataset is missing or malformed.
 
 ---
 
-### PR 8 — SRD Browser UI + version selector
+### PR 8 — ✅ COMPLETE SRD Browser UI + version selector
 
 **Files:**
 
@@ -510,7 +510,7 @@ Fail builds if SRD dataset is missing or malformed.
 
 ---
 
-### PR 9 — Per-campaign ruleset selection + 5.2.1-aware character wizard updates
+### PR 9 — ✅ COMPLETE Per-campaign ruleset selection + 5.2.1-aware character wizard updates
 
 **Files:**
 
@@ -524,7 +524,7 @@ Fail builds if SRD dataset is missing or malformed.
 
 ---
 
-### PR 10 — Verification + CI guardrails
+### PR 10 — ✅ COMPLETE Verification + CI guardrails
 
 **Files:**
 

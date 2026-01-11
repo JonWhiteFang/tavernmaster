@@ -10,6 +10,7 @@ import {
   type CreationStep
 } from "../../characterCreation/state";
 import type { SrdClass, SrdRace, SrdBackground } from "../../characterCreation/types";
+import type { SrdVersion } from "../../data/srdSync";
 import { listSrdClasses, listSrdRaces, listSrdBackgrounds } from "../../data/srdContent";
 import AbilityScoresStep from "./AbilityScoresStep";
 import ClassStep from "./ClassStep";
@@ -22,6 +23,7 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   onComplete: (state: CharacterCreationState) => void;
+  rulesetVersion?: SrdVersion;
 };
 
 const stepLabels: Record<CreationStep, string> = {
@@ -42,7 +44,12 @@ const stepOrder: CreationStep[] = [
   "confirm"
 ];
 
-export default function CharacterCreationModal({ isOpen, onClose, onComplete }: Props) {
+export default function CharacterCreationModal({
+  isOpen,
+  onClose,
+  onComplete,
+  rulesetVersion = "5.1"
+}: Props) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [classes, setClasses] = useState<SrdClass[]>([]);
   const [races, setRaces] = useState<SrdRace[]>([]);
@@ -52,11 +59,11 @@ export default function CharacterCreationModal({ isOpen, onClose, onComplete }: 
 
   useEffect(() => {
     if (isOpen) {
-      listSrdClasses().then(setClasses);
-      listSrdRaces().then(setRaces);
-      listSrdBackgrounds().then(setBackgrounds);
+      listSrdClasses(rulesetVersion).then(setClasses);
+      listSrdRaces(rulesetVersion).then(setRaces);
+      listSrdBackgrounds(rulesetVersion).then(setBackgrounds);
     }
-  }, [isOpen]);
+  }, [isOpen, rulesetVersion]);
 
   const handleClose = () => {
     if (isDirty && !window.confirm("Cancel character creation? Your progress will be lost.")) {
