@@ -67,6 +67,8 @@ export async function listAiLogs(params: {
   const clauses: string[] = [];
   const values: (string | number)[] = [];
 
+  clauses.push("deleted_at IS NULL");
+
   if (params.campaignId) {
     clauses.push("campaign_id = ?");
     values.push(params.campaignId);

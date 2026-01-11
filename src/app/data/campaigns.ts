@@ -26,7 +26,7 @@ function mapCampaign(row: CampaignRow): Campaign {
 export async function listCampaigns(): Promise<Campaign[]> {
   const db = await getDatabase();
   const rows = await db.select<CampaignRow[]>(
-    "SELECT id, name, summary, active_scene_id, created_at, updated_at FROM campaigns ORDER BY updated_at DESC"
+    "SELECT id, name, summary, active_scene_id, created_at, updated_at FROM campaigns WHERE deleted_at IS NULL ORDER BY updated_at DESC"
   );
   const campaigns = await Promise.all(
     rows.map(async (row) => {

@@ -17,7 +17,7 @@ export async function listJournalEntries(campaignId: string): Promise<JournalEnt
   const rows = await db.select<JournalRow[]>(
     `SELECT id, campaign_id, title, content, created_at, updated_at
      FROM journal_entries
-     WHERE campaign_id = ?
+     WHERE campaign_id = ? AND deleted_at IS NULL
      ORDER BY created_at DESC`,
     [campaignId]
   );

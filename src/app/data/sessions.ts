@@ -32,7 +32,7 @@ export async function listSessions(campaignId: string): Promise<Session[]> {
   const rows = await db.select<SessionRow[]>(
     `SELECT id, campaign_id, title, started_at, ended_at, recap, created_at, updated_at
      FROM sessions
-     WHERE campaign_id = ?
+     WHERE campaign_id = ? AND deleted_at IS NULL
      ORDER BY created_at DESC`,
     [campaignId]
   );
