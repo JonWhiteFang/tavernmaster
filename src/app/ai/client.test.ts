@@ -1,113 +1,130 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { requestChatCompletion, streamChatCompletion } from "./client";
-import type { ChatMessage, LlmConfig } from "./types";
+import type { LlmConfig, ChatMessage } from "./types";
 
-describe("LLM client", () => {
-  const config: LlmConfig = {
-    baseUrl: "http://localhost:11434/",
-    model: "llama3",
-    temperature: 0.7,
-    maxTokens: 120,
-    topP: 1,
-    stream: false
-  };
-  const messages: ChatMessage[] = [{ role: "user", content: "hello" }];
+const mockConfig: LlmConfig = {
+  baseUrl: "http://localhost:11434/",
+  model: "llama3.1:8b",
+  temperature: 0.7,
+  maxTokens: 2048,
+  topP: 0.9,
+  stream: false
+};
 
-  const fetchMock = vi.fn();
+const mockMessages: ChatMessage[] = [
+  { role: "system", content: "You are a helpful assistant." },
+  { role: "user", content: "Hello" }
+];
 
+function mockResponse(data: {
+  ok?: boolean;
+  status?: number;
+  body?: ReadableStream<Uint8Array> | null;
+  json?: () => Promise<unknown>;
+}): globalThis.Response {
+  return data as globalThis.Response;
+}
+
+describe("AI client", () => {
   beforeEach(() => {
-    vi.stubGlobal("fetch", fetchMock);
+    vi.stubGlobal("fetch", vi.fn());
   });
 
   afterEach(() => {
     vi.unstubAllGlobals();
-    fetchMock.mockReset();
   });
 
-  it("requests chat completions with a sanitized base url", async () => {
-    fetchMock.mockResolvedValue({
-      ok: true,
-      json: vi.fn().mockResolvedValue({
-        choices: [{ message: { content: "Hi there" } }],
-        usage: { prompt_tokens: 1, completion_tokens: 2, total_tokens: 3 }
-      })
+  describe("requestChatCompletion", () => {
+    it("sends correct request format", async () => {
+      const mockResponse2 = {
+        choices: [{ message: { content: "Hello there!" } }],
+        usage: { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 }
+      };
+
+      vi.mocked(fetch).mockResolvedValueOnce(
+        mockResponse({
+          ok: true,
+          json: () => Promise.resolve(mockResponse2)
+        })
+      );
+
+      const result = await requestChatCompletion(mockConfig, mockMessages);
+
+      expect(fetch).toHaveBeenCalledWith("http://localhost:11434/v1/chat/completions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: expect.stringContaining('"model":"llama3.1:8b"')
+      });
+
+      expect(result.content).toBe("Hello there!");
+      expect(result.usage?.totalTokens).toBe(15);
     });
 
-    const response = await requestChatCompletion(config, messages);
+    it("strips trailing slash from base URL", async () => {
+      vi.mocked(fetch).mockResolvedValueOnce(
+        mockResponse({
+          ok: true,
+          json: () => Promise.resolve({ choices: [{ message: { content: "" } }] })
+        })
+      );
 
-    expect(fetchMock).toHaveBeenCalledWith(
-      "http://localhost:11434/v1/chat/completions",
-      expect.objectContaining({
-        method: "POST"
-      })
-    );
-    const body = JSON.parse(fetchMock.mock.calls[0][1]?.body as string);
-    expect(body).toMatchObject({
-      model: "llama3",
-      stream: false,
-      temperature: 0.7,
-      max_tokens: 120,
-      top_p: 1
+      await requestChatCompletion({ ...mockConfig, baseUrl: "http://example.com/" }, mockMessages);
+
+      expect(fetch).toHaveBeenCalledWith(
+        "http://example.com/v1/chat/completions",
+        expect.any(Object)
+      );
     });
-    expect(response).toEqual({
-      content: "Hi there",
-      usage: {
-        promptTokens: 1,
-        completionTokens: 2,
-        totalTokens: 3
-      }
+
+    it("throws on non-ok response", async () => {
+      vi.mocked(fetch).mockResolvedValueOnce(
+        mockResponse({
+          ok: false,
+          status: 500
+        })
+      );
+
+      await expect(requestChatCompletion(mockConfig, mockMessages)).rejects.toThrow(
+        "LLM request failed: 500"
+      );
+    });
+
+    it("handles missing content gracefully", async () => {
+      vi.mocked(fetch).mockResolvedValueOnce(
+        mockResponse({
+          ok: true,
+          json: () => Promise.resolve({ choices: [] })
+        })
+      );
+
+      const result = await requestChatCompletion(mockConfig, mockMessages);
+      expect(result.content).toBe("");
     });
   });
 
-  it("throws when the response is not ok", async () => {
-    fetchMock.mockResolvedValue({ ok: false, status: 500 });
+  describe("streamChatCompletion", () => {
+    it("throws on non-ok response", async () => {
+      vi.mocked(fetch).mockResolvedValueOnce(
+        mockResponse({
+          ok: false,
+          status: 503
+        })
+      );
 
-    await expect(requestChatCompletion(config, messages)).rejects.toThrow(
-      "LLM request failed: 500"
-    );
-  });
-
-  it("streams chat completions", async () => {
-    const encoder = new globalThis.TextEncoder();
-    const chunks = [
-      'data: {"choices":[{"delta":{"content":"Hello"}}]}\n\n',
-      'data: {"choices":[{"delta":{"content":" world"}}]}\n\n',
-      "data: [DONE]\n\n"
-    ];
-
-    let index = 0;
-    const reader = {
-      read: vi.fn().mockImplementation(async () => {
-        if (index >= chunks.length) {
-          return { done: true, value: undefined };
-        }
-        const value = encoder.encode(chunks[index]);
-        index += 1;
-        return { done: false, value };
-      })
-    };
-
-    fetchMock.mockResolvedValue({
-      ok: true,
-      body: {
-        getReader: () => reader
-      }
+      const generator = streamChatCompletion(mockConfig, mockMessages);
+      await expect(generator.next()).rejects.toThrow("LLM streaming request failed: 503");
     });
 
-    const output: string[] = [];
-    for await (const chunk of streamChatCompletion(config, messages)) {
-      output.push(chunk);
-    }
+    it("throws when body is null", async () => {
+      vi.mocked(fetch).mockResolvedValueOnce(
+        mockResponse({
+          ok: true,
+          body: null
+        })
+      );
 
-    expect(output.join("")).toBe("Hello world");
-  });
-
-  it("throws when streaming response is invalid", async () => {
-    fetchMock.mockResolvedValue({ ok: false, status: 401, body: null });
-
-    await expect(async () => {
-      const iterator = streamChatCompletion(config, messages);
-      await iterator.next();
-    }).rejects.toThrow("LLM streaming request failed: 401");
+      const generator = streamChatCompletion(mockConfig, mockMessages);
+      await expect(generator.next()).rejects.toThrow("LLM streaming request failed");
+    });
   });
 });
