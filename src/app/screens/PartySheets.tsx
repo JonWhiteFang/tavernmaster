@@ -23,6 +23,7 @@ import {
   srdClasses
 } from "../rules/characterCreation";
 import { useAppContext } from "../state/AppContext";
+import { logger } from "../utils/logger";
 import CharacterCreationModal from "../ui/characterCreation/CharacterCreationModal";
 import type { CharacterCreationState } from "../characterCreation/state";
 import { buildNewCharacterInput } from "../characterCreation/builder";
@@ -247,7 +248,7 @@ export default function PartySheets() {
       }
       setMode("view");
     } catch (error) {
-      console.error(error);
+      logger.error("Failed to save character", error, "PartySheets");
       setFormError("Failed to save character. Check the console for details.");
     } finally {
       setIsSaving(false);
@@ -266,7 +267,7 @@ export default function PartySheets() {
       await loadCharacters();
       setMode("view");
     } catch (error) {
-      console.error(error);
+      logger.error("Failed to delete character", error, "PartySheets");
       setFormError("Failed to delete character. Check the console for details.");
     }
   };

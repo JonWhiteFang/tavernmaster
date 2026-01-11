@@ -14,6 +14,7 @@ import Button from "../ui/Button";
 import Chip from "../ui/Chip";
 import ListCard from "../ui/ListCard";
 import { useToast } from "../ui/Toast";
+import { logger } from "../utils/logger";
 
 const defaultSummary =
   "Act II: the party advances through the Sunken Vault to recover the Reliquary Core.";
@@ -116,7 +117,7 @@ export default function PlayWorkspace() {
       setNoteContent("");
       pushToast({ tone: "success", message: "Journal entry saved." });
     } catch (error) {
-      console.error("Failed to save journal entry", error);
+      logger.error("Failed to save journal entry", error, "PlayWorkspace");
       pushToast({ tone: "error", message: "Unable to save journal entry." });
     } finally {
       setIsSaving(false);

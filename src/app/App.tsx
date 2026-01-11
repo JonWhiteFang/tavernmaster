@@ -1,6 +1,7 @@
 import { memo, useEffect, useMemo, useState } from "react";
 import { initializeData } from "./data/init";
 import { initializeSync } from "./sync/client";
+import { logger } from "./utils/logger";
 import TitleScreen from "./screens/TitleScreen";
 import Dashboard from "./screens/Dashboard";
 import AiDirector from "./screens/AiDirector";
@@ -119,7 +120,7 @@ function AppShell() {
         await initializeData();
         await initializeSync();
       } catch (error) {
-        console.error("Failed to initialize app data", error);
+        logger.error("Failed to initialize app data", error, "App");
       }
     })();
   }, []);

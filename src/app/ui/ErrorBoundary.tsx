@@ -1,5 +1,6 @@
 import { Component } from "react";
 import type { ErrorInfo, PropsWithChildren } from "react";
+import { logger } from "../utils/logger";
 
 type ErrorBoundaryState = {
   hasError: boolean;
@@ -17,7 +18,7 @@ export default class ErrorBoundary extends Component<PropsWithChildren, ErrorBou
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error("ErrorBoundary caught:", error, info.componentStack);
+    logger.error(`ErrorBoundary caught: ${info.componentStack}`, error, "ErrorBoundary");
   }
 
   handleReset = () => {

@@ -24,6 +24,7 @@ import Button from "../ui/Button";
 import Chip from "../ui/Chip";
 import { useAppContext } from "../state/AppContext";
 import { useToast } from "../ui/Toast";
+import { logger } from "../utils/logger";
 
 const demoAction = {
   type: "attack",
@@ -121,7 +122,7 @@ export default function EncounterFlow() {
       return;
     }
     void saveEncounterRecovery({ rulesState, log, rngSeed }).catch((error) => {
-      console.error("Failed to save encounter recovery snapshot.", error);
+      logger.error("Failed to save encounter recovery snapshot.", error, "EncounterFlow");
       pushToast({ tone: "error", message: "Failed to save recovery snapshot." });
     });
   }, [rulesState, log, rngSeed, pushToast]);
@@ -245,7 +246,7 @@ export default function EncounterFlow() {
     try {
       await clearEncounterRecovery();
     } catch (error) {
-      console.error("Failed to clear encounter recovery snapshot.", error);
+      logger.error("Failed to clear encounter recovery snapshot.", error, "EncounterFlow");
       pushToast({ tone: "error", message: "Failed to clear recovery snapshot." });
     }
 
@@ -267,7 +268,7 @@ export default function EncounterFlow() {
       await clearEncounterRecovery();
       setLoadedRecovery(false);
     } catch (error) {
-      console.error("Failed to clear encounter recovery snapshot.", error);
+      logger.error("Failed to clear encounter recovery snapshot.", error, "EncounterFlow");
       pushToast({ tone: "error", message: "Failed to clear recovery snapshot." });
     }
   };

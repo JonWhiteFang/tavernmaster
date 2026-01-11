@@ -212,7 +212,10 @@ describe("App", () => {
     render(<App />);
 
     await waitFor(() => {
-      expect(consoleSpy).toHaveBeenCalledWith("Failed to initialize app data", error);
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining("Failed to initialize app data"),
+        error
+      );
     });
 
     consoleSpy.mockRestore();

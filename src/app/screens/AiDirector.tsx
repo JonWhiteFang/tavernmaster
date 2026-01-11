@@ -11,6 +11,7 @@ import Button from "../ui/Button";
 import Chip from "../ui/Chip";
 import ListCard from "../ui/ListCard";
 import { useToast } from "../ui/Toast";
+import { logger } from "../utils/logger";
 
 const defaultSummary =
   "Act II: the party advances through the Sunken Vault to recover the Reliquary Core.";
@@ -243,7 +244,7 @@ export default function AiDirector() {
       });
       pushToast({ tone: "success", message: "Narration copied to Journal." });
     } catch (error) {
-      console.error("Failed to copy narration to journal", error);
+      logger.error("Failed to copy narration to journal", error, "AiDirector");
       pushToast({ tone: "error", message: "Unable to save narration." });
     } finally {
       setIsSavingJournal(false);

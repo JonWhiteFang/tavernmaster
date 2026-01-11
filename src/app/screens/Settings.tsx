@@ -17,6 +17,7 @@ import { keepLocalForConflict, keepRemoteForConflict } from "../sync/resolve";
 import { useAppContext } from "../state/AppContext";
 import { useToast } from "../ui/Toast";
 import { useTutorial } from "../ui/Tutorial";
+import { logger } from "../utils/logger";
 
 const testMessages: ChatMessage[] = [
   { role: "system", content: "Reply with 'OK' if you can read this." },
@@ -69,7 +70,7 @@ export default function Settings() {
         setDraft(loaded);
       })
       .catch((error) => {
-        console.error("Failed to load settings", error);
+        logger.error("Failed to load settings", error, "Settings");
         if (!isMounted) {
           return;
         }
@@ -181,7 +182,7 @@ export default function Settings() {
     } catch (error) {
       setStatus("error");
       setStatusMessage("Failed to save settings.");
-      console.error(error);
+      logger.error("Failed to save settings", error, "Settings");
     }
   };
 
@@ -211,7 +212,7 @@ export default function Settings() {
     } catch (error) {
       setTestStatus("error");
       setTestMessage("Connection failed. Check base URL and model.");
-      console.error(error);
+      logger.error("LLM connection test failed", error, "Settings");
     }
   };
 
@@ -275,7 +276,7 @@ export default function Settings() {
         message: `Sample data created (${result.characterCount} characters).`
       });
     } catch (error) {
-      console.error("Failed to create sample data", error);
+      logger.error("Failed to create sample data", error, "Settings");
       pushToast({ tone: "error", message: "Unable to create sample data." });
     } finally {
       setSeedStatus("idle");

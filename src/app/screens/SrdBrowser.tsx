@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { querySrdEntries, getSrdEntryById, type SrdRecord } from "../data/srd_queries";
 import type { SrdVersion, SrdEntryType } from "../data/srdSync";
 import { useToast } from "../ui/Toast";
+import { logger } from "../utils/logger";
 
 const SRD_TYPES: { type: SrdEntryType; label: string }[] = [
   { type: "spell", label: "Spells" },
@@ -35,7 +36,7 @@ export default function SrdBrowser() {
       setEntries(results);
       setSelectedEntry(null);
     } catch (error) {
-      console.error("Failed to load SRD entries", error);
+      logger.error("Failed to load SRD entries", error, "SrdBrowser");
       pushToast({ tone: "error", message: "Failed to load SRD entries." });
     } finally {
       setLoading(false);
@@ -51,7 +52,7 @@ export default function SrdBrowser() {
       const full = await getSrdEntryById(entry.id, version);
       setSelectedEntry(full);
     } catch (error) {
-      console.error("Failed to load entry details", error);
+      logger.error("Failed to load entry details", error, "SrdBrowser");
       pushToast({ tone: "error", message: "Failed to load entry details." });
     }
   };

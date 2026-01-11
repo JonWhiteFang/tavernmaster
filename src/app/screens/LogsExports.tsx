@@ -7,6 +7,7 @@ import { useAppContext } from "../state/AppContext";
 import Button from "../ui/Button";
 import Chip from "../ui/Chip";
 import { useToast } from "../ui/Toast";
+import { logger } from "../utils/logger";
 
 const kindLabels: Record<AiLogEntry["kind"], string> = {
   dm: "DM",
@@ -155,7 +156,7 @@ export default function LogsExports() {
       pushToast({ tone: "success", message: "Transcript exported." });
       window.dispatchEvent(new globalThis.CustomEvent("tm.tutorial.logs-exported"));
     } catch (error) {
-      console.error("Failed to export transcript", error);
+      logger.error("Failed to export transcript", error, "LogsExports");
       pushToast({ tone: "error", message: "Unable to export transcript." });
     } finally {
       setIsExporting(false);
@@ -216,7 +217,7 @@ export default function LogsExports() {
       downloadTextFile(filename, content, "text/markdown");
       pushToast({ tone: "success", message: "Session packet exported." });
     } catch (error) {
-      console.error("Failed to export session packet", error);
+      logger.error("Failed to export session packet", error, "LogsExports");
       pushToast({ tone: "error", message: "Unable to export session packet." });
     } finally {
       setIsExporting(false);

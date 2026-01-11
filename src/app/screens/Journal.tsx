@@ -6,6 +6,7 @@ import { downloadTextFile, openPrintWindow, toFilename } from "../ui/exports";
 import { useAppContext } from "../state/AppContext";
 import Button from "../ui/Button";
 import { useToast } from "../ui/Toast";
+import { logger } from "../utils/logger";
 
 export default function Journal() {
   const { activeCampaignId, activeSessionId } = useAppContext();
@@ -128,7 +129,7 @@ export default function Journal() {
         pushToast({ tone: "success", message: "Entry updated." });
       }
     } catch (error) {
-      console.error("Failed to save journal entry", error);
+      logger.error("Failed to save journal entry", error, "Journal");
       pushToast({ tone: "error", message: "Unable to save journal entry." });
     } finally {
       setIsSaving(false);
@@ -163,7 +164,7 @@ export default function Journal() {
       setEditorMode(null);
       pushToast({ tone: "success", message: "Narration imported." });
     } catch (error) {
-      console.error("Failed to import narration", error);
+      logger.error("Failed to import narration", error, "Journal");
       pushToast({ tone: "error", message: "Unable to import narration." });
     } finally {
       setIsImporting(false);

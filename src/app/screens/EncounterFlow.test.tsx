@@ -1,3 +1,4 @@
+import type { ReactElement } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
@@ -46,7 +47,7 @@ vi.mock("../rules/actions", () => ({
   resolveAction: vi.fn()
 }));
 
-const renderWithToast = (ui: React.ReactElement) => render(<ToastProvider>{ui}</ToastProvider>);
+const renderWithToast = (ui: ReactElement) => render(<ToastProvider>{ui}</ToastProvider>);
 
 describe("EncounterFlow", () => {
   it("shows prompt when no campaign is active", () => {

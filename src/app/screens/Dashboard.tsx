@@ -7,6 +7,7 @@ import type { SrdRulesetVersion } from "../data/types";
 import { useAppContext } from "../state/AppContext";
 import Modal from "../ui/Modal";
 import { useToast } from "../ui/Toast";
+import { logger } from "../utils/logger";
 
 type DashboardProps = {
   onResumePlay?: () => void;
@@ -108,7 +109,7 @@ export default function Dashboard({ onResumePlay }: DashboardProps) {
       pushToast({ tone: "success", message: "Campaign created." });
       window.dispatchEvent(new globalThis.CustomEvent("tm.tutorial.campaign-created"));
     } catch (error) {
-      console.error("Failed to create campaign", error);
+      logger.error("Failed to create campaign", error, "Dashboard");
       setCampaignError("Unable to create campaign. Try again.");
     } finally {
       setIsCreatingCampaign(false);
@@ -133,7 +134,7 @@ export default function Dashboard({ onResumePlay }: DashboardProps) {
       pushToast({ tone: "success", message: "Session created." });
       window.dispatchEvent(new globalThis.CustomEvent("tm.tutorial.session-created"));
     } catch (error) {
-      console.error("Failed to create session", error);
+      logger.error("Failed to create session", error, "Dashboard");
       setSessionError("Unable to create session. Try again.");
     } finally {
       setIsCreatingSession(false);
