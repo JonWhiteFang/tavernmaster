@@ -63,7 +63,7 @@ Recommended default model: `llama3.1:8b` (swap as needed for your Mac).
 - LLM runtime: `docs/runtime/LLM_RUNTIME.md`
 - Sync strategy: `docs/sync/SUPABASE_SYNC.md`
 - UI style: `docs/design/UI_STYLE.md`
-- Implementation plans: `docs/plans/IMPLEMENTATION_PLAN_4_FIRST_USABLE_LOOP_AND_CHARACTER_WIZARD_FIXED.md` (current)
+- Implementation plans: `docs/plans/IMPLEMENTATION_PLAN_5_FIXES.md` (current)
 
 ## App Icons
 

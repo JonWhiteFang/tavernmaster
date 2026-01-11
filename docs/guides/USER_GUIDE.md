@@ -92,6 +92,13 @@ See `docs/guides/CHARACTER_CREATION_WIZARD.md` for detailed documentation.
 - Toggle controller between `Player` and `AI` during creation or in edits.
 - `Delete` soft-removes the character (kept for sync history).
 
+### Campaign-Scoped Characters
+
+- Characters can be assigned to a specific campaign or left global.
+- Global characters (no campaign assignment) appear in all campaigns.
+- Campaign-specific characters only appear in their assigned campaign.
+- Use this to maintain separate party rosters for different campaigns.
+
 ### Campaign Gating
 
 - `Start/Continue Campaign` is disabled until at least one party member exists.
@@ -118,11 +125,12 @@ Sync is optional. If configured, Tavern Master pushes local changes and pulls re
 - Create a new Supabase project.
 - Enable email/password auth for your user.
 
-### 2) Apply the schema migration
+### 2) Apply the schema migrations
 
-Run the SQL migration in the Supabase SQL editor:
+Run the SQL migrations in the Supabase SQL editor (in order):
 
-- `supabase/migrations/20260106160000_schema_mirror.sql`
+1. `supabase/migrations/20260106160000_schema_mirror.sql` - Base schema
+2. `supabase/migrations/20260111060000_rls_user_ownership.sql` - User-scoped RLS
 
 ### 3) Configure env vars
 

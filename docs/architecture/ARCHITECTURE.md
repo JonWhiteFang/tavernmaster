@@ -27,9 +27,18 @@ Tavern Master is a Tauri desktop app with a React + TypeScript UI and a Rust hos
 - Characters are created via the Character Creation Wizard or manual entry in `Party Sheets`.
 - The wizard guides users through: Abilities → Class → Race → Background → Equipment → Confirm.
 - Character data persists across `characters`, `character_stats`, `character_abilities`, `character_inventory`, and `character_spells`.
+- Characters can be scoped to a specific campaign via `campaign_id`, or left global (NULL) for use across all campaigns.
 - Starting equipment is auto-assigned based on class selection.
 - `control_mode` determines who controls each character; the AI Director only uses AI-controlled members.
 - Campaign continuation is gated until at least one party member exists.
+
+## Sync & Data Integrity
+
+- All database writes use soft deletes (`deleted_at`) for sync compatibility.
+- Multi-step writes (character create/update) are wrapped in SQLite transactions.
+- Sync operations are serialized via a mutex to prevent race conditions.
+- Supabase RLS enforces user-scoped data isolation via `user_id` columns.
+- Encounter updates preserve original `created_at` timestamps for accurate history.
 
 ## Local LLM Contract
 

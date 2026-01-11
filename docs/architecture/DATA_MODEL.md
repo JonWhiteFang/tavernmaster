@@ -11,8 +11,9 @@ User-authored tables also include nullable `deleted_at` for soft deletes (used b
 
 ## Characters & Party
 
-- `characters`: name, role (player/ally/npc), control_mode (player/ai), level, class, ancestry,
+- `characters`: campaign_id (optional), name, role (player/ally/npc), control_mode (player/ai), level, class, ancestry,
   background, alignment, proficiencies_json, ancestry_bonus_json.
+  - `campaign_id`: Optional foreign key to campaigns. Characters with NULL campaign_id are visible to all campaigns.
   - `proficiencies_json`: JSON array of proficiencies (skills, tools, languages).
   - `ancestry_bonus_json`: JSON array of flexible ancestry bonus selections (ex: Half-Elf).
 - `character_stats`: character_id, hp, hp_max, ac, initiative_bonus, speed.
@@ -22,11 +23,11 @@ User-authored tables also include nullable `deleted_at` for soft deletes (used b
 
 ## Encounters & Combat
 
-- `encounters`: campaign_id, name, environment, difficulty, round, active_turn_id.
+- `encounters`: campaign_id, name, environment, difficulty, round, active_turn_id, created_at, updated_at.
 - `initiative_entries`: encounter_id, character_id, order_index.
 - `conditions`: name, rules_ref, duration_rounds.
 - `encounter_conditions`: encounter_id, condition_id, target_id.
-- `action_proposals`: encounter_id, character_id, summary, rules_refs, status.
+- `action_proposals`: encounter_id, character_id, summary, rules_refs, status, payload_json.
 - `combat_log`: encounter_id, entry_type, payload_json.
 
 ## SRD Content (Read-Only)
