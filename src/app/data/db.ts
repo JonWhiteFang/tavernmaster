@@ -54,6 +54,19 @@ export async function getDatabase(): Promise<Database> {
   return databasePromise;
 }
 
+export async function withTransaction<T>(fn: (db: Database) => Promise<T>): Promise<T> {
+  const db = await getDatabase();
+  await db.execute("BEGIN");
+  try {
+    const result = await fn(db);
+    await db.execute("COMMIT");
+    return result;
+  } catch (error) {
+    await db.execute("ROLLBACK");
+    throw error;
+  }
+}
+
 export async function initDatabase(): Promise<void> {
   const db = await getDatabase();
   for (const statement of schemaStatements) {

@@ -6,7 +6,7 @@ import type {
   CharacterRole,
   CharacterSpell
 } from "./types";
-import { getDatabase } from "./db";
+import { getDatabase, withTransaction } from "./db";
 import { enqueueUpsertsAndSchedule } from "../sync/ops";
 import { getSrdById } from "./srd_queries";
 
@@ -293,85 +293,23 @@ export async function listCharacters(): Promise<Character[]> {
 }
 
 export async function createCharacter(input: NewCharacterInput): Promise<Character> {
-  const db = await getDatabase();
   const id = crypto.randomUUID();
   const statsId = crypto.randomUUID();
   const now = new Date().toISOString();
   const proficienciesJson = JSON.stringify(input.proficiencies ?? []);
   const ancestryBonusJson = JSON.stringify(input.ancestryBonusSelections ?? []);
 
-  await db.execute(
-    `INSERT INTO characters
-      (id, name, role, control_mode, level, class_name, ancestry, background, alignment,
-       proficiencies_json, ancestry_bonus_json, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [
-      id,
-      input.name,
-      input.role,
-      input.controlMode,
-      input.level,
-      input.className,
-      input.ancestry,
-      input.background,
-      input.alignment,
-      proficienciesJson,
-      ancestryBonusJson,
-      now,
-      now
-    ]
-  );
-
-  await db.execute(
-    `INSERT INTO character_stats
-      (id, character_id, hp, hp_max, ac, initiative_bonus, speed, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [
-      statsId,
-      id,
-      input.hitPoints,
-      input.hitPointMax,
-      input.armorClass,
-      input.initiativeBonus,
-      input.speed,
-      now,
-      now
-    ]
-  );
-
   const abilityPayloads: AbilityPayloadRow[] = (Object.keys(input.abilities) as AbilityScore[]).map(
-    (ability) => {
-      const abilityId = crypto.randomUUID();
-      return {
-        id: abilityId,
-        character_id: id,
-        ability,
-        score: input.abilities[ability],
-        save_bonus: Math.floor((input.abilities[ability] - 10) / 2),
-        deleted_at: null,
-        created_at: now,
-        updated_at: now
-      };
-    }
-  );
-
-  await Promise.all(
-    abilityPayloads.map((payload) =>
-      db.execute(
-        `INSERT INTO character_abilities
-          (id, character_id, ability, score, save_bonus, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [
-          payload.id,
-          payload.character_id,
-          payload.ability,
-          payload.score,
-          payload.save_bonus,
-          now,
-          now
-        ]
-      )
-    )
+    (ability) => ({
+      id: crypto.randomUUID(),
+      character_id: id,
+      ability,
+      score: input.abilities[ability],
+      save_bonus: Math.floor((input.abilities[ability] - 10) / 2),
+      deleted_at: null,
+      created_at: now,
+      updated_at: now
+    })
   );
 
   const inventoryPayloads: InventoryPayloadRow[] = input.inventory.map((entry) => ({
@@ -385,9 +323,76 @@ export async function createCharacter(input: NewCharacterInput): Promise<Charact
     updated_at: now
   }));
 
-  await Promise.all(
-    inventoryPayloads.map((payload) =>
-      db.execute(
+  const spellPayloads: SpellPayloadRow[] = input.spells.map((entry) => ({
+    id: crypto.randomUUID(),
+    character_id: id,
+    spell_id: entry.spellId,
+    prepared: entry.prepared ? 1 : 0,
+    slots_used: entry.slotsUsed,
+    deleted_at: null,
+    created_at: now,
+    updated_at: now
+  }));
+
+  await withTransaction(async (db) => {
+    await db.execute(
+      `INSERT INTO characters
+        (id, name, role, control_mode, level, class_name, ancestry, background, alignment,
+         proficiencies_json, ancestry_bonus_json, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        id,
+        input.name,
+        input.role,
+        input.controlMode,
+        input.level,
+        input.className,
+        input.ancestry,
+        input.background,
+        input.alignment,
+        proficienciesJson,
+        ancestryBonusJson,
+        now,
+        now
+      ]
+    );
+
+    await db.execute(
+      `INSERT INTO character_stats
+        (id, character_id, hp, hp_max, ac, initiative_bonus, speed, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        statsId,
+        id,
+        input.hitPoints,
+        input.hitPointMax,
+        input.armorClass,
+        input.initiativeBonus,
+        input.speed,
+        now,
+        now
+      ]
+    );
+
+    for (const payload of abilityPayloads) {
+      await db.execute(
+        `INSERT INTO character_abilities
+          (id, character_id, ability, score, save_bonus, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [
+          payload.id,
+          payload.character_id,
+          payload.ability,
+          payload.score,
+          payload.save_bonus,
+          now,
+          now
+        ]
+      );
+    }
+
+    for (const payload of inventoryPayloads) {
+      await db.execute(
         `INSERT INTO character_inventory
           (id, character_id, item_id, quantity, attuned, created_at, updated_at)
          VALUES (?, ?, ?, ?, ?, ?, ?)`,
@@ -400,24 +405,11 @@ export async function createCharacter(input: NewCharacterInput): Promise<Charact
           now,
           now
         ]
-      )
-    )
-  );
+      );
+    }
 
-  const spellPayloads: SpellPayloadRow[] = input.spells.map((entry) => ({
-    id: crypto.randomUUID(),
-    character_id: id,
-    spell_id: entry.spellId,
-    prepared: entry.prepared ? 1 : 0,
-    slots_used: entry.slotsUsed,
-    deleted_at: null,
-    created_at: now,
-    updated_at: now
-  }));
-
-  await Promise.all(
-    spellPayloads.map((payload) =>
-      db.execute(
+    for (const payload of spellPayloads) {
+      await db.execute(
         `INSERT INTO character_spells
           (id, character_id, spell_id, prepared, slots_used, created_at, updated_at)
          VALUES (?, ?, ?, ?, ?, ?, ?)`,
@@ -430,9 +422,9 @@ export async function createCharacter(input: NewCharacterInput): Promise<Charact
           now,
           now
         ]
-      )
-    )
-  );
+      );
+    }
+  });
 
   await enqueueUpsertsAndSchedule([
     {
@@ -555,95 +547,9 @@ async function getCharacterStatsPayload(id: string): Promise<CharacterStatsPaylo
 }
 
 export async function updateCharacter(id: string, input: NewCharacterInput): Promise<Character> {
-  const db = await getDatabase();
   const now = new Date().toISOString();
   const proficienciesJson = JSON.stringify(input.proficiencies ?? []);
   const ancestryBonusJson = JSON.stringify(input.ancestryBonusSelections ?? []);
-
-  await db.execute(
-    `UPDATE characters
-     SET name = ?, role = ?, control_mode = ?, level = ?, class_name = ?, ancestry = ?, background = ?,
-         alignment = ?, proficiencies_json = ?, ancestry_bonus_json = ?, updated_at = ?
-     WHERE id = ?`,
-    [
-      input.name,
-      input.role,
-      input.controlMode,
-      input.level,
-      input.className,
-      input.ancestry,
-      input.background,
-      input.alignment,
-      proficienciesJson,
-      ancestryBonusJson,
-      now,
-      id
-    ]
-  );
-
-  const statsRows = await db.select<{ id: string }[]>(
-    `SELECT id FROM character_stats WHERE character_id = ? AND deleted_at IS NULL LIMIT 1`,
-    [id]
-  );
-  let statsId = statsRows[0]?.id ?? null;
-
-  if (statsId) {
-    await db.execute(
-      `UPDATE character_stats
-       SET hp = ?, hp_max = ?, ac = ?, initiative_bonus = ?, speed = ?, updated_at = ?
-       WHERE id = ?`,
-      [
-        input.hitPoints,
-        input.hitPointMax,
-        input.armorClass,
-        input.initiativeBonus,
-        input.speed,
-        now,
-        statsId
-      ]
-    );
-  } else {
-    statsId = crypto.randomUUID();
-    await db.execute(
-      `INSERT INTO character_stats
-        (id, character_id, hp, hp_max, ac, initiative_bonus, speed, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        statsId,
-        id,
-        input.hitPoints,
-        input.hitPointMax,
-        input.armorClass,
-        input.initiativeBonus,
-        input.speed,
-        now,
-        now
-      ]
-    );
-  }
-
-  const existingAbilities = await db.select<AbilityPayloadRow[]>(
-    `SELECT id, character_id, ability, score, save_bonus, deleted_at, created_at, updated_at
-     FROM character_abilities
-     WHERE character_id = ? AND deleted_at IS NULL`,
-    [id]
-  );
-
-  await Promise.all(
-    existingAbilities.map((row) =>
-      db.execute(`UPDATE character_abilities SET deleted_at = ?, updated_at = ? WHERE id = ?`, [
-        now,
-        now,
-        row.id
-      ])
-    )
-  );
-
-  const deletedAbilityPayloads = existingAbilities.map((row) => ({
-    ...row,
-    deleted_at: now,
-    updated_at: now
-  }));
 
   const abilityPayloads: AbilityPayloadRow[] = (Object.keys(input.abilities) as AbilityScore[]).map(
     (ability) => ({
@@ -658,48 +564,6 @@ export async function updateCharacter(id: string, input: NewCharacterInput): Pro
     })
   );
 
-  await Promise.all(
-    abilityPayloads.map((payload) =>
-      db.execute(
-        `INSERT INTO character_abilities
-          (id, character_id, ability, score, save_bonus, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [
-          payload.id,
-          payload.character_id,
-          payload.ability,
-          payload.score,
-          payload.save_bonus,
-          now,
-          now
-        ]
-      )
-    )
-  );
-
-  const existingInventory = await db.select<InventoryPayloadRow[]>(
-    `SELECT id, character_id, item_id, quantity, attuned, deleted_at, created_at, updated_at
-     FROM character_inventory
-     WHERE character_id = ? AND deleted_at IS NULL`,
-    [id]
-  );
-
-  await Promise.all(
-    existingInventory.map((row) =>
-      db.execute(`UPDATE character_inventory SET deleted_at = ?, updated_at = ? WHERE id = ?`, [
-        now,
-        now,
-        row.id
-      ])
-    )
-  );
-
-  const deletedInventoryPayloads = existingInventory.map((row) => ({
-    ...row,
-    deleted_at: now,
-    updated_at: now
-  }));
-
   const inventoryPayloads: InventoryPayloadRow[] = input.inventory.map((entry) => ({
     id: crypto.randomUUID(),
     character_id: id,
@@ -708,48 +572,6 @@ export async function updateCharacter(id: string, input: NewCharacterInput): Pro
     attuned: entry.attuned ? 1 : 0,
     deleted_at: null,
     created_at: now,
-    updated_at: now
-  }));
-
-  await Promise.all(
-    inventoryPayloads.map((payload) =>
-      db.execute(
-        `INSERT INTO character_inventory
-          (id, character_id, item_id, quantity, attuned, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [
-          payload.id,
-          payload.character_id,
-          payload.item_id,
-          payload.quantity,
-          payload.attuned,
-          now,
-          now
-        ]
-      )
-    )
-  );
-
-  const existingSpells = await db.select<SpellPayloadRow[]>(
-    `SELECT id, character_id, spell_id, prepared, slots_used, deleted_at, created_at, updated_at
-     FROM character_spells
-     WHERE character_id = ? AND deleted_at IS NULL`,
-    [id]
-  );
-
-  await Promise.all(
-    existingSpells.map((row) =>
-      db.execute(`UPDATE character_spells SET deleted_at = ?, updated_at = ? WHERE id = ?`, [
-        now,
-        now,
-        row.id
-      ])
-    )
-  );
-
-  const deletedSpellPayloads = existingSpells.map((row) => ({
-    ...row,
-    deleted_at: now,
     updated_at: now
   }));
 
@@ -764,24 +586,183 @@ export async function updateCharacter(id: string, input: NewCharacterInput): Pro
     updated_at: now
   }));
 
-  await Promise.all(
-    spellPayloads.map((payload) =>
-      db.execute(
-        `INSERT INTO character_spells
-          (id, character_id, spell_id, prepared, slots_used, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+  const { statsId, deletedAbilityPayloads, deletedInventoryPayloads, deletedSpellPayloads } =
+    await withTransaction(async (db) => {
+      await db.execute(
+        `UPDATE characters
+         SET name = ?, role = ?, control_mode = ?, level = ?, class_name = ?, ancestry = ?, background = ?,
+             alignment = ?, proficiencies_json = ?, ancestry_bonus_json = ?, updated_at = ?
+         WHERE id = ?`,
         [
-          payload.id,
-          payload.character_id,
-          payload.spell_id,
-          payload.prepared,
-          payload.slots_used,
+          input.name,
+          input.role,
+          input.controlMode,
+          input.level,
+          input.className,
+          input.ancestry,
+          input.background,
+          input.alignment,
+          proficienciesJson,
+          ancestryBonusJson,
           now,
-          now
+          id
         ]
-      )
-    )
-  );
+      );
+
+      const statsRows = await db.select<{ id: string }[]>(
+        `SELECT id FROM character_stats WHERE character_id = ? AND deleted_at IS NULL LIMIT 1`,
+        [id]
+      );
+      let statsId = statsRows[0]?.id ?? null;
+
+      if (statsId) {
+        await db.execute(
+          `UPDATE character_stats
+           SET hp = ?, hp_max = ?, ac = ?, initiative_bonus = ?, speed = ?, updated_at = ?
+           WHERE id = ?`,
+          [
+            input.hitPoints,
+            input.hitPointMax,
+            input.armorClass,
+            input.initiativeBonus,
+            input.speed,
+            now,
+            statsId
+          ]
+        );
+      } else {
+        statsId = crypto.randomUUID();
+        await db.execute(
+          `INSERT INTO character_stats
+            (id, character_id, hp, hp_max, ac, initiative_bonus, speed, created_at, updated_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            statsId,
+            id,
+            input.hitPoints,
+            input.hitPointMax,
+            input.armorClass,
+            input.initiativeBonus,
+            input.speed,
+            now,
+            now
+          ]
+        );
+      }
+
+      const existingAbilities = await db.select<AbilityPayloadRow[]>(
+        `SELECT id, character_id, ability, score, save_bonus, deleted_at, created_at, updated_at
+         FROM character_abilities
+         WHERE character_id = ? AND deleted_at IS NULL`,
+        [id]
+      );
+
+      for (const row of existingAbilities) {
+        await db.execute(
+          `UPDATE character_abilities SET deleted_at = ?, updated_at = ? WHERE id = ?`,
+          [now, now, row.id]
+        );
+      }
+
+      const deletedAbilityPayloads = existingAbilities.map((row) => ({
+        ...row,
+        deleted_at: now,
+        updated_at: now
+      }));
+
+      for (const payload of abilityPayloads) {
+        await db.execute(
+          `INSERT INTO character_abilities
+            (id, character_id, ability, score, save_bonus, created_at, updated_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?)`,
+          [
+            payload.id,
+            payload.character_id,
+            payload.ability,
+            payload.score,
+            payload.save_bonus,
+            now,
+            now
+          ]
+        );
+      }
+
+      const existingInventory = await db.select<InventoryPayloadRow[]>(
+        `SELECT id, character_id, item_id, quantity, attuned, deleted_at, created_at, updated_at
+         FROM character_inventory
+         WHERE character_id = ? AND deleted_at IS NULL`,
+        [id]
+      );
+
+      for (const row of existingInventory) {
+        await db.execute(
+          `UPDATE character_inventory SET deleted_at = ?, updated_at = ? WHERE id = ?`,
+          [now, now, row.id]
+        );
+      }
+
+      const deletedInventoryPayloads = existingInventory.map((row) => ({
+        ...row,
+        deleted_at: now,
+        updated_at: now
+      }));
+
+      for (const payload of inventoryPayloads) {
+        await db.execute(
+          `INSERT INTO character_inventory
+            (id, character_id, item_id, quantity, attuned, created_at, updated_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?)`,
+          [
+            payload.id,
+            payload.character_id,
+            payload.item_id,
+            payload.quantity,
+            payload.attuned,
+            now,
+            now
+          ]
+        );
+      }
+
+      const existingSpells = await db.select<SpellPayloadRow[]>(
+        `SELECT id, character_id, spell_id, prepared, slots_used, deleted_at, created_at, updated_at
+         FROM character_spells
+         WHERE character_id = ? AND deleted_at IS NULL`,
+        [id]
+      );
+
+      for (const row of existingSpells) {
+        await db.execute(
+          `UPDATE character_spells SET deleted_at = ?, updated_at = ? WHERE id = ?`,
+          [now, now, row.id]
+        );
+      }
+
+      const deletedSpellPayloads = existingSpells.map((row) => ({
+        ...row,
+        deleted_at: now,
+        updated_at: now
+      }));
+
+      for (const payload of spellPayloads) {
+        await db.execute(
+          `INSERT INTO character_spells
+            (id, character_id, spell_id, prepared, slots_used, created_at, updated_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?)`,
+          [
+            payload.id,
+            payload.character_id,
+            payload.spell_id,
+            payload.prepared,
+            payload.slots_used,
+            now,
+            now
+          ]
+        );
+      }
+
+      return { statsId, deletedAbilityPayloads, deletedInventoryPayloads, deletedSpellPayloads };
+    });
 
   const characterPayload = await getCharacterPayload(id);
   const statsPayload = statsId ? await getCharacterStatsPayload(statsId) : null;

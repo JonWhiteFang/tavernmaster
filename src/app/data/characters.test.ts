@@ -9,7 +9,8 @@ const { enqueueUpsertsAndSchedule } = vi.hoisted(() => ({
 }));
 
 vi.mock("./db", () => ({
-  getDatabase: async () => fakeDb
+  getDatabase: async () => fakeDb,
+  withTransaction: async <T>(fn: (db: FakeDb) => Promise<T>): Promise<T> => fn(fakeDb)
 }));
 
 vi.mock("../sync/ops", () => ({
