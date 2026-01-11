@@ -6,6 +6,10 @@ vi.mock("@tauri-apps/api/core", () => ({
   invoke: vi.fn()
 }));
 
+vi.mock("@tauri-apps/plugin-process", () => ({
+  exit: vi.fn()
+}));
+
 const noop = () => {};
 
 if (!("matchMedia" in window)) {

@@ -102,6 +102,27 @@ vi.mock("./screens/Dashboard", () => ({
     <button onClick={onResumePlay}>Dashboard Screen</button>
   )
 }));
+vi.mock("./screens/TitleScreen", () => ({
+  default: ({
+    onNewCampaign,
+    onContinue,
+    onSettings,
+    onExit
+  }: {
+    onNewCampaign: () => void;
+    onContinue: () => void;
+    onSettings: () => void;
+    onExit: () => void;
+  }) => (
+    <div>
+      <div>Title Screen</div>
+      <button onClick={onContinue}>Continue</button>
+      <button onClick={onNewCampaign}>New Campaign</button>
+      <button onClick={onSettings}>Settings</button>
+      <button onClick={onExit}>Exit</button>
+    </div>
+  )
+}));
 
 describe("App", () => {
   beforeEach(() => {
@@ -120,10 +141,22 @@ describe("App", () => {
     });
   });
 
+  it("shows title screen first and navigates to main app", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    expect(screen.getByText("Title Screen")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Continue" }));
+    expect(screen.getByText("Play Workspace Screen")).toBeInTheDocument();
+  });
+
   it("navigates via app chrome and hides the context rail in settings", async () => {
     const user = userEvent.setup();
     render(<App />);
 
+    // First exit title screen
+    await user.click(screen.getByRole("button", { name: "Continue" }));
     expect(screen.getByText("Play Workspace Screen")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Go Settings" }));
@@ -138,8 +171,12 @@ describe("App", () => {
     expect(screen.getByText("Logs Screen")).toBeInTheDocument();
   });
 
-  it("responds to navigation events", () => {
+  it("responds to navigation events", async () => {
+    const user = userEvent.setup();
     render(<App />);
+
+    // Exit title screen first
+    await user.click(screen.getByRole("button", { name: "Continue" }));
 
     window.dispatchEvent(new window.CustomEvent("tm.navigate", { detail: { screen: "journal" } }));
 
@@ -151,6 +188,9 @@ describe("App", () => {
   it("handles hotkey navigation", async () => {
     const user = userEvent.setup();
     render(<App />);
+
+    // Exit title screen first
+    await user.click(screen.getByRole("button", { name: "Continue" }));
 
     const binding = hotkeyBindings.find((entry) => entry.key === "2");
     expect(binding).toBeDefined();

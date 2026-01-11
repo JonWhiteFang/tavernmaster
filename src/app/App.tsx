@@ -1,6 +1,7 @@
 import { memo, useEffect, useMemo, useState } from "react";
 import { initializeData } from "./data/init";
 import { initializeSync } from "./sync/client";
+import TitleScreen from "./screens/TitleScreen";
 import Dashboard from "./screens/Dashboard";
 import AiDirector from "./screens/AiDirector";
 import EncounterFlow from "./screens/EncounterFlow";
@@ -66,6 +67,7 @@ export default function App() {
 }
 
 function AppShell() {
+  const [showTitle, setShowTitle] = useState(true);
   const [activeScreen, setActiveScreen] = useState<ScreenKey>("play");
   const navSections = useMemo(
     () => [
@@ -171,6 +173,35 @@ function AppShell() {
   };
 
   const showContextRail = activeScreen !== "settings" && activeScreen !== "licenses";
+
+  const handleExitApp = async () => {
+    try {
+      const { exit } = await import("@tauri-apps/plugin-process");
+      await exit(0);
+    } catch {
+      window.close();
+    }
+  };
+
+  if (showTitle) {
+    return (
+      <TitleScreen
+        onNewCampaign={() => {
+          setShowTitle(false);
+          setActiveScreen("dashboard");
+        }}
+        onContinue={() => {
+          setShowTitle(false);
+          setActiveScreen("play");
+        }}
+        onSettings={() => {
+          setShowTitle(false);
+          setActiveScreen("settings");
+        }}
+        onExit={handleExitApp}
+      />
+    );
+  }
 
   return (
     <div className="app">
