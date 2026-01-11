@@ -74,6 +74,8 @@ export interface Encounter {
   initiativeOrder: string[];
   activeTurnId?: string;
   conditions: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface JournalEntry {

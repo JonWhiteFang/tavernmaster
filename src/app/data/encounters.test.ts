@@ -7,20 +7,19 @@ const mockInitiative: Record<string, unknown>[] = [];
 vi.mock("./db", () => ({
   getDatabase: vi.fn().mockResolvedValue({
     execute: vi.fn().mockImplementation(async (sql: string, params: unknown[]) => {
-      if (sql.includes("DELETE FROM initiative_entries")) {
-        const encId = params[0];
-        const toRemove = mockInitiative.filter((r) => r.encounter_id === encId);
-        toRemove.forEach((r) => {
-          const idx = mockInitiative.indexOf(r);
-          if (idx >= 0) mockInitiative.splice(idx, 1);
-        });
+      if (sql.includes("UPDATE initiative_entries SET deleted_at")) {
+        const id = params[2];
+        const row = mockInitiative.find((r) => r.id === id);
+        if (row) row.deleted_at = params[0];
       }
       if (sql.includes("INSERT INTO initiative_entries")) {
         mockInitiative.push({
           id: params[0],
           encounter_id: params[1],
           character_id: params[2],
-          order_index: params[3]
+          order_index: params[3],
+          created_at: params[4],
+          deleted_at: null
         });
       }
       if (sql.includes("UPDATE encounters SET round")) {
@@ -29,15 +28,16 @@ vi.mock("./db", () => ({
         if (row) {
           row.round = params[0];
           row.active_turn_id = params[1];
+          row.updated_at = params[2];
         }
       }
     }),
     select: vi.fn().mockImplementation(async (sql: string, params: unknown[]) => {
       if (sql.includes("FROM encounters WHERE id")) {
-        return mockRows.filter((r) => r.id === params[0]);
+        return mockRows.filter((r) => r.id === params[0] && r.deleted_at === null);
       }
-      if (sql.includes("FROM initiative_entries WHERE encounter_id")) {
-        return mockInitiative.filter((r) => r.encounter_id === params[0]);
+      if (sql.includes("FROM initiative_entries")) {
+        return mockInitiative.filter((r) => r.encounter_id === params[0] && r.deleted_at === null);
       }
       if (sql.includes("FROM encounter_conditions")) {
         return [];
@@ -55,6 +55,7 @@ describe("encounters initiative persistence", () => {
   beforeEach(() => {
     mockRows.length = 0;
     mockInitiative.length = 0;
+    const now = new Date().toISOString();
     mockRows.push({
       id: "enc-1",
       campaign_id: "camp-1",
@@ -62,27 +63,33 @@ describe("encounters initiative persistence", () => {
       environment: null,
       difficulty: "medium",
       round: 1,
-      active_turn_id: null
+      active_turn_id: null,
+      created_at: now,
+      updated_at: now,
+      deleted_at: null
     });
   });
 
   it("saves initiative order", async () => {
     await saveInitiativeOrder("enc-1", ["char-a", "char-b", "char-c"]);
 
-    expect(mockInitiative).toHaveLength(3);
-    expect(mockInitiative[0].character_id).toBe("char-a");
-    expect(mockInitiative[0].order_index).toBe(0);
-    expect(mockInitiative[2].character_id).toBe("char-c");
-    expect(mockInitiative[2].order_index).toBe(2);
+    const active = mockInitiative.filter((r) => r.deleted_at === null);
+    expect(active).toHaveLength(3);
+    expect(active[0].character_id).toBe("char-a");
+    expect(active[0].order_index).toBe(0);
+    expect(active[2].character_id).toBe("char-c");
+    expect(active[2].order_index).toBe(2);
   });
 
-  it("clears existing initiative before saving new order", async () => {
+  it("soft-deletes existing initiative before saving new order", async () => {
     await saveInitiativeOrder("enc-1", ["char-a"]);
     await saveInitiativeOrder("enc-1", ["char-x", "char-y"]);
 
-    const enc1Initiative = mockInitiative.filter((r) => r.encounter_id === "enc-1");
-    expect(enc1Initiative).toHaveLength(2);
-    expect(enc1Initiative[0].character_id).toBe("char-x");
+    const active = mockInitiative.filter(
+      (r) => r.encounter_id === "enc-1" && r.deleted_at === null
+    );
+    expect(active).toHaveLength(2);
+    expect(active[0].character_id).toBe("char-x");
   });
 
   it("updates encounter turn state", async () => {
@@ -94,9 +101,24 @@ describe("encounters initiative persistence", () => {
   });
 
   it("gets encounter with initiative order", async () => {
+    const now = new Date().toISOString();
     mockInitiative.push(
-      { id: "i1", encounter_id: "enc-1", character_id: "char-a", order_index: 0 },
-      { id: "i2", encounter_id: "enc-1", character_id: "char-b", order_index: 1 }
+      {
+        id: "i1",
+        encounter_id: "enc-1",
+        character_id: "char-a",
+        order_index: 0,
+        created_at: now,
+        deleted_at: null
+      },
+      {
+        id: "i2",
+        encounter_id: "enc-1",
+        character_id: "char-b",
+        order_index: 1,
+        created_at: now,
+        deleted_at: null
+      }
     );
 
     const enc = await getEncounter("enc-1");
