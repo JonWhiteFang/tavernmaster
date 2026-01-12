@@ -133,9 +133,9 @@ Sync is robust and doesn’t break encryption.
 
 ### Checklist
 
-- [ ] Sync canon/turn/state tables.
+- [x] Sync canon/turn/state tables.
 - [ ] Sync crypto_meta safely.
-- [ ] Conflicts surfaced and resolvable (keep local / keep remote / merge notes).
+- [x] Conflicts surfaced and resolvable (keep local / keep remote / merge notes).
 
 ### Acceptance criteria
 

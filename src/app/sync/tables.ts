@@ -14,7 +14,11 @@ export type SyncedTable =
   | "action_proposals"
   | "combat_log"
   | "ai_logs"
-  | "app_settings";
+  | "app_settings"
+  | "campaign_state"
+  | "turns"
+  | "canon_facts"
+  | "canon_summaries";
 
 export type TableSpec = {
   table: SyncedTable;
@@ -251,6 +255,36 @@ export const syncedTables: readonly TableSpec[] = [
     columns: ["key", "value_json", "deleted_at", "created_at", "updated_at"],
     // Only sync "app_settings" key; "ui_state" stays local-only (active campaign/session/encounter IDs)
     syncFilter: (row) => row.key === "app_settings"
+  },
+  {
+    table: "campaign_state",
+    primaryKey: "id",
+    columns: ["campaign_id", "state_json", "current_scene", "turn_count", "updated_at"]
+  },
+  {
+    table: "turns",
+    primaryKey: "id",
+    columns: [
+      "id",
+      "campaign_id",
+      "session_id",
+      "turn_number",
+      "player_input",
+      "ai_output",
+      "mode",
+      "status",
+      "created_at"
+    ]
+  },
+  {
+    table: "canon_facts",
+    primaryKey: "id",
+    columns: ["id", "campaign_id", "key", "value", "source", "created_at", "updated_at"]
+  },
+  {
+    table: "canon_summaries",
+    primaryKey: "id",
+    columns: ["id", "campaign_id", "long_summary", "recent", "created_at", "updated_at"]
   }
 ] as const;
 
