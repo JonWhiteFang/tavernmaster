@@ -101,19 +101,19 @@ If a migration fails, restore automatically and show a recovery UI.
 
 ### Checklist
 
-- [ ] In `runMigrations()`:
-  - [ ] call `backup_database("pre-migration vX→vY")` before each migration
-  - [ ] wrap migration in try/catch
-  - [ ] on failure, restore backup and throw a structured error
-- [ ] Add `Recovery` screen:
-  - [ ] explains failure in plain English
-  - [ ] offers: Restore latest backup, Open backups folder (if supported), Retry
-- [ ] In `App.tsx`, if migration fails, route to `Recovery` screen.
+- [x] In `runMigrations()`:
+  - [x] call `backup_database("pre-migration vX→vY")` before each migration
+  - [x] wrap migration in try/catch
+  - [x] on failure, restore backup and throw a structured error
+- [x] Add `Recovery` screen:
+  - [x] explains failure in plain English
+  - [x] offers: Restore latest backup, Open backups folder (if supported), Retry
+- [x] In `App.tsx`, if migration fails, route to `Recovery` screen.
 
 ### Tests (required)
 
-- [ ] migration failure test: runner calls restore and surfaces error.
-- [ ] Recovery screen renders and buttons call expected handlers.
+- [x] migration failure test: runner calls restore and surfaces error.
+- [x] Recovery screen renders and buttons call expected handlers.
 
 ### Acceptance criteria
 
