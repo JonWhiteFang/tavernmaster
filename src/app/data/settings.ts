@@ -126,3 +126,8 @@ export async function upsertAppSettings(settings: AppSettings): Promise<void> {
 export async function ensureSettings(): Promise<AppSettings> {
   return getAppSettings();
 }
+
+export async function getLlmConfig(): Promise<LlmSettings> {
+  const settings = await getAppSettings();
+  return settings.llm;
+}
