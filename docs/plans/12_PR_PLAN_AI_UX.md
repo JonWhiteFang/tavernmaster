@@ -20,19 +20,19 @@ Make AI output deterministic and safe to apply.
 
 ### Checklist
 
-- [ ] Define `TurnResponse` schema exactly (scene, choices, mechanics, state_patch, canon_updates, etc.).
+- [x] Define `TurnResponse` schema exactly (scene, choices, mechanics, state_patch, canon_updates, etc.).
 - [ ] Implement strict JSON parsing:
-  - [ ] accept raw JSON only; optionally extract first JSON object from text (no semantic rewrite)
+  - [x] accept raw JSON only; optionally extract first JSON object from text (no semantic rewrite)
 - [ ] Implement retry policy:
-  - [ ] attempt 1: normal
-  - [ ] attempt 2: temperature=0 + “JSON ONLY” reinforcement
-  - [ ] on failure: surface error and store raw output for diagnostics
+  - [x] attempt 1: normal
+  - [x] attempt 2: temperature=0 + “JSON ONLY” reinforcement
+  - [x] on failure: surface error and store raw output for diagnostics
 
 ### Tests
 
-- [ ] parse succeeds on valid json
-- [ ] parse fails predictably on invalid json
-- [ ] retry logic called with correct params (mock client)
+- [x] parse succeeds on valid json
+- [x] parse fails predictably on invalid json
+- [x] retry logic called with correct params (mock client)
 
 ### Acceptance criteria
 
