@@ -167,19 +167,19 @@ A single bad AI output must never permanently poison a campaign.
 
 ### Checklist
 
-- [ ] Add `turns.status` enum-like text: `applied|undone`.
+- [x] Add `turns.status` enum-like text: `applied|undone`.
 - [ ] Implement `undoLastTurn(campaignId)`:
-  - [ ] find last applied turn
-  - [ ] load previous snapshot
-  - [ ] update campaign_state to previous snapshot
-  - [ ] mark last turn as undone
+  - [x] find last applied turn
+  - [x] load previous snapshot
+  - [x] update campaign_state to previous snapshot
+  - [x] mark last turn as undone
   - [ ] append a “system” log entry for audit (optional but required in data)
 - [ ] Expose command in UI later via menu/shortcut.
 
 ### Tests
 
-- [ ] undo reverts state doc exactly
-- [ ] repeated undo behaves correctly
+- [x] undo reverts state doc exactly
+- [x] repeated undo behaves correctly
 
 ### Acceptance criteria
 
