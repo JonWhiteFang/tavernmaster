@@ -133,24 +133,24 @@ Player-first “game view” exists and is usable.
 ### Checklist
 
 - [ ] PlayView shows:
-  - scene card (title + narrative)
-  - 3–7 choices as buttons
-  - custom action input
-  - your character summary (HP/AC/conditions)
-  - collapsible timeline drawer
+  - [x] scene card (title + narrative)
+  - [x] 3–7 choices as buttons
+  - [x] custom action input
+  - [x] your character summary (HP/AC/conditions)
+  - [x] collapsible timeline drawer
 - [ ] On choice/custom submit:
-  - orchestrate turn
-  - apply turn
-  - refresh state + timeline
+  - [x] orchestrate turn
+  - [x] apply turn
+  - [x] refresh state + timeline
 - [ ] Error UX:
   - “Retry”
   - “Open details” (dev mode only)
 
 ### Tests
 
-- [ ] renders choices
-- [ ] submitting triggers orchestrator and then applyTurn
-- [ ] keyboard hotkeys 1..7 select choices
+- [x] renders choices
+- [x] submitting triggers orchestrator and then applyTurn
+- [x] keyboard hotkeys 1..7 select choices
 
 ### Acceptance criteria
 

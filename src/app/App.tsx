@@ -8,6 +8,7 @@ import Dashboard from "./screens/Dashboard";
 import AiDirector from "./screens/AiDirector";
 import EncounterFlow from "./screens/EncounterFlow";
 import PlayWorkspace from "./screens/PlayWorkspace";
+import PlayView from "./screens/PlayView";
 import Journal from "./screens/Journal";
 import MapStudio from "./screens/MapStudio";
 import LogsExports from "./screens/LogsExports";
@@ -28,6 +29,7 @@ import ErrorBoundary from "./ui/ErrorBoundary";
 
 type ScreenKey =
   | "play"
+  | "playview"
   | "dashboard"
   | "encounter"
   | "party"
@@ -41,6 +43,7 @@ type ScreenKey =
 
 const screens: ScreenKey[] = [
   "play",
+  "playview",
   "dashboard",
   "encounter",
   "party",
@@ -150,6 +153,8 @@ function AppShell() {
     switch (activeScreen) {
       case "play":
         return <PlayWorkspace />;
+      case "playview":
+        return <PlayView onNeedsCampaign={() => setActiveScreen("dashboard")} />;
       case "settings":
         return <Settings />;
       case "licenses":
