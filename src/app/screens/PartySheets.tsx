@@ -360,11 +360,16 @@ export default function PartySheets() {
   };
 
   const handleWizardComplete = async (wizardState: CharacterCreationState) => {
-    const input = buildNewCharacterInput(wizardState);
-    const saved = await createCharacter(input);
-    await loadCharacters(saved.id);
-    setWizardOpen(false);
-    window.dispatchEvent(new globalThis.CustomEvent("tm.tutorial.character-created"));
+    try {
+      const input = buildNewCharacterInput(wizardState);
+      const saved = await createCharacter(input);
+      await loadCharacters(saved.id);
+      setWizardOpen(false);
+      window.dispatchEvent(new globalThis.CustomEvent("tm.tutorial.character-created"));
+    } catch (error) {
+      logger.error("Failed to create character", error, "PartySheets");
+      console.error("Character creation failed:", error);
+    }
   };
 
   const handleSetAsPlayer = async () => {
