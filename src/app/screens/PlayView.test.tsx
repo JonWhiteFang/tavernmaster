@@ -54,7 +54,8 @@ describe("PlayView", () => {
     render(<PlayView />);
 
     expect(await screen.findByText("The tavern")).toBeInTheDocument();
-    expect(screen.getByText(/Mode: exploration/)).toBeInTheDocument();
+    expect(screen.getByText(/Mode:/)).toBeInTheDocument();
+    expect(screen.getByText(/Exploring/)).toBeInTheDocument();
     expect(screen.getByText(/Turn: 5/)).toBeInTheDocument();
   });
 
@@ -63,7 +64,7 @@ describe("PlayView", () => {
     const PlayView = (await import("./PlayView")).default;
     render(<PlayView />);
 
-    expect(screen.getByText(/Select a campaign/)).toBeInTheDocument();
+    expect(screen.getByText(/No campaign selected/)).toBeInTheDocument();
   });
 
   it("renders custom action input", async () => {

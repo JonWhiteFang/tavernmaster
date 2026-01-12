@@ -236,12 +236,12 @@ Remove “tool” language and reduce cognitive load.
 
 ### Checklist
 
-- [ ] Rename UI labels:
+- [x] Rename UI labels:
   - Stream Narration → Continue
   - Campaigns & Sessions → Campaign Library
   - Encounter → Combat (when active)
-- [ ] Empty states: clear, friendly, action-oriented
-- [ ] Error messages: plain language + actionable steps
+- [x] Empty states: clear, friendly, action-oriented
+- [x] Error messages: plain language + actionable steps
 
 ### Acceptance criteria
 
