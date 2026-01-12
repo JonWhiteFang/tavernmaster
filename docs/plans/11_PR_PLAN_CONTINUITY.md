@@ -203,19 +203,19 @@ Support branching timelines and explicit canon corrections.
 ### Checklist
 
 - [ ] Implement `branchCampaign({ campaignId, parentTurnId, label })`:
-  - [ ] duplicate campaign row (new id)
-  - [ ] copy campaign_state doc from snapshot at parentTurnId
-  - [ ] copy canon store + quests
+  - [x] duplicate campaign row (new id)
+  - [x] copy campaign_state doc from snapshot at parentTurnId
+  - [x] copy canon store + quests
   - [ ] copy turns up to parentTurnId (or reference them as read-only prefix)
 - [ ] Implement `addRetcon({ campaignId, note })`:
-  - [ ] store as canon fact under key `retcon:<timestamp>`
+  - [x] store as canon fact under key `retcon:<timestamp>`
   - [ ] include in canon summaries as “must include”
 - [ ] Provide minimal UI hook points (actual UI in Plan 12+).
 
 ### Tests
 
-- [ ] branched campaign is playable and independent
-- [ ] retcon is stored and retrievable
+- [x] branched campaign is playable and independent
+- [x] retcon is stored and retrievable
 
 ### Acceptance criteria
 
