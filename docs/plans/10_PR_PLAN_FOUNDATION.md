@@ -22,23 +22,23 @@ Add a real migration framework without breaking existing installs.
 
 ### Checklist
 
-- [ ] Implement `getUserVersion(db)` and `setUserVersion(db, version)` using `PRAGMA user_version`.
-- [ ] Implement a migration registry: `const migrations = [{ version: 1, name, up(db) }, ...]`.
-- [ ] Implement `runMigrations(db)`:
-  - [ ] reads `user_version`
-  - [ ] runs migrations > current version in order
-  - [ ] sets `user_version` after each successful migration
-- [ ] Modify `initDatabase()` in `db.ts`:
-  - [ ] `await runMigrations(db)` first
-  - [ ] then run existing `schemaStatements` only if baseline migration needs it (ensure idempotency)
-  - [ ] keep `ensureColumn` for now (deprecated later)
-- [ ] Update docs in `migrations/README.md` for how to add a migration.
+- [x] Implement `getUserVersion(db)` and `setUserVersion(db, version)` using `PRAGMA user_version`.
+- [x] Implement a migration registry: `const migrations = [{ version: 1, name, up(db) }, ...]`.
+- [x] Implement `runMigrations(db)`:
+  - [x] reads `user_version`
+  - [x] runs migrations > current version in order
+  - [x] sets `user_version` after each successful migration
+- [x] Modify `initDatabase()` in `db.ts`:
+  - [x] `await runMigrations(db)` first
+  - [x] then run existing `schemaStatements` only if baseline migration needs it (ensure idempotency)
+  - [x] keep `ensureColumn` for now (deprecated later)
+- [x] Update docs in `migrations/README.md` for how to add a migration.
 
 ### Tests (required)
 
-- [ ] `migrate.test.ts`: when `user_version = 0`, runner applies baseline migration and sets `user_version=1`.
-- [ ] `migrate.test.ts`: when `user_version=1`, does not re-run baseline.
-- [ ] `db.test.ts`: still passes with mocks.
+- [x] `migrate.test.ts`: when `user_version = 0`, runner applies baseline migration and sets `user_version=1`.
+- [x] `migrate.test.ts`: when `user_version=1`, does not re-run baseline.
+- [x] `db.test.ts`: still passes with mocks.
 
 ### Acceptance criteria
 

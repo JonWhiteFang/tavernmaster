@@ -1,5 +1,5 @@
 import Database from "@tauri-apps/plugin-sql";
-import { schemaStatements } from "./schema";
+import { runMigrations } from "./migrate";
 
 const DATABASE_URL = "sqlite:tavernmaster.db";
 
@@ -69,9 +69,7 @@ export async function withTransaction<T>(fn: (db: Database) => Promise<T>): Prom
 
 export async function initDatabase(): Promise<void> {
   const db = await getDatabase();
-  for (const statement of schemaStatements) {
-    await db.execute(statement);
-  }
+  await runMigrations(db);
   await ensureSoftDeleteColumns(db);
   await ensureColumn(db, "campaigns", "ruleset_version", "TEXT NOT NULL DEFAULT '5.1'");
   await ensureColumn(db, "characters", "campaign_id", "TEXT");
