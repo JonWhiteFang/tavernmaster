@@ -355,16 +355,17 @@ export default function PartySheets() {
       setMode("view");
     } catch (error) {
       logger.error("Failed to delete character", error, "PartySheets");
+      console.error("Delete failed:", error);
       setFormError("Failed to delete character. Check the console for details.");
     }
   };
 
   const handleWizardComplete = async (wizardState: CharacterCreationState) => {
+    setWizardOpen(false);
     try {
       const input = buildNewCharacterInput(wizardState);
       const saved = await createCharacter(input);
       await loadCharacters(saved.id);
-      setWizardOpen(false);
       window.dispatchEvent(new globalThis.CustomEvent("tm.tutorial.character-created"));
     } catch (error) {
       logger.error("Failed to create character", error, "PartySheets");
