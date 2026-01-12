@@ -98,17 +98,17 @@ Single safe function applies a validated TurnResponse to persistence.
   - HP bounds, condition schema, quest transitions
   - state doc versioning
 - [ ] Transactional apply:
-  - appendTurn
-  - snapshot
-  - update campaign_state doc
-  - upsert canon facts/quests
+  - [x] appendTurn
+  - [x] snapshot
+  - [x] update campaign_state doc
+  - [x] upsert canon facts/quests
   - update search_index for recap/summary
 - [ ] Store raw AI output separately for developer diagnostics.
 
 ### Tests
 
-- [ ] invalid patch rejected with explicit error
-- [ ] transaction ordering correct
+- [x] invalid patch rejected with explicit error
+- [x] transaction ordering correct
 
 ### Acceptance criteria
 
