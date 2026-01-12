@@ -54,21 +54,21 @@ Every player action becomes an auditable, replayable Turn with a snapshot.
 
 ### Checklist
 
-- [ ] Add `turns` and `turn_state_snapshots` tables.
-- [ ] Implement `appendTurn({ campaignId, sessionId, playerInput, aiOutput, mode, stateDoc })`:
-  - [ ] begin transaction
-  - [ ] insert into `turns`
-  - [ ] insert snapshot (encrypted json)
-  - [ ] update `campaign_state` to new `stateDoc`
-  - [ ] commit
-- [ ] TimelineDrawer:
-  - [ ] merge last 10 from turns + combat_log
-  - [ ] keep ai_logs view as dev-only later
+- [x] Add `turns` and `turn_state_snapshots` tables.
+- [x] Implement `appendTurn({ campaignId, sessionId, playerInput, aiOutput, mode, stateDoc })`:
+  - [x] begin transaction
+  - [x] insert into `turns`
+  - [x] insert snapshot (encrypted json)
+  - [x] update `campaign_state` to new `stateDoc`
+  - [x] commit
+- [x] TimelineDrawer:
+  - [x] merge last 10 from turns + combat_log
+  - [x] keep ai_logs view as dev-only later
 
 ### Tests
 
-- [ ] appendTurn is transactional (mock begin/commit/rollback if available; else statement ordering assertions)
-- [ ] list turns paging works
+- [x] appendTurn is transactional (mock begin/commit/rollback if available; else statement ordering assertions)
+- [x] list turns paging works
 
 ### Acceptance criteria
 
