@@ -105,12 +105,12 @@ Reliable long-term backups and portability.
 
 ### Checklist
 
-- [ ] Export bundle includes:
-  - schema version
-  - app version
+- [x] Export bundle includes:
+  - [x] schema version
+  - [x] app version
   - wrapped key material
-  - campaign data (either full DB or campaign subset)
-- [ ] Import validates versions and offers conflict-safe restore (new campaign id).
+  - [x] campaign data (either full DB or campaign subset)
+- [x] Import validates versions and offers conflict-safe restore (new campaign id).
 
 ### Acceptance criteria
 
