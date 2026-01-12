@@ -10,6 +10,7 @@ tauri-build = { version = "2.0.0", features = [] }
 tauri = { version = "2.0.0", features = [] }
 tauri-plugin-sql = { version = "2.0.0", features = ["sqlite"] }
 aes-gcm = "0.10.3"
+argon2 = "0.5"
 base64 = "0.22.1"
 chrono = "0.4"
 keyring = "2.3.3"
