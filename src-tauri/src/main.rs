@@ -14,7 +14,13 @@ fn main() {
             commands::get_app_data_dir,
             commands::backup_database,
             commands::list_database_backups,
-            commands::restore_database
+            commands::restore_database,
+            commands::vault_status,
+            commands::vault_initialize,
+            commands::vault_unlock,
+            commands::vault_rewrap,
+            commands::vault_get_data_key,
+            commands::vault_lock
         ])
         .run(tauri::generate_context!())
         .expect("error while running Tavern Master");

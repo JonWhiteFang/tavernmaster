@@ -183,22 +183,22 @@ Make encrypted campaign data portable across device restores via an explicit Vau
 
 ### Checklist
 
-- [ ] Add table `crypto_meta(key TEXT PRIMARY KEY, value TEXT NOT NULL)`.
-- [ ] Implement in Rust:
-  - [ ] generate random `data_key` if none exists
-  - [ ] derive wrapping key from passphrase using Argon2id (store salt + params in kdf_params)
-  - [ ] wrap/unwrap `data_key` via AES-GCM, store `wrapped_data_key`
-- [ ] Keep keychain as a cache, but DB+passphrase as the durable source.
-- [ ] Update TS encryption helper to request the active data key from Tauri commands.
-- [ ] Add Vault UI:
-  - [ ] set passphrase
-  - [ ] rotate passphrase (rewrap only)
-  - [ ] export recovery bundle hook (actual export in later PRs)
+- [x] Add table `crypto_meta(key TEXT PRIMARY KEY, value TEXT NOT NULL)`.
+- [x] Implement in Rust:
+  - [x] generate random `data_key` if none exists
+  - [x] derive wrapping key from passphrase using Argon2id (store salt + params in kdf_params)
+  - [x] wrap/unwrap `data_key` via AES-GCM, store `wrapped_data_key`
+- [x] Keep keychain as a cache, but DB+passphrase as the durable source.
+- [x] Update TS encryption helper to request the active data key from Tauri commands.
+- [x] Add Vault UI:
+  - [x] set passphrase
+  - [x] rotate passphrase (rewrap only)
+  - [x] export recovery bundle hook (actual export in later PRs)
 
 ### Tests (required)
 
-- [ ] Rust: wrap/unwrap roundtrip with fixed vectors.
-- [ ] TS: encrypt/decrypt roundtrip remains valid across app reload (mocked invoke).
+- [x] Rust: wrap/unwrap roundtrip with fixed vectors.
+- [x] TS: encrypt/decrypt roundtrip remains valid across app reload (mocked invoke).
 
 ### Acceptance criteria
 

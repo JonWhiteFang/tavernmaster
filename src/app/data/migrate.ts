@@ -1,6 +1,7 @@
 import type Database from "@tauri-apps/plugin-sql";
 import baseline from "./migrations/0001_baseline";
 import campaignPlayerAndState from "./migrations/0002_campaign_player_and_state";
+import cryptoMeta from "./migrations/0003_crypto_meta";
 import { backupDatabase, restoreDatabase } from "./backups";
 
 export interface Migration {
@@ -21,7 +22,7 @@ export class MigrationError extends Error {
   }
 }
 
-const migrations: Migration[] = [baseline, campaignPlayerAndState];
+const migrations: Migration[] = [baseline, campaignPlayerAndState, cryptoMeta];
 
 type VersionRow = { user_version: number };
 
