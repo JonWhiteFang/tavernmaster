@@ -24,10 +24,6 @@ The canonical build plan lives in `docs/plans/`.
 4. `docs/plans/12_PR_PLAN_AI_UX.md` (PR-013 → PR-019)
 5. `docs/plans/13_PR_PLAN_COMBAT_SRD_SYNC_RELEASE.md` (PR-020 → PR-026)
 
-### Legacy plans (context only)
-These older files may exist and can provide historical context, but the numbered plans above are the source of truth:
-- `docs/plans/IMPLEMENTATION_PLAN_*.md`
-
 ---
 
 ## How to work (Kiro workflow)
