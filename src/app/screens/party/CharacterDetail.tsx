@@ -3,8 +3,10 @@ import { abilityOrder, abilityModifier } from "../../rules/characterCreation";
 
 type Props = {
   character: Character;
+  isPlayerCharacter: boolean;
   onEdit: () => void;
   onDelete: () => void;
+  onSetAsPlayer?: () => void;
 };
 
 const controlLabels: Record<CharacterControl, string> = {
@@ -25,12 +27,30 @@ function formatSpellSummary(spell: Character["spells"][number]): string {
   return detail ? `${spell.name} (${detail}, ${prepared})` : `${spell.name} (${prepared})`;
 }
 
-export default function CharacterDetail({ character, onEdit, onDelete }: Props) {
+export default function CharacterDetail({
+  character,
+  isPlayerCharacter,
+  onEdit,
+  onDelete,
+  onSetAsPlayer
+}: Props) {
   return (
     <>
       <div className="panel-header">
-        <div className="panel-title">Character Detail</div>
+        <div className="panel-title">
+          Character Detail
+          {isPlayerCharacter && (
+            <span className="status-chip" style={{ marginLeft: "0.5rem" }}>
+              Your Character
+            </span>
+          )}
+        </div>
         <div className="button-row" style={{ marginTop: 0 }}>
+          {!isPlayerCharacter && onSetAsPlayer && (
+            <button className="primary-button" onClick={onSetAsPlayer}>
+              Set as Your Character
+            </button>
+          )}
           <button className="secondary-button" onClick={onEdit}>
             Edit
           </button>

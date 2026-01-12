@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { listAiLogs } from "../data/ai_logs";
 import { createCampaign } from "../data/campaigns";
+import { getPlayerCharacterId } from "../data/campaign_player";
 import { listCharacters } from "../data/characters";
 import { createSession } from "../data/sessions";
 import type { SrdRulesetVersion } from "../data/types";
@@ -26,6 +27,7 @@ export default function Dashboard({ onResumePlay }: DashboardProps) {
   } = useAppContext();
   const { pushToast } = useToast();
   const [partyCount, setPartyCount] = useState(0);
+  const [playerCharacterId, setPlayerCharacterId] = useState<string | null>(null);
   const [lastLogAt, setLastLogAt] = useState<string | null>(null);
   const [isCreatingCampaign, setIsCreatingCampaign] = useState(false);
   const [isCreatingSession, setIsCreatingSession] = useState(false);
@@ -43,6 +45,14 @@ export default function Dashboard({ onResumePlay }: DashboardProps) {
       setPartyCount(data.length);
     });
   }, []);
+
+  useEffect(() => {
+    if (!activeCampaignId) {
+      setPlayerCharacterId(null);
+      return;
+    }
+    void getPlayerCharacterId(activeCampaignId).then(setPlayerCharacterId);
+  }, [activeCampaignId]);
 
   useEffect(() => {
     if (!activeCampaignId) {
@@ -69,6 +79,8 @@ export default function Dashboard({ onResumePlay }: DashboardProps) {
   );
 
   const hasParty = partyCount > 0;
+  const hasPlayerCharacter = !!playerCharacterId;
+  const canPlay = hasParty && hasPlayerCharacter;
 
   const trimmedCampaignName = campaignName.trim();
   const trimmedCampaignSummary = campaignSummary.trim();
@@ -296,15 +308,22 @@ export default function Dashboard({ onResumePlay }: DashboardProps) {
                 <div className="session-block">
                   <div className="panel-title">Campaign Actions</div>
                   <div className="panel-copy">
-                    {hasParty
-                      ? "Party assembled. You can continue the campaign."
-                      : "Add party members in Party Sheets before continuing."}
+                    {!hasParty
+                      ? "Add party members in Party Sheets before continuing."
+                      : !hasPlayerCharacter
+                        ? "Choose your player character in Party Sheets to continue."
+                        : "Party assembled. You can continue the campaign."}
                   </div>
                   <div className="button-row" style={{ marginTop: "1rem" }}>
+                    {!hasPlayerCharacter && hasParty && (
+                      <button className="secondary-button" onClick={() => handleNavigate("party")}>
+                        Choose Your Character
+                      </button>
+                    )}
                     <button
                       className="primary-button"
                       onClick={onResumePlay}
-                      disabled={!onResumePlay}
+                      disabled={!onResumePlay || !canPlay}
                       data-tutorial-id="dashboard-resume-play"
                     >
                       Resume Play

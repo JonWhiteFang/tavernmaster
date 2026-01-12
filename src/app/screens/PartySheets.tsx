@@ -7,6 +7,7 @@ import {
   listCharacters,
   updateCharacter
 } from "../data/characters";
+import { getPlayerCharacterId, setPlayerCharacter } from "../data/campaign_player";
 import type { SrdRecord } from "../data/srd_queries";
 import { querySrd } from "../data/srd_queries";
 import {
@@ -181,6 +182,7 @@ export default function PartySheets() {
   const { activeCampaign } = useAppContext();
   const [characters, setCharacters] = useState<Character[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [playerCharacterId, setPlayerCharacterId] = useState<string | null>(null);
   const [mode, setMode] = useState<FormMode>("view");
   const [formState, setFormState] = useState<CharacterFormState>(buildDefaultFormState);
   const [formError, setFormError] = useState<string | null>(null);
@@ -205,6 +207,14 @@ export default function PartySheets() {
   useEffect(() => {
     void loadCharacters();
   }, [loadCharacters]);
+
+  useEffect(() => {
+    if (!activeCampaign?.id) {
+      setPlayerCharacterId(null);
+      return;
+    }
+    void getPlayerCharacterId(activeCampaign.id).then(setPlayerCharacterId);
+  }, [activeCampaign?.id]);
 
   useEffect(() => {
     void (async () => {
@@ -357,6 +367,16 @@ export default function PartySheets() {
     window.dispatchEvent(new globalThis.CustomEvent("tm.tutorial.character-created"));
   };
 
+  const handleSetAsPlayer = async () => {
+    if (!activeCampaign?.id || !activeId) return;
+    try {
+      await setPlayerCharacter(activeCampaign.id, activeId);
+      setPlayerCharacterId(activeId);
+    } catch (error) {
+      logger.error("Failed to set player character", error, "PartySheets");
+    }
+  };
+
   return (
     <div className="party">
       <section className="panel" style={{ marginBottom: "1.4rem" }}>
@@ -381,8 +401,10 @@ export default function PartySheets() {
             activeCharacter ? (
               <CharacterDetail
                 character={activeCharacter}
+                isPlayerCharacter={activeCharacter.id === playerCharacterId}
                 onEdit={handleStartEdit}
                 onDelete={handleDelete}
+                onSetAsPlayer={activeCampaign?.id ? handleSetAsPlayer : undefined}
               />
             ) : (
               <>
