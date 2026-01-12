@@ -37,14 +37,23 @@ export async function listSrdRaces(version: SrdVersion = "5.1"): Promise<SrdRace
   return rows.map((row) => {
     const data = JSON.parse(row.data_json) as {
       speed: number;
-      abilityBonuses: AbilityBonuses;
+      abilityBonuses?: Array<{ ability: string; bonus: number }> | AbilityBonuses;
       bonusChoices?: BonusChoices;
     };
+    // Convert array format to object format if needed
+    let bonuses: AbilityBonuses = {};
+    if (Array.isArray(data.abilityBonuses)) {
+      for (const b of data.abilityBonuses) {
+        bonuses[b.ability.toLowerCase() as keyof AbilityBonuses] = b.bonus;
+      }
+    } else if (data.abilityBonuses) {
+      bonuses = data.abilityBonuses;
+    }
     return {
       id: row.id,
       name: row.name,
       speed: data.speed,
-      abilityBonuses: data.abilityBonuses,
+      abilityBonuses: bonuses,
       bonusChoices: data.bonusChoices
     };
   });
