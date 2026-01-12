@@ -141,21 +141,21 @@ Align data model with product truth: player controls exactly one party member.
 
 ### Checklist
 
-- [ ] Add table `campaign_player(campaign_id PK, player_character_id, updated_at)`.
-- [ ] Add table `campaign_state` (minimal fields for now; enriched later).
-- [ ] Implement `getPlayerCharacterId()` and `setPlayerCharacter()` transactional.
-- [ ] Modify character listing:
-  - [ ] normal mode lists characters strictly by campaign_id
-  - [ ] treat `campaign_id IS NULL` as legacy; provide a one-time attach/cleanup path (migration helper).
-- [ ] UI gating:
-  - [ ] “Play/Continue” disabled until player character selected
-  - [ ] provide a “Choose your character” prompt that opens Party Sheets selection.
+- [x] Add table `campaign_player(campaign_id PK, player_character_id, updated_at)`.
+- [x] Add table `campaign_state` (minimal fields for now; enriched later).
+- [x] Implement `getPlayerCharacterId()` and `setPlayerCharacter()` transactional.
+- [x] Modify character listing:
+  - [x] normal mode lists characters strictly by campaign_id
+  - [x] treat `campaign_id IS NULL` as legacy; provide a one-time attach/cleanup path (migration helper).
+- [x] UI gating:
+  - [x] "Play/Continue" disabled until player character selected
+  - [x] provide a "Choose your character" prompt that opens Party Sheets selection.
 
 ### Tests (required)
 
 - [ ] Can’t start play without campaign_player set.
-- [ ] Setting player character overwrites previous value safely (one row per campaign).
-- [ ] Dashboard CTA changes appropriately.
+- [x] Setting player character overwrites previous value safely (one row per campaign).
+- [x] Dashboard CTA changes appropriately.
 
 ### Acceptance criteria
 

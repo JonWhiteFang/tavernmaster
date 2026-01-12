@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import Dashboard from "./Dashboard";
 import { useAppContext } from "../state/AppContext";
 import { listCharacters } from "../data/characters";
+import { getPlayerCharacterId } from "../data/campaign_player";
 import { listAiLogs } from "../data/ai_logs";
 import { createCampaign } from "../data/campaigns";
 import { createSession } from "../data/sessions";
@@ -15,6 +16,9 @@ vi.mock("../state/AppContext", () => ({
 }));
 vi.mock("../data/characters", () => ({
   listCharacters: vi.fn()
+}));
+vi.mock("../data/campaign_player", () => ({
+  getPlayerCharacterId: vi.fn()
 }));
 vi.mock("../data/ai_logs", () => ({
   listAiLogs: vi.fn()
@@ -44,6 +48,7 @@ describe("Dashboard", () => {
 
     vi.mocked(listCharacters).mockResolvedValue([]);
     vi.mocked(listAiLogs).mockResolvedValue([]);
+    vi.mocked(getPlayerCharacterId).mockResolvedValue(null);
 
     render(<Dashboard />);
 
@@ -80,6 +85,7 @@ describe("Dashboard", () => {
 
     vi.mocked(listCharacters).mockResolvedValue([]);
     vi.mocked(listAiLogs).mockResolvedValue([]);
+    vi.mocked(getPlayerCharacterId).mockResolvedValue(null);
     vi.mocked(createCampaign).mockResolvedValue({
       id: "camp-new",
       name: "New Campaign",
