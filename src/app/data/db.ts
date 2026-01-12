@@ -54,6 +54,10 @@ export async function getDatabase(): Promise<Database> {
   return databasePromise;
 }
 
+export function resetDatabaseForRestore(): void {
+  databasePromise = null;
+}
+
 export async function withTransaction<T>(fn: (db: Database) => Promise<T>): Promise<T> {
   const db = await getDatabase();
   await db.execute("BEGIN");

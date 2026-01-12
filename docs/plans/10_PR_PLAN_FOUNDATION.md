@@ -62,21 +62,21 @@ Enable reliable automatic backups and restores **without relying on JS fs plugin
 
 ### Checklist
 
-- [ ] Add Tauri commands:
-  - [ ] `get_app_data_dir()` → returns app data directory (string path)
-  - [ ] `backup_database(reason: String)` → copies `tavernmaster.db` to `backups/` with timestamp and reason
-  - [ ] `list_database_backups()` → returns list of backups (path, createdAt, reason)
-  - [ ] `restore_database(backup_path: String)` → replaces current DB with backup
-- [ ] Define backup retention: keep last 20; rotate oldest.
-- [ ] In TS `backups.ts`, wrap commands with typed functions.
-- [ ] Ensure restore is safe:
-  - [ ] close DB connection (invalidate cached Database) before restore
-  - [ ] after restore, reopen DB and re-run migrations
+- [x] Add Tauri commands:
+  - [x] `get_app_data_dir()` → returns app data directory (string path)
+  - [x] `backup_database(reason: String)` → copies `tavernmaster.db` to `backups/` with timestamp and reason
+  - [x] `list_database_backups()` → returns list of backups (path, createdAt, reason)
+  - [x] `restore_database(backup_path: String)` → replaces current DB with backup
+- [x] Define backup retention: keep last 20; rotate oldest.
+- [x] In TS `backups.ts`, wrap commands with typed functions.
+- [x] Ensure restore is safe:
+  - [x] close DB connection (invalidate cached Database) before restore
+  - [x] after restore, reopen DB and re-run migrations
 
 ### Tests (required)
 
-- [ ] TS: `backups.test.ts` mocks `invoke` and asserts correct command calls.
-- [ ] TS: ensure restore triggers DB reset hook (export a `resetDatabaseForRestore()` in `db.ts` and test it).
+- [x] TS: `backups.test.ts` mocks `invoke` and asserts correct command calls.
+- [x] TS: ensure restore triggers DB reset hook (export a `resetDatabaseForRestore()` in `db.ts` and test it).
 
 ### Acceptance criteria
 

@@ -45,4 +45,16 @@ describe("db", () => {
       expect.stringContaining("ALTER TABLE characters ADD COLUMN proficiencies_json")
     );
   });
+
+  it("resetDatabaseForRestore clears cached connection", async () => {
+    const { getDatabase, resetDatabaseForRestore } = await import("./db");
+
+    await getDatabase();
+    expect(load).toHaveBeenCalledTimes(1);
+
+    resetDatabaseForRestore();
+
+    await getDatabase();
+    expect(load).toHaveBeenCalledTimes(2);
+  });
 });
