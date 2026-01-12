@@ -221,17 +221,17 @@ Prevent performance cliffs as campaigns grow.
 
 ### Checklist
 
-- [ ] Add indices:
-  - [ ] `ai_logs(campaign_id, session_id, created_at)`
-  - [ ] `sessions(campaign_id, started_at, created_at)`
-  - [ ] `combat_log(encounter_id, created_at)`
-- [ ] Add FTS5 table `search_index` with triggers or explicit upsert functions.
-- [ ] Index: session recap + journal entries + summary logs (initial scope).
+- [x] Add indices:
+  - [x] `ai_logs(campaign_id, session_id, created_at)`
+  - [x] `sessions(campaign_id, started_at, created_at)`
+  - [x] `combat_log(encounter_id, created_at)`
+- [x] Add FTS5 table `search_index` with triggers or explicit upsert functions.
+- [x] Index: session recap + journal entries + summary logs (initial scope).
 
 ### Tests (required)
 
-- [ ] SQL executed includes CREATE INDEX statements.
-- [ ] search_index upsert/list/search behaviors.
+- [x] SQL executed includes CREATE INDEX statements.
+- [x] search_index upsert/list/search behaviors.
 
 ### Acceptance criteria
 
