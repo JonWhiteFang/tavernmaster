@@ -12,12 +12,14 @@ The player controls **exactly one** party member. The AI runs everything else (D
 The canonical build plan lives in `docs/plans/`.
 
 ### Execute in order (end-to-end “complete app”)
+
 1. `docs/plans/00_IMPLEMENTATION_PLANS_README.md`
 2. `docs/plans/01_FOUNDATION_PERSISTENCE_SECURITY_TESTS.md`
 3. `docs/plans/02_CONTINUITY_TURN_ENGINE_CANON_MEMORY.md`
 4. `docs/plans/03_AI_GUARDRAILS_PLAYER_UX_COMBAT_SYNC.md`
 
 ### PR-sized execution breakdown (preferred for implementation)
+
 1. `docs/plans/09_PR_SIZED_PLANS_README.md`
 2. `docs/plans/10_PR_PLAN_FOUNDATION.md` (PR-001 → PR-006)
 3. `docs/plans/11_PR_PLAN_CONTINUITY.md` (PR-007 → PR-012)
@@ -29,6 +31,7 @@ The canonical build plan lives in `docs/plans/`.
 ## How to work (Kiro workflow)
 
 ### Default approach
+
 - Prefer **small, sequential PRs** (follow the PR plan documents).
 - After completing a task from `docs/plans/*`, **check it off in the plan** in the same PR so work isn’t duplicated.
 - Make changes **reversible** and **test-backed**.
@@ -36,12 +39,15 @@ The canonical build plan lives in `docs/plans/`.
 - Keep advanced/dev tools, but hide them behind **Developer Mode** in the UI.
 
 ### Clarifying questions
+
 Ask questions only when they are truly blocking or high-risk (data loss/security). Otherwise:
+
 - state assumptions explicitly
 - proceed with the safest reversible approach
 - add tests and a rollback path
 
 **Hard stop questions are allowed only for:**
+
 - destructive migrations / data deletion
 - secrets / auth / crypto changes that could lock users out
 - external integrations that require credentials not present
@@ -62,9 +68,11 @@ Ask questions only when they are truly blocking or high-risk (data loss/security
 ## Build / test commands (required gates)
 
 Install:
+
 - `npm install`
 
 Frontend:
+
 - `npm run dev`
 - `npm run build`
 - `npm run lint`
@@ -72,14 +80,17 @@ Frontend:
 - `npm run format:check`
 
 Desktop (Tauri):
+
 - `npm run tauri:dev`
 - `npm run tauri:build`
 
 Rust (recommended when touching `src-tauri/`):
+
 - `cd src-tauri && cargo fmt`
 - `cd src-tauri && cargo clippy`
 
 SRD:
+
 - `npm run srd:generate`
 - `npm run srd:verify`
 
@@ -91,6 +102,7 @@ If SRD data or import changes, `srd:verify` must pass.
 ## Campaign continuity rules (non-negotiable)
 
 ### Persistence & migrations
+
 - Use **versioned migrations** (`PRAGMA user_version`) — no “silent” schema drift.
 - Any migration must:
   - create an automatic DB backup first
@@ -98,18 +110,23 @@ If SRD data or import changes, `srd:verify` must pass.
   - have a tested rollback path (restore backup) if it fails
 
 ### Transactional state updates
+
 Anything that affects long-term continuity must be applied in **one transaction**:
+
 - append a Turn
 - save a snapshot
 - update campaign state
 - upsert canon facts/quests
 
 ### Canon vs context
+
 - Separate **long-term canon** (facts, NPCs, quests, locations) from **recent context** (last N turns).
 - Avoid prompt bloat: always bound the amount of history sent to the model.
 
 ### Recovery
+
 The app must support:
+
 - Undo last turn (non-destructive)
 - Branch from a prior turn
 - Retcon notes (explicit canon corrections)
@@ -140,12 +157,14 @@ The app must support:
 ## UI principles (player-first)
 
 Default Play View must show only:
+
 1. Current Scene (short)
 2. Immediate Choices (3–7 + custom)
 3. Your Character status (at a glance)
 4. Collapsible Timeline (“what just happened”)
 
 Everything else is progressive disclosure:
+
 - Details expanders
 - DM Notes panel
 - Combat details toggle
@@ -154,6 +173,7 @@ Everything else is progressive disclosure:
 ---
 
 ## Commit / PR conventions
+
 - Commit changes in **incremental, logical steps**:
   - keep each commit focused (one cohesive change)
   - avoid “mega-commits” that mix migrations, UI, and refactors unless unavoidable
@@ -161,7 +181,6 @@ Everything else is progressive disclosure:
 - When a plan task is completed, **update the corresponding plan file** in `docs/plans/`:
   - check off completed checklist items
   - note any deviations with a short rationale
-
 
 - Conventional Commits: `feat:`, `fix:`, `docs:`, `chore:`.
 - PR description should include:
