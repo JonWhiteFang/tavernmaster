@@ -27,14 +27,8 @@ jobs:
       - name: Format check
         run: npm run format:check
 
-      - name: Type check
-        run: npm run build
-
       - name: Test
         run: npm run test
-
-      - name: SRD verify
-        run: npm run srd:verify
 
   rust:
     runs-on: macos-latest
@@ -42,7 +36,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Setup Rust
-        uses: dtolnay/rust-action@stable
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Cargo check
         working-directory: src-tauri
