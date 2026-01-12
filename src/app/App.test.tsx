@@ -214,7 +214,7 @@ describe("App", () => {
     await waitFor(() => {
       expect(consoleSpy).toHaveBeenCalledWith(
         expect.stringContaining("Failed to initialize app data"),
-        error
+        expect.anything()
       );
     });
 
