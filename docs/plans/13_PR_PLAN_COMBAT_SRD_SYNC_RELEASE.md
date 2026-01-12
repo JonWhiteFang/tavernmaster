@@ -21,11 +21,11 @@ Combat is playable end-to-end in the main PlayView.
 
 ### Checklist
 
-- [ ] Define `CombatPatch` schema for TurnResponse.
+- [x] Define `CombatPatch` schema for TurnResponse.
 - [ ] Validate and apply combat patch:
-  - initiative order
-  - HP/conditions/resources
-  - turn progression
+  - [x] initiative order
+  - [x] HP/conditions/resources
+  - [x] turn progression
 - [ ] PlayView:
   - show “My turn” actions
   - auto-resolve AI turns quickly with short narration
