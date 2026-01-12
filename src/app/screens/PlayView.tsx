@@ -10,6 +10,7 @@ import type { Turn } from "../engine/turns/turnStore";
 import type { Choice } from "../engine/ai/schemas";
 import type { PlayStyle } from "../engine/ai/playStyles";
 import { getLlmConfig } from "../data/settings";
+import { copy } from "../content/copy";
 
 interface PlayViewProps {
   onNeedsCampaign?: () => void;
@@ -118,9 +119,9 @@ export default function PlayView({ onNeedsCampaign }: PlayViewProps) {
   if (!activeCampaignId) {
     return (
       <section className="panel">
-        <div className="panel-title">Play</div>
+        <div className="panel-title">{copy.nav.play}</div>
         <div className="panel-body">
-          <p>Select a campaign to begin playing.</p>
+          <p>{copy.empty.noCampaign}</p>
         </div>
       </section>
     );
@@ -177,30 +178,30 @@ export default function PlayView({ onNeedsCampaign }: PlayViewProps) {
               onClick={() => handleAction(customAction.trim())}
               disabled={loading || !customAction.trim()}
             >
-              {loading ? "..." : "Go"}
+              {loading ? copy.status.thinking : copy.actions.continue}
             </button>
           </div>
 
           {error && (
             <div className="error-message" role="alert">
               {error}
-              <button onClick={() => setError(null)}>Dismiss</button>
+              <button onClick={() => setError(null)}>{copy.actions.dismiss}</button>
             </div>
           )}
         </div>
       </section>
 
       <section className="panel status-panel">
-        <div className="panel-title">Status</div>
+        <div className="panel-title">{copy.status.ready}</div>
         <div className="panel-body">
-          <p>Mode: {state?.mode || "exploration"}</p>
+          <p>Mode: {copy.modes[state?.mode || "exploration"]}</p>
           <p>Turn: {state?.turnCount || 0}</p>
           <p>
             Quests:{" "}
             {state?.quests
               .filter((q) => q.status === "active")
               .map((q) => q.name)
-              .join(", ") || "None"}
+              .join(", ") || copy.empty.noQuests.split(".")[0]}
           </p>
         </div>
       </section>
