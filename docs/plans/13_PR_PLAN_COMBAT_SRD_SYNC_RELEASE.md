@@ -52,11 +52,11 @@ Between-session progression is durable and low-friction.
 
 ### Checklist
 
-- [ ] Inventory diffs applied via state patches (transactional).
+- [x] Inventory diffs applied via state patches (transactional).
 - [ ] Level-up:
-  - AI proposes choices
-  - player approves in wizard
-  - state + character tables updated
+  - [x] AI proposes choices
+  - [x] player approves in wizard
+  - [x] state + character tables updated
 
 ### Acceptance criteria
 
