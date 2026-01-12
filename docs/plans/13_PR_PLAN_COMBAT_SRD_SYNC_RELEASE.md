@@ -158,10 +158,10 @@ Be safe by default.
 
 ### Checklist
 
-- [ ] Redact secrets from logs (baseUrl tokens, supabase session, wrapped keys).
-- [ ] Never persist vault passphrase.
+- [x] Redact secrets from logs (baseUrl tokens, supabase session, wrapped keys).
+- [x] Never persist vault passphrase.
 - [ ] Audit localStorage usage (remove MapStudio tokenCounts persistence or migrate to DB).
-- [ ] Add a security doc: `docs/SECURITY.md` describing storage and threat model.
+- [x] Add a security doc: `docs/SECURITY.md` describing storage and threat model.
 
 ### Acceptance criteria
 
