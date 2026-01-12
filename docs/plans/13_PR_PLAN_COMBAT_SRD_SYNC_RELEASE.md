@@ -80,7 +80,7 @@ SRD reference is fast, complete, and linkable from mechanics.
 
 ### Checklist
 
-- [ ] Add FTS virtual table for SRD entries and triggers.
+- [x] Add FTS virtual table for SRD entries and triggers.
 - [ ] Ensure verify script asserts expected SRD types and minimum counts.
 - [ ] Mechanics `rules_refs` deep link into SRD Browser.
 

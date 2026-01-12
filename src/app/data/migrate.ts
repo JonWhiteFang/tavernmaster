@@ -8,6 +8,7 @@ import turnsAndSnapshots from "./migrations/0006_turns_and_snapshots";
 import canonStore from "./migrations/0007_canon_store";
 import turnStatus from "./migrations/0008_turn_status";
 import branchesAndRetcons from "./migrations/0009_branches_and_retcons";
+import srdFts from "./migrations/0010_srd_fts";
 import { backupDatabase, restoreDatabase } from "./backups";
 
 export interface Migration {
@@ -37,7 +38,8 @@ const migrations: Migration[] = [
   turnsAndSnapshots,
   canonStore,
   turnStatus,
-  branchesAndRetcons
+  branchesAndRetcons,
+  srdFts
 ];
 
 type VersionRow = { user_version: number };
