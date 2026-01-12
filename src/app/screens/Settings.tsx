@@ -15,6 +15,7 @@ import {
 import { countOpenConflicts, listOpenConflicts, type SyncConflictRow } from "../sync/conflicts";
 import { keepLocalForConflict, keepRemoteForConflict } from "../sync/resolve";
 import { useAppContext } from "../state/AppContext";
+import { useDeveloperMode } from "../state/developerMode";
 import { useToast } from "../ui/Toast";
 import { useTutorial } from "../ui/Tutorial";
 import { logger } from "../utils/logger";
@@ -30,6 +31,7 @@ type TestState = "idle" | "testing" | "success" | "error";
 
 export default function Settings() {
   const { refreshCampaigns, refreshSessions } = useAppContext();
+  const { developerMode, setDeveloperMode } = useDeveloperMode();
   const { pushToast } = useToast();
   const {
     status: tutorialStatus,
@@ -443,6 +445,26 @@ export default function Settings() {
                 Reset Progress
               </button>
             </div>
+          </div>
+        </section>
+
+        <section className="panel settings-card">
+          <div className="panel-title">Advanced</div>
+          <div className="panel-body">
+            <label
+              className="form-field"
+              style={{ flexDirection: "row", alignItems: "center", gap: "0.75rem" }}
+            >
+              <input
+                type="checkbox"
+                checked={developerMode}
+                onChange={(e) => void setDeveloperMode(e.target.checked)}
+              />
+              <span>Developer Mode</span>
+            </label>
+            <p className="panel-copy" style={{ marginTop: "0.5rem" }}>
+              Shows advanced tools: AI Director, Combat Debugger, Logs & Exports, Map Studio.
+            </p>
           </div>
         </section>
 

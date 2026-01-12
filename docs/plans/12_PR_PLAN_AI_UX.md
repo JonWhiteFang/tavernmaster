@@ -174,18 +174,18 @@ Keep advanced tools but remove them from the main path.
 
 ### Checklist
 
-- [ ] Add persisted Developer Mode toggle in `app_settings`.
-- [ ] Sidebar shows only:
+- [x] Add persisted Developer Mode toggle in `app_settings`.
+- [x] Sidebar shows only:
   - Play
   - Campaign Library
   - Character
   - Notes
-- [ ] Developer Mode reveals:
+- [x] Developer Mode reveals:
   - Logs & Exports
   - Director (Developer)
   - Combat Debugger
   - Prompt inspection panel
-- [ ] Ensure Developer Mode is off by default and doesn’t block play.
+- [x] Ensure Developer Mode is off by default and doesn’t block play.
 
 ### Acceptance criteria
 

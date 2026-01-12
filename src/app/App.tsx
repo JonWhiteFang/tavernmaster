@@ -18,6 +18,7 @@ import Licenses from "./screens/Licenses";
 import SrdBrowser from "./screens/SrdBrowser";
 import Recovery from "./screens/Recovery";
 import { AppProvider } from "./state/AppContext";
+import { DeveloperModeProvider } from "./state/developerMode";
 import Topbar from "./layout/Topbar";
 import SidebarNav from "./layout/SidebarNav";
 import { useHotkeys } from "./hooks/useHotkeys";
@@ -62,11 +63,13 @@ export default function App() {
   return (
     <ErrorBoundary>
       <AppProvider>
-        <ToastProvider>
-          <TutorialProvider>
-            <MemoizedAppShell />
-          </TutorialProvider>
-        </ToastProvider>
+        <DeveloperModeProvider>
+          <ToastProvider>
+            <TutorialProvider>
+              <MemoizedAppShell />
+            </TutorialProvider>
+          </ToastProvider>
+        </DeveloperModeProvider>
       </AppProvider>
     </ErrorBoundary>
   );
@@ -81,25 +84,29 @@ function AppShell() {
       {
         title: "PLAY",
         items: [
-          { id: "play" as const, label: "Play Workspace" },
-          { id: "dashboard" as const, label: "Campaigns & Sessions" },
-          { id: "encounter" as const, label: "Encounter" },
-          { id: "map" as const, label: "Map" },
-          { id: "journal" as const, label: "Journal" },
-          { id: "director" as const, label: "AI Director" }
+          { id: "playview" as const, label: "Play" },
+          { id: "dashboard" as const, label: "Campaign Library" },
+          { id: "party" as const, label: "Character" },
+          { id: "journal" as const, label: "Notes" }
+        ]
+      },
+      {
+        title: "DEVELOPER",
+        items: [
+          { id: "play" as const, label: "Play Workspace", devOnly: true },
+          { id: "encounter" as const, label: "Combat Debugger", devOnly: true },
+          { id: "director" as const, label: "AI Director", devOnly: true },
+          { id: "logs" as const, label: "Logs & Exports", devOnly: true },
+          { id: "map" as const, label: "Map Studio", devOnly: true }
         ]
       },
       {
         title: "REFERENCE",
-        items: [
-          { id: "party" as const, label: "Party" },
-          { id: "srd" as const, label: "SRD Browser" }
-        ]
+        items: [{ id: "srd" as const, label: "SRD Browser" }]
       },
       {
         title: "SYSTEM",
         items: [
-          { id: "logs" as const, label: "Transcripts & Exports" },
           { id: "settings" as const, label: "Settings" },
           { id: "licenses" as const, label: "Licenses" }
         ]
