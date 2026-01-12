@@ -1,5 +1,6 @@
 import { memo, useEffect, useMemo, useState } from "react";
 import { initializeData } from "./data/init";
+import { MigrationError } from "./data/migrate";
 import { initializeSync } from "./sync/client";
 import { logger } from "./utils/logger";
 import TitleScreen from "./screens/TitleScreen";
@@ -14,6 +15,7 @@ import PartySheets from "./screens/PartySheets";
 import Settings from "./screens/Settings";
 import Licenses from "./screens/Licenses";
 import SrdBrowser from "./screens/SrdBrowser";
+import Recovery from "./screens/Recovery";
 import { AppProvider } from "./state/AppContext";
 import Topbar from "./layout/Topbar";
 import SidebarNav from "./layout/SidebarNav";
@@ -69,6 +71,7 @@ export default function App() {
 
 function AppShell() {
   const [showTitle, setShowTitle] = useState(true);
+  const [migrationError, setMigrationError] = useState<MigrationError | null>(null);
   const [activeScreen, setActiveScreen] = useState<ScreenKey>("play");
   const navSections = useMemo(
     () => [
@@ -120,7 +123,11 @@ function AppShell() {
         await initializeData();
         await initializeSync();
       } catch (error) {
-        logger.error("Failed to initialize app data", error, "App");
+        if (error instanceof MigrationError) {
+          setMigrationError(error);
+        } else {
+          logger.error("Failed to initialize app data", error, "App");
+        }
       }
     })();
   }, []);
@@ -183,6 +190,26 @@ function AppShell() {
       window.close();
     }
   };
+
+  const handleRetryInit = () => {
+    setMigrationError(null);
+    void (async () => {
+      try {
+        await initializeData();
+        await initializeSync();
+      } catch (error) {
+        if (error instanceof MigrationError) {
+          setMigrationError(error);
+        } else {
+          logger.error("Failed to initialize app data", error, "App");
+        }
+      }
+    })();
+  };
+
+  if (migrationError) {
+    return <Recovery error={migrationError} onRetry={handleRetryInit} />;
+  }
 
   if (showTitle) {
     return (

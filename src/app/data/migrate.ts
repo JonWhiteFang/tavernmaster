@@ -1,10 +1,23 @@
 import type Database from "@tauri-apps/plugin-sql";
 import baseline from "./migrations/0001_baseline";
+import { backupDatabase, restoreDatabase } from "./backups";
 
 export interface Migration {
   version: number;
   name: string;
   up: (db: Database) => Promise<void>;
+}
+
+export class MigrationError extends Error {
+  constructor(
+    message: string,
+    public readonly fromVersion: number,
+    public readonly toVersion: number,
+    public readonly backupPath?: string
+  ) {
+    super(message);
+    this.name = "MigrationError";
+  }
 }
 
 const migrations: Migration[] = [baseline];
@@ -28,8 +41,33 @@ export async function runMigrations(db: Database): Promise<void> {
     .sort((a, b) => a.version - b.version);
 
   for (const migration of pending) {
-    await migration.up(db);
-    await setUserVersion(db, migration.version);
+    const fromVersion = await getUserVersion(db);
+    let backupPath: string | undefined;
+
+    try {
+      backupPath = await backupDatabase(`pre-migration-v${fromVersion}-to-v${migration.version}`);
+    } catch {
+      // Continue without backup if it fails (e.g., no DB file yet)
+    }
+
+    try {
+      await migration.up(db);
+      await setUserVersion(db, migration.version);
+    } catch (err) {
+      if (backupPath) {
+        try {
+          await restoreDatabase(backupPath);
+        } catch {
+          // Restore failed, throw original error
+        }
+      }
+      throw new MigrationError(
+        err instanceof Error ? err.message : String(err),
+        fromVersion,
+        migration.version,
+        backupPath
+      );
+    }
   }
 }
 

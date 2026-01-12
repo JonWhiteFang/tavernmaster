@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const execute = vi.fn();
 const select = vi.fn();
+const backupDatabase = vi.fn();
+const restoreDatabase = vi.fn();
 
 vi.mock("@tauri-apps/plugin-sql", () => ({
   default: { load: vi.fn(async () => ({ execute, select })) }
@@ -11,11 +13,19 @@ vi.mock("./schema", () => ({
   schemaStatements: ["CREATE TABLE test_table;"]
 }));
 
+vi.mock("./backups", () => ({
+  backupDatabase: (reason: string) => backupDatabase(reason),
+  restoreDatabase: (path: string) => restoreDatabase(path)
+}));
+
 describe("migrate", () => {
   beforeEach(() => {
     vi.resetModules();
     execute.mockClear();
     select.mockClear();
+    backupDatabase.mockClear();
+    restoreDatabase.mockClear();
+    backupDatabase.mockResolvedValue("/backup.db");
   });
 
   it("applies baseline migration when user_version is 0", async () => {
@@ -59,5 +69,21 @@ describe("migrate", () => {
     await setUserVersion(db, 5);
 
     expect(execute).toHaveBeenCalledWith("PRAGMA user_version = 5;");
+  });
+
+  it("creates backup before migration and restores on failure", async () => {
+    select.mockResolvedValue([{ user_version: 0 }]);
+    execute.mockImplementation((sql: string) => {
+      if (sql === "CREATE TABLE test_table;") {
+        throw new Error("Migration failed");
+      }
+    });
+
+    const { runMigrations, MigrationError } = await import("./migrate");
+    const db = { execute, select } as never;
+
+    await expect(runMigrations(db)).rejects.toThrow(MigrationError);
+    expect(backupDatabase).toHaveBeenCalledWith("pre-migration-v0-to-v1");
+    expect(restoreDatabase).toHaveBeenCalledWith("/backup.db");
   });
 });
