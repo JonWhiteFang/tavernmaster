@@ -20,18 +20,18 @@ Create a single authoritative state document to rehydrate play instantly.
 
 ### Checklist
 
-- [ ] Define `CampaignStateDoc` zod schema with `version` and core sections:
+- [x] Define `CampaignStateDoc` zod schema with `version` and core sections:
   - scene, player summary, companions summary, quests, npcs, locations, inventory, flags, mode
-- [ ] Implement load/save functions:
-  - [ ] `loadCampaignState(campaignId)` with default initializer
-  - [ ] `saveCampaignState(campaignId, doc, { tx })`
-- [ ] Ensure encryption is used for any sensitive long-form text fields if stored separately.
+- [x] Implement load/save functions:
+  - [x] `loadCampaignState(campaignId)` with default initializer
+  - [x] `saveCampaignState(campaignId, doc, { tx })`
+- [x] Ensure encryption is used for any sensitive long-form text fields if stored separately.
 
 ### Tests
 
-- [ ] default doc creation
-- [ ] schema validation + roundtrip
-- [ ] save updates `updated_at` correctly
+- [x] default doc creation
+- [x] schema validation + roundtrip
+- [x] save updates `updated_at` correctly
 
 ### Acceptance criteria
 
