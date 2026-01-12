@@ -7,6 +7,7 @@ import campaignStateJson from "./migrations/0005_campaign_state_json";
 import turnsAndSnapshots from "./migrations/0006_turns_and_snapshots";
 import canonStore from "./migrations/0007_canon_store";
 import turnStatus from "./migrations/0008_turn_status";
+import branchesAndRetcons from "./migrations/0009_branches_and_retcons";
 import { backupDatabase, restoreDatabase } from "./backups";
 
 export interface Migration {
@@ -35,7 +36,8 @@ const migrations: Migration[] = [
   campaignStateJson,
   turnsAndSnapshots,
   canonStore,
-  turnStatus
+  turnStatus,
+  branchesAndRetcons
 ];
 
 type VersionRow = { user_version: number };
