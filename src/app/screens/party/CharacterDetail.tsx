@@ -54,7 +54,13 @@ export default function CharacterDetail({
           <button className="secondary-button" onClick={onEdit}>
             Edit
           </button>
-          <button className="ghost-button" onClick={() => { console.log('Delete clicked'); onDelete(); }}>
+          <button
+            className="ghost-button"
+            onClick={() => {
+              console.log("Delete clicked");
+              onDelete();
+            }}
+          >
             Delete
           </button>
         </div>
