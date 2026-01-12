@@ -90,21 +90,21 @@ Separate long-term canon from recent context and transcripts.
 
 ### Checklist
 
-- [ ] Add tables:
+- [x] Add tables:
   - canon_facts (keyed upserts)
   - canon_summaries (long + recent)
   - quest_threads (state machine)
-- [ ] Implement:
-  - [ ] `upsertCanonFact({ key, type, value, confidence, sourceTurnId })`
-  - [ ] `getCanonSummary(campaignId)`
-  - [ ] `upsertCanonSummary(campaignId, { long, recent })`
-  - [ ] `listQuests(campaignId, filter)`
-  - [ ] validate quest state transitions
+- [x] Implement:
+  - [x] `upsertCanonFact({ key, type, value, confidence, sourceTurnId })`
+  - [x] `getCanonSummary(campaignId)`
+  - [x] `upsertCanonSummary(campaignId, { long, recent })`
+  - [x] `listQuests(campaignId, filter)`
+  - [x] validate quest state transitions
 
 ### Tests
 
-- [ ] idempotent upsert by key
-- [ ] quest transitions allowed/blocked correctly
+- [x] idempotent upsert by key
+- [x] quest transitions allowed/blocked correctly
 
 ### Acceptance criteria
 

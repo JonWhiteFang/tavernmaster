@@ -5,6 +5,7 @@ import cryptoMeta from "./migrations/0003_crypto_meta";
 import indicesAndSearch from "./migrations/0004_indices_and_search";
 import campaignStateJson from "./migrations/0005_campaign_state_json";
 import turnsAndSnapshots from "./migrations/0006_turns_and_snapshots";
+import canonStore from "./migrations/0007_canon_store";
 import { backupDatabase, restoreDatabase } from "./backups";
 
 export interface Migration {
@@ -31,7 +32,8 @@ const migrations: Migration[] = [
   cryptoMeta,
   indicesAndSearch,
   campaignStateJson,
-  turnsAndSnapshots
+  turnsAndSnapshots,
+  canonStore
 ];
 
 type VersionRow = { user_version: number };
