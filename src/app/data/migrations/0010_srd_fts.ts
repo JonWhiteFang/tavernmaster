@@ -23,14 +23,14 @@ const migration: Migration = {
     `);
 
     await db.execute(`
-      INSERT INTO srd_fts(rowid + 10000, entry_type, name, content)
-      SELECT rowid, 'monster', name, COALESCE(json_extract(data_json, '$.description'), '')
+      INSERT INTO srd_fts(rowid, entry_type, name, content)
+      SELECT rowid + 10000, 'monster', name, COALESCE(json_extract(data_json, '$.description'), '')
       FROM srd_monsters;
     `);
 
     await db.execute(`
-      INSERT INTO srd_fts(rowid + 20000, entry_type, name, content)
-      SELECT rowid, 'item', name, COALESCE(json_extract(data_json, '$.description'), '')
+      INSERT INTO srd_fts(rowid, entry_type, name, content)
+      SELECT rowid + 20000, 'item', name, COALESCE(json_extract(data_json, '$.description'), '')
       FROM srd_items;
     `);
   }
