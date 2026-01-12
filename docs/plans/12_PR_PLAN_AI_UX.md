@@ -208,8 +208,8 @@ Make it feel native and efficient.
 
 ### Checklist
 
-- [ ] Implement menu items: New Campaign, Undo, Branch, Export, Settings/Vault, Toggle Developer Mode
-- [ ] Keyboard shortcuts:
+- [x] Implement menu items: New Campaign, Undo, Branch, Export, Settings/Vault, Toggle Developer Mode
+- [x] Keyboard shortcuts:
   - ⌘1 Play, ⌘2 Library, ⌘Z Undo, ⌘⇧B Branch, ⌘, Settings
 - [ ] Accessibility:
   - aria-live for narration updates
