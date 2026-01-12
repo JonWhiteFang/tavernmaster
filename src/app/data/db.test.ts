@@ -7,8 +7,10 @@ const load = vi.fn(async () => ({ execute, select }));
 vi.mock("@tauri-apps/plugin-sql", () => ({
   default: { load }
 }));
-vi.mock("./schema", () => ({
-  schemaStatements: ["CREATE TABLE one;", "CREATE TABLE two;"]
+
+const runMigrations = vi.fn();
+vi.mock("./migrate", () => ({
+  runMigrations
 }));
 
 describe("db", () => {
@@ -17,6 +19,7 @@ describe("db", () => {
     execute.mockClear();
     select.mockClear();
     load.mockClear();
+    runMigrations.mockClear();
     select.mockResolvedValue([]);
   });
 
@@ -29,13 +32,12 @@ describe("db", () => {
     expect(load).toHaveBeenCalledTimes(1);
   });
 
-  it("initializes schema and adds missing columns", async () => {
+  it("initializes via migrations and adds missing columns", async () => {
     const { initDatabase } = await import("./db");
 
     await initDatabase();
 
-    expect(execute).toHaveBeenCalledWith("CREATE TABLE one;");
-    expect(execute).toHaveBeenCalledWith("CREATE TABLE two;");
+    expect(runMigrations).toHaveBeenCalled();
     expect(execute).toHaveBeenCalledWith(
       expect.stringContaining("ALTER TABLE characters ADD COLUMN control_mode")
     );
