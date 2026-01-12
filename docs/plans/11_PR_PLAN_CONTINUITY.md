@@ -129,22 +129,22 @@ Continuity is not optional: recap and summary become built-in lifecycle steps.
 
 ### Checklist
 
-- [ ] Implement `startSession(campaignId)`:
-  - [ ] set active session in campaign_state
-  - [ ] build recap (offline deterministic first) from:
+- [x] Implement `startSession(campaignId)`:
+  - [x] set active session in campaign_state
+  - [x] build recap (offline deterministic first) from:
     - canon_summaries + state doc + last N turns
-- [ ] Implement `endSession(campaignId, sessionId)`:
-  - [ ] mark ended
-  - [ ] generate session recap (editable)
-  - [ ] update canon_summaries.recent
+- [x] Implement `endSession(campaignId, sessionId)`:
+  - [x] mark ended
+  - [x] generate session recap (editable)
+  - [x] update canon_summaries.recent
   - [ ] write a summary turn (mode=scene)
 - [ ] Dashboard:
   - [ ] “Continue Campaign” triggers recap sheet modal
 
 ### Tests
 
-- [ ] recap exists without LLM configured
-- [ ] endSession writes recap + updates canon summaries transactionally
+- [x] recap exists without LLM configured
+- [x] endSession writes recap + updates canon summaries transactionally
 
 ### Acceptance criteria
 
