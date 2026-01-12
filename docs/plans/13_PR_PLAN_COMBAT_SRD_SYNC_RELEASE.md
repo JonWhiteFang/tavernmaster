@@ -184,12 +184,12 @@ Be safe by default.
 
 ### Checklist
 
-- [ ] CI runs lint, test, format:check, SRD verify.
+- [x] CI runs lint, test, format:check, SRD verify.
 - [ ] Regression sim runs and ensures:
   - state doc bounded size
   - canon summaries compact
   - undo/branch/retcon stable
-- [ ] Rollback procedure tested: restore from backup and continue.
+- [x] Rollback procedure tested: restore from backup and continue.
 
 ### Acceptance criteria
 
