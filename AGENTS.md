@@ -1,95 +1,175 @@
-# Repository Guidelines
+# TavernMaster — Agent Guide
 
-Tavern Master is a Mac desktop app built with Tauri (Rust host shell) and a React + TypeScript frontend. The app is offline-first with local SQLite, single-user Supabase sync, and an OpenAI-compatible local LLM runtime (Ollama or LM Studio).
+TavernMaster is a **macOS-only** desktop app (Tauri + React/TypeScript) for a **solo, AI-guided D&D campaign**.
+The player controls **exactly one** party member. The AI runs everything else (DMing, companions, enemies, bookkeeping).
 
-## Clarifying Questions (Required)
+**North star:** campaigns that feel real over **months/years**. Continuity and recoverability are priority #1.
 
-Before making any file changes, running commands, or proposing a detailed implementation, you MUST:
+---
 
-1. **Assess ambiguity** in the user’s prompt/task and decide whether you have enough information to proceed safely and correctly.
-2. If anything is unclear, **ask clarifying questions first** and wait for answers. Do NOT guess.
+## Plans index (start here)
 
-### You MUST ask clarifying questions when any of the following are true
+The canonical build plan lives in `docs/plans/`.
 
-- **Goal ambiguity:** the desired outcome, scope, or definition of “done” isn’t explicit.
-- **Constraints missing:** you don’t know key constraints (time, performance, compatibility, dependencies, style, security).
-- **Environment uncertainty:** OS, toolchain, versions, build/test commands, credentials, or access assumptions matter.
-- **Risk of destructive changes:** refactors, migrations, deletes, renames, or large-scale formatting could be unintended.
-- **Multiple valid approaches:** there are competing solutions with meaningful tradeoffs (you must ask which the user prefers).
-- **Unknown acceptance criteria:** you can’t tell how success will be verified (tests, lint, output format, UX, etc.).
-- **External API/behavior assumptions:** you would need to assume undocumented behavior, third-party service details, or data formats.
+### Execute in order (end-to-end “complete app”)
+1. `docs/plans/00_IMPLEMENTATION_PLANS_README.md`
+2. `docs/plans/01_FOUNDATION_PERSISTENCE_SECURITY_TESTS.md`
+3. `docs/plans/02_CONTINUITY_TURN_ENGINE_CANON_MEMORY.md`
+4. `docs/plans/03_AI_GUARDRAILS_PLAYER_UX_COMBAT_SYNC.md`
 
-### Clarifying Questions Format
+### PR-sized execution breakdown (preferred for implementation)
+1. `docs/plans/09_PR_SIZED_PLANS_README.md`
+2. `docs/plans/10_PR_PLAN_FOUNDATION.md` (PR-001 → PR-006)
+3. `docs/plans/11_PR_PLAN_CONTINUITY.md` (PR-007 → PR-012)
+4. `docs/plans/12_PR_PLAN_AI_UX.md` (PR-013 → PR-019)
+5. `docs/plans/13_PR_PLAN_COMBAT_SRD_SYNC_RELEASE.md` (PR-020 → PR-026)
 
-When questions are needed, respond with:
+### Legacy plans (context only)
+These older files may exist and can provide historical context, but the numbered plans above are the source of truth:
+- `docs/plans/IMPLEMENTATION_PLAN_*.md`
 
-- A one-sentence summary of what you believe the user wants.
-- A **numbered list** of concise questions (aim for 1–5).
-- (Optional) The **default assumption** you would use _if the user explicitly tells you to proceed without answers_.
+---
 
-### If no questions are needed
+## How to work (Kiro workflow)
 
-State: **“No clarifying questions needed.”** Then:
+### Default approach
+- Prefer **small, sequential PRs** (follow the PR plan documents).
+- After completing a task from `docs/plans/*`, **check it off in the plan** in the same PR so work isn’t duplicated.
+- Make changes **reversible** and **test-backed**.
+- Prefer **additive** schema changes + migrations over refactors that risk data loss.
+- Keep advanced/dev tools, but hide them behind **Developer Mode** in the UI.
 
-- Briefly restate the task in your own words.
-- Propose a short plan (3–7 bullets).
-- Proceed with implementation.
+### Clarifying questions
+Ask questions only when they are truly blocking or high-risk (data loss/security). Otherwise:
+- state assumptions explicitly
+- proceed with the safest reversible approach
+- add tests and a rollback path
 
-### Do NOT proceed if questions are pending
+**Hard stop questions are allowed only for:**
+- destructive migrations / data deletion
+- secrets / auth / crypto changes that could lock users out
+- external integrations that require credentials not present
 
-Until the user answers the clarifying questions, do not:
+---
 
-- Edit files
-- Run commands
-- Create commits/PRs
-- Generate large code changes
-
-(You may still inspect/read files to understand context if allowed by the environment.)
-
-## Project Structure & Module Organization
+## Project structure (high level)
 
 - `src/`: React entry point and UI code.
-- `src/app/`: Screens (`screens/`), reusable UI (`ui/`), AI prompts (`ai/`), rules helpers (`rules/`), sync (`sync/`), and state (`state/`).
-- `src/styles/`: Theme tokens and layout styles for the fantasy-luxury UI.
-- `src/assets/`: Fonts and static assets (licensed fonts go in `src/assets/fonts/`).
-- `src-tauri/`: Rust host app and Tauri config.
-- `docs/`: Architecture, data model, LLM runtime, sync strategy, and UI style notes.
-- `IMPLEMENTATION_PLAN.md`: living checklist for current progress and next steps.
+- `src/app/`: screens, layout, reusable UI, AI integration, rules, sync, shared state.
+- `src/app/data/`: SQLite access + schema + DAOs.
+- `src-tauri/`: Rust host (Tauri) + native commands (crypto/keychain/etc).
+- `docs/`: architecture notes, runtime, sync, guides, plans.
+- `scripts/`: SRD generation/verification and utilities.
 
-## Build, Test, and Development Commands
+---
 
-- `npm install`: install frontend dependencies.
-- `npm run dev`: run the Vite dev server.
-- `npm run build`: build the frontend bundle.
-- `npm run format:check`: verify formatting.
-- `npm run tauri:dev`: run the desktop app in dev mode.
-- `npm run tauri:build`: build the desktop app bundle.
+## Build / test commands (required gates)
 
-## Coding Style & Naming Conventions
+Install:
+- `npm install`
 
-- Indentation: 2 spaces for TS/TSX/CSS/JSON/Markdown; Rust follows rustfmt defaults.
-- Naming: `PascalCase` for React components and files; `camelCase` for variables; `kebab-case` for CSS class names.
-- Keep UI components small and composable; shared types live in `src/app/data/`.
-- Use SRD-only naming for rules data and avoid non-SRD content.
+Frontend:
+- `npm run dev`
+- `npm run build`
+- `npm run lint`
+- `npm run test`
+- `npm run format:check`
 
-## Testing Guidelines
+Desktop (Tauri):
+- `npm run tauri:dev`
+- `npm run tauri:build`
 
-- Use `npm run test` (Vitest) for unit checks.
-- Place unit tests near modules and name them `*.test.ts` or `*.test.tsx`.
-- Prioritize rules engine tests first (dice, conditions, action validation, initiative).
+Rust (recommended when touching `src-tauri/`):
+- `cd src-tauri && cargo fmt`
+- `cd src-tauri && cargo clippy`
 
-## Commit & Pull Request Guidelines
+SRD:
+- `npm run srd:generate`
+- `npm run srd:verify`
 
-- Use Conventional Commits: `feat:`, `fix:`, `docs:`, `chore:`.
-- PRs should include a brief summary, test results (or "not run"), and screenshots for UI changes.
+**Quality gate:** PRs should pass `lint`, `test`, and `format:check`.  
+If SRD data or import changes, `srd:verify` must pass.
 
-## Configuration & Secrets
+---
 
-- Store local configuration in `.env` files and keep Supabase keys and LLM URLs out of Git.
-- Use the OS keychain for the single-user sync key once implemented.
+## Campaign continuity rules (non-negotiable)
 
-## Codex CLI Workflow
+### Persistence & migrations
+- Use **versioned migrations** (`PRAGMA user_version`) — no “silent” schema drift.
+- Any migration must:
+  - create an automatic DB backup first
+  - be idempotent
+  - have a tested rollback path (restore backup) if it fails
 
-- Definition of done: require `npm run lint`, `npm run test`, and `npm run format:check`, plus updating `IMPLEMENTATION_PLAN.md` when scope changes.
-- Context continuity: use `codex resume` / `codex resume --last` for ongoing work.
-- Prompting style: include goal, constraints, acceptance criteria; ask for a plan before execution when tasks are non-trivial.
+### Transactional state updates
+Anything that affects long-term continuity must be applied in **one transaction**:
+- append a Turn
+- save a snapshot
+- update campaign state
+- upsert canon facts/quests
+
+### Canon vs context
+- Separate **long-term canon** (facts, NPCs, quests, locations) from **recent context** (last N turns).
+- Avoid prompt bloat: always bound the amount of history sent to the model.
+
+### Recovery
+The app must support:
+- Undo last turn (non-destructive)
+- Branch from a prior turn
+- Retcon notes (explicit canon corrections)
+
+---
+
+## AI safety/consistency rules (app integrity)
+
+- Never apply AI output without **schema validation** (zod).
+- No semantic “repair” of invalid JSON in the main play loop.
+  - Retry with stricter prompting; if still invalid, fail safely with a retry UI.
+- Apply state patches only after validating game invariants (HP bounds, quest states, etc.).
+- Preserve raw AI output in developer diagnostics, but keep it out of the default player path.
+
+---
+
+## Security & secrets
+
+- Do not commit secrets. Use `.env` (see `.env.example`).
+- Treat Supabase auth/session and any API keys as secrets.
+- Do not log secrets or full decrypted content.
+- Prefer key material stored in:
+  - OS keychain as cache
+  - durable **Vault passphrase wrapped key** for cross-device restore (see plans)
+
+---
+
+## UI principles (player-first)
+
+Default Play View must show only:
+1. Current Scene (short)
+2. Immediate Choices (3–7 + custom)
+3. Your Character status (at a glance)
+4. Collapsible Timeline (“what just happened”)
+
+Everything else is progressive disclosure:
+- Details expanders
+- DM Notes panel
+- Combat details toggle
+- Developer Mode for logs/prompt inspection
+
+---
+
+## Commit / PR conventions
+- Commit changes in **incremental, logical steps**:
+  - keep each commit focused (one cohesive change)
+  - avoid “mega-commits” that mix migrations, UI, and refactors unless unavoidable
+  - ensure the app builds/tests between major steps
+- When a plan task is completed, **update the corresponding plan file** in `docs/plans/`:
+  - check off completed checklist items
+  - note any deviations with a short rationale
+
+
+- Conventional Commits: `feat:`, `fix:`, `docs:`, `chore:`.
+- PR description should include:
+  - what changed
+  - how to test
+  - risks/rollback (especially for migrations)
+  - screenshots for UI changes
