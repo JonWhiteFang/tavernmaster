@@ -56,23 +56,23 @@ Replace manual context fields with an automatic prompt builder.
 
 ### Checklist
 
-- [ ] Prompt builder uses:
-  - canon_summaries.long + recent
-  - CampaignStateDoc
-  - last N turns (bounded excerpts)
-  - player input
-  - play style preset
+- [x] Prompt builder uses:
+  - [x] canon_summaries.long + recent
+  - [x] CampaignStateDoc
+  - [x] last N turns (bounded excerpts)
+  - [x] player input
+  - [x] play style preset
 - [ ] Orchestrator:
-  - [ ] request Planner turn (low temp)
-  - [ ] validate TurnResponse
+  - [x] request Planner turn (low temp)
+  - [x] validate TurnResponse
   - [ ] request Narrator rewrite for narrative only
   - [ ] validate and merge; fallback to planner narrative if narrator fails
 - [ ] Add endpoint capability probe cached in settings (non-user-facing).
 
 ### Tests
 
-- [ ] prompt builder size bound test (never exceeds N chars)
-- [ ] narrator failure fallback test
+- [x] prompt builder size bound test (never exceeds N chars)
+- [x] narrator failure fallback test
 
 ### Acceptance criteria
 
