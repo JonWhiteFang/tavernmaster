@@ -15,22 +15,22 @@ const migration: Migration = {
       );
     `);
 
-    // Populate from existing SRD tables
+    // Populate from existing SRD tables (description is inside data_json)
     await db.execute(`
       INSERT INTO srd_fts(rowid, entry_type, name, content)
-      SELECT rowid, 'spell', name, COALESCE(description, '')
+      SELECT rowid, 'spell', name, COALESCE(json_extract(data_json, '$.description'), '')
       FROM srd_spells WHERE deleted_at IS NULL;
     `);
 
     await db.execute(`
       INSERT INTO srd_fts(rowid + 10000, entry_type, name, content)
-      SELECT rowid, 'monster', name, COALESCE(description, '')
+      SELECT rowid, 'monster', name, COALESCE(json_extract(data_json, '$.description'), '')
       FROM srd_monsters WHERE deleted_at IS NULL;
     `);
 
     await db.execute(`
       INSERT INTO srd_fts(rowid + 20000, entry_type, name, content)
-      SELECT rowid, 'item', name, COALESCE(description, '')
+      SELECT rowid, 'item', name, COALESCE(json_extract(data_json, '$.description'), '')
       FROM srd_items WHERE deleted_at IS NULL;
     `);
   }
